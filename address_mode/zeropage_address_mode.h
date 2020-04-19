@@ -21,10 +21,10 @@ class ZeropageAddressMode : public IAddressMode {
 public:
     const enum InstructionArgSize arg_size = INSTRUCTION_ARG_SIZE_WORD;
 
-    inline enum PeNESStatus get_data(
+    inline enum PeNESStatus get_storage(
         const ProgramContext *program_context,
         native_dword_t zeropage_address,
-        native_word_t *output_data
+        StorageLocation **output_storage
     ) override;
 };
 
@@ -32,10 +32,10 @@ class ZeropageXIndexedAddressMode : public IAddressMode {
 public:
     const enum InstructionArgSize arg_size = INSTRUCTION_ARG_SIZE_WORD;
 
-    inline enum PeNESStatus get_data(
+    inline enum PeNESStatus get_storage(
         const ProgramContext *program_context,
-        native_dword_t zeropage_indexed_address,
-        native_word_t *output_data
+        native_dword_t zeropage_address,
+        StorageLocation **output_storage
     ) override;
 };
 
@@ -43,10 +43,10 @@ class ZeropageYIndexedAddressMode : public IAddressMode {
 public:
     const enum InstructionArgSize arg_size = INSTRUCTION_ARG_SIZE_WORD;
 
-    inline enum PeNESStatus get_data(
+    inline enum PeNESStatus get_storage(
         const ProgramContext *program_context,
-        native_dword_t zeropage_indexed_address,
-        native_word_t *output_data
+        native_dword_t zeropage_address,
+        StorageLocation **output_storage
     ) override;
 };
 

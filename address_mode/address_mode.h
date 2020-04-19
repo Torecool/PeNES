@@ -21,6 +21,8 @@
 #include "address_mode/absolute_address_mode.h"
 #include "address_mode/indirect_address_mode.h"
 #include "address_mode/zeropage_address_mode.h"
+#include "address_mode/accumulator_address_mode.h"
+#include "address_mode/immediate_address_mode.h"
 
 /** Namespaces ************************************************************/
 namespace address_modes {
@@ -39,23 +41,6 @@ public:
 
 private:
     const std::vector<IAddressMode *> address_mode_list;
-};
-
-
-/* Default address modes. */
-class ImmediateAddressMode : public IAddressMode {
-public:
-    const enum InstructionArgSize arg_size = INSTRUCTION_ARG_SIZE_WORD;
-};
-
-class RelativeAddressMode : public IAddressMode {
-public:
-    const enum InstructionArgSize arg_size = INSTRUCTION_ARG_SIZE_WORD;
-};
-
-class AccumulatorAddressMode : public IAddressMode {
-public:
-    const enum InstructionArgSize arg_size = INSTRUCTION_ARG_SIZE_NO_ARG;
 };
 
 } /* namespace address_modes */

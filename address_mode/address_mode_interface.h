@@ -30,23 +30,11 @@ class IAddressMode {
 public:
     const enum InstructionArgSize arg_size = INSTRUCTION_ARG_SIZE_NO_ARG;
 
-    virtual inline enum PeNESStatus get_data(
+    virtual inline enum PeNESStatus get_storage(
         const ProgramContext *program_context,
         native_dword_t operand,
-        native_word_t *output_data
-    )
-    {
-        enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-
-        ASSERT(nullptr != program_context);
-        ASSERT(nullptr != output_data);
-
-        *output_data = static_cast<native_word_t>(operand);
-
-        status = PENES_STATUS_SUCCESS;
-l_cleanup:
-        return status;
-    }
+        StorageLocation **output_storage_location
+    ) = 0;
 };
 
 } /* namespace address_modes */

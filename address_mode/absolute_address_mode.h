@@ -8,8 +8,6 @@
 #define __ABSOLUTE_ADDRESS_MODE_H__
 
 /** Headers ***************************************************************/
-#include <cstdint>
-
 #include "penes_status.h"
 
 #include "address_mode/address_mode_interface.h"
@@ -22,10 +20,10 @@ class AbsoluteAddressMode : public IAddressMode {
 public:
     const enum InstructionArgSize arg_size = INSTRUCTION_ARG_SIZE_DWORD;
 
-    inline enum PeNESStatus get_data(
+    inline enum PeNESStatus get_storage(
         const ProgramContext *program_context,
         native_dword_t absolute_address,
-        native_word_t *output_data
+        StorageLocation **output_storage
     ) override;
 };
 
@@ -34,10 +32,10 @@ class AbsoluteXIndexedAddressMode : public IAddressMode {
 public:
     const enum InstructionArgSize arg_size = INSTRUCTION_ARG_SIZE_DWORD;
 
-    inline enum PeNESStatus get_data(
+    inline enum PeNESStatus get_storage(
         const ProgramContext *program_context,
-        native_dword_t absolute_indexed_address,
-        native_word_t *output_data
+        native_dword_t absolute_address,
+        StorageLocation **output_storage
     ) override;
 };
 
@@ -46,10 +44,10 @@ class AbsoluteYIndexedAddressMode : public IAddressMode {
 public:
     const enum InstructionArgSize arg_size = INSTRUCTION_ARG_SIZE_DWORD;
 
-    inline enum PeNESStatus get_data(
+    inline enum PeNESStatus get_storage(
         const ProgramContext *program_context,
-        native_dword_t absolute_indexed_address,
-        native_word_t *output_data
+        native_dword_t absolute_address,
+        StorageLocation **output_storage
     ) override;
 };
 

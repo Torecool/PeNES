@@ -51,6 +51,24 @@
 #endif
 
 /** Macros ****************************************************************/
+/* Dynamically allocate and initialize memory on the heap. */
+#define HEAPALLOCZ(size) (calloc(1, (size)))
+#ifdef HEAPALLOCZ
+#include <cstdlib>
+#endif
+
+/* Free memory that has been dynamically allocated on the heap. */
+#define HEAPFREE(ptr)                                       \
+    do {                                                    \
+        if (NULL != (ptr)) {                                \
+            (void) free(ptr);                                \
+            (ptr) = NULL;                                   \
+        }                                                   \
+    } while (0)
+#ifdef HEAPFREE
+#include <cstdlib>
+#endif
+
 /* Perform a debug print, with the value of errno as well as additionally formatted args. */
 #ifdef _DEBUG
 #include <cstdio>
@@ -99,6 +117,13 @@
 #else
 #define ASSERT(cond) do {} while(0)
 #endif
+
+/* Eliminate the compile-time warning of an unused parameter. */
+#define UNREFERENCED_PARAMETER(param)                       \
+    do {                                                    \
+        (param) = (param);                                  \
+    } while (0)
+
 
 /* Determine which item is smaller by integer comparison. */
 #define MIN(a, b) (((a) <= (b))? (a): (b))

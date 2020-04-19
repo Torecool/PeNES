@@ -10,21 +10,43 @@
 /** Headers ***************************************************************/
 #include <cstdint>
 
+#include "system.h"
+
+#include "storage_location/storage_location.h"
 #include "memory_manager/memory_manager.h"
 
-typedef uint8_t native_word_t;
-typedef uint16_t native_dword_t;
-typedef native_dword_t native_address_t;
+
 
 /** Structs ***************************************************************/
+class RegisterStorage : public StorageLocation {
+public:
+   inline explicit RegisterStorage(size_t register_size) : StorageLocation(register_size) {};
+};
 
-struct RegisterFile {
-    native_word_t register_a;
-    native_word_t register_x;
-    native_word_t register_y;
-    native_word_t register_status;
-    native_word_t register_stack_pointer;
-    native_dword_t register_program_counter;
+
+class RegisterFile {
+public:
+    RegisterFile(void);
+
+    constexpr inline RegisterStorage *get_register_a(void) const;
+
+    constexpr inline RegisterStorage * get_register_x(void) const;
+
+    constexpr inline RegisterStorage *get_register_y(void) const;
+
+    constexpr inline RegisterStorage *get_register_status(void) const;
+
+    constexpr inline RegisterStorage *get_register_stack_pointer(void) const;
+
+    constexpr inline RegisterStorage *get_register_program_counter(void) const;
+
+private:
+    RegisterStorage register_a = RegisterStorage(sizeof(native_word_t));
+    RegisterStorage register_x = RegisterStorage(sizeof(native_word_t));
+    RegisterStorage register_y = RegisterStorage(sizeof(native_word_t));
+    RegisterStorage register_status = RegisterStorage(sizeof(native_word_t));
+    RegisterStorage register_stack_pointer = RegisterStorage(sizeof(native_word_t));
+    RegisterStorage register_program_counter = RegisterStorage(sizeof(native_dword_t));
 };
 
 struct ProgramContext {

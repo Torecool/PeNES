@@ -21,10 +21,10 @@ class IndirectAddressMode : public IAddressMode {
 public:
     const enum InstructionArgSize arg_size = INSTRUCTION_ARG_SIZE_DWORD;
 
-    inline enum PeNESStatus get_data(
+    inline enum PeNESStatus get_storage(
         const ProgramContext *program_context,
         native_dword_t indirect_address,
-        native_word_t *output_data
+        StorageLocation **output_storage
     ) override;
 };
 
@@ -33,10 +33,10 @@ class XIndexedIndirectAddressMode : public IAddressMode {
 public:
     const enum InstructionArgSize arg_size = INSTRUCTION_ARG_SIZE_WORD;
 
-    inline enum PeNESStatus get_data(
+    inline enum PeNESStatus get_storage(
         const ProgramContext *program_context,
-        native_dword_t indexed_indirect_address,
-        native_word_t *output_data
+        native_dword_t indirect_address,
+        StorageLocation **output_storage
     ) override;
 };
 
@@ -45,10 +45,10 @@ class IndirectYIndexedAddressMode : public IAddressMode {
 public:
     const enum InstructionArgSize arg_size = INSTRUCTION_ARG_SIZE_WORD;
 
-    inline enum PeNESStatus get_data(
+    inline enum PeNESStatus get_storage(
         const ProgramContext *program_context,
-        native_dword_t indirect_indexed_address,
-        native_word_t *output_data
+        native_dword_t indirect_address,
+        StorageLocation **output_storage
     ) override;
 };
 
