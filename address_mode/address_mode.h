@@ -35,7 +35,7 @@ public:
     ) : address_mode_list(address_mode_list) {};
 
     inline enum PeNESStatus get_address_mode(
-        size_t index,
+        std::size_t index,
         const IAddressMode **output_address_mode
     ) const;
 

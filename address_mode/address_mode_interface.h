@@ -33,7 +33,8 @@ public:
     virtual inline enum PeNESStatus get_storage(
         const ProgramContext *program_context,
         native_dword_t operand,
-        StorageLocation **output_storage_location
+        StorageLocation **output_storage,
+        std::size_t *output_storage_offset = nullptr
     ) = 0;
 };
 

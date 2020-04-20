@@ -49,15 +49,5 @@ static const address_modes::AddressModeTable address_mode_table2 = {
 
 Decoder::Decoder()
 {
-    address_mode_table0  = {
-        new address_modes::ImmediateAddressMode(),
-        new address_modes::ZeropageAddressMode(),
-        nullptr,
-        new address_modes::AbsoluteAddressMode(),
-        nullptr,
-        new address_modes::ZeropageXIndexedAddressMode(),
-        nullptr,
-        new address_modes::AbsoluteXIndexedAddressMode()
-    };
 }
 

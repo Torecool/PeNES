@@ -22,21 +22,25 @@ using namespace address_modes;
 inline enum PeNESStatus ZeropageAddressMode::get_storage(
     const ProgramContext *program_context,
     native_dword_t zeropage_address,
-    StorageLocation **output_storage
+    StorageLocation **output_storage,
+    std::size_t *output_storage_offset
 )
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     MemoryStorage *data_storage = nullptr;
     native_word_t address_data = 0;
-    size_t num_bytes_read = sizeof(address_data);
+    size_t data_storage_offset = 0;
+    std::size_t num_bytes_read = sizeof(address_data);
 
     ASSERT(nullptr != program_context);
     ASSERT(nullptr != output_storage);
+    ASSERT(nullptr != output_storage_offset);
 
     /* Retrieve storage at absolute zeropage address. */
-    status = program_context->memory_manager.data_at_address(
+    status = program_context->memory_manager.get_memory_storage(
         zeropage_address,
-        &data_storage
+        &data_storage,
+        &data_storage_offset
     );
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("data_at_address failed. Status: %d\n", status);
@@ -44,6 +48,7 @@ inline enum PeNESStatus ZeropageAddressMode::get_storage(
     }
 
     *output_storage = data_storage;
+    *output_storage_offset = data_storage_offset;
 
     status = PENES_STATUS_SUCCESS;
 l_cleanup:
@@ -54,17 +59,20 @@ l_cleanup:
 inline enum PeNESStatus ZeropageXIndexedAddressMode::get_storage(
     const ProgramContext *program_context,
     native_dword_t zeropage_address,
-    StorageLocation **output_storage
+    StorageLocation **output_storage,
+    std::size_t *output_storage_offset
 )
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     MemoryStorage *data_storage = nullptr;
     RegisterStorage *register_x = nullptr;
+    size_t data_storage_offset = 0;
     native_address_t indexed_zeropage_address = 0;
     native_word_t register_index = 0;
 
     ASSERT(nullptr != program_context);
     ASSERT(nullptr != output_storage);
+    ASSERT(nullptr != output_storage_offset);
 
     /* Add index offset from register X.
      * Note: We don't want carry behavior. If the summation overflows the address should wrap around.
@@ -80,9 +88,10 @@ inline enum PeNESStatus ZeropageXIndexedAddressMode::get_storage(
     );
 
     /* Retrieve storage at absolute indexed zeropage address. */
-    status = program_context->memory_manager.data_at_address(
+    status = program_context->memory_manager.get_memory_storage(
         indexed_zeropage_address,
-        &data_storage
+        &data_storage,
+        &data_storage_offset
     );
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("data_at_address failed. Status: %d\n", status);
@@ -90,6 +99,7 @@ inline enum PeNESStatus ZeropageXIndexedAddressMode::get_storage(
     }
 
     *output_storage = data_storage;
+    *output_storage_offset = data_storage_offset;
 
     status = PENES_STATUS_SUCCESS;
 l_cleanup:
@@ -100,17 +110,20 @@ l_cleanup:
 enum PeNESStatus ZeropageYIndexedAddressMode::get_storage(
     const ProgramContext *program_context,
     native_dword_t zeropage_address,
-    StorageLocation **output_storage
+    StorageLocation **output_storage,
+    std::size_t *output_storage_offset
 )
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     MemoryStorage *data_storage = nullptr;
     RegisterStorage *register_y = nullptr;
+    size_t data_storage_offset = 0;
     native_address_t indexed_zeropage_address = 0;
     native_word_t register_index = 0;
 
     ASSERT(nullptr != program_context);
     ASSERT(nullptr != output_storage);
+    ASSERT(nullptr != output_storage_offset);
 
     /* Add index offset from register Y.
      * Note: We don't want carry behavior. If the summation overflows the address should wrap around.
@@ -126,9 +139,10 @@ enum PeNESStatus ZeropageYIndexedAddressMode::get_storage(
     );
 
     /* Retrieve storage at absolute indexed zeropage address. */
-    status = program_context->memory_manager.data_at_address(
+    status = program_context->memory_manager.get_memory_storage(
         indexed_zeropage_address,
-        &data_storage
+        &data_storage,
+        &data_storage_offset
     );
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("data_at_address failed. Status: %d\n", status);
@@ -136,6 +150,7 @@ enum PeNESStatus ZeropageYIndexedAddressMode::get_storage(
     }
 
     *output_storage = data_storage;
+    *output_storage_offset = data_storage_offset;
 
     status = PENES_STATUS_SUCCESS;
 l_cleanup:

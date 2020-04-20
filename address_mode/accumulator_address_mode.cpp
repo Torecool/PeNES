@@ -19,8 +19,9 @@ using namespace address_modes;
 /** Functions *************************************************************/
 inline enum PeNESStatus AccumulatorAddressMode::get_storage(
     const ProgramContext *program_context,
-    native_dword_t address,
-    StorageLocation **output_storage
+    native_dword_t operand,
+    StorageLocation **output_storage,
+    size_t *output_storage_offset
 )
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
@@ -29,12 +30,15 @@ inline enum PeNESStatus AccumulatorAddressMode::get_storage(
     ASSERT(nullptr != program_context);
     ASSERT(nullptr != output_storage);
 
-    UNREFERENCED_PARAMETER(address);
+    UNREFERENCED_PARAMETER(operand);
 
-    /* Retrieve storage at absolute address. */
+    /* Retrieve storage at absolute operand. */
     register_a = program_context->register_file.get_register_a();
 
     *output_storage = register_a;
+    if (nullptr != output_storage_offset) {
+        *output_storage_offset = 0;
+    }
 
     status = PENES_STATUS_SUCCESS;
 l_cleanup:

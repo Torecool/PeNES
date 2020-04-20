@@ -16,7 +16,7 @@ using namespace address_modes;
 
 /** Functions *************************************************************/
 enum PeNESStatus AddressModeTable::get_address_mode(
-    size_t index,
+    std::size_t index,
     const IAddressMode **output_address_mode
 ) const
 {

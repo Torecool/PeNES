@@ -1,17 +1,16 @@
 /**
  * @brief  
  * @author TBK
- * @date   17/04/2020
+ * @date   20/04/2020
  * */
 
-#ifndef __DECODER_H__
-#define __DECODER_H__
+#ifndef __OBJECT_POOL_H__
+#define __OBJECT_POOL_H__
 
 /** Headers ***************************************************************/
-#include <iostream>
+#include <unordered_set>
 
-#include "program_context/program_context.h"
-#include "address_mode/address_mode.h"
+#include "penes_status.h"
 
 /** Constants *************************************************************/
 /** Macros ****************************************************************/
@@ -19,32 +18,19 @@
 /** Typedefs **************************************************************/
 /** Structs ***************************************************************/
 /** Functions *************************************************************/
-class Opcode {
+namespace utils {
+
+template <class T>
+class ObjectPool : private std::unordered_set<T> {
 public:
-    virtual inline
+    explicit ObjectPool(std::size_t pool_size);
+
+    inline enum PeNESStatus retrieve(T **output_object);
+
+    inline enum PeNESStatus release(T *release_object);
 };
 
-class Instruction {
-public:
-
-    inline virtual void exec(
-        ProgramContext* program_ctx,
-        StorageLocation* address_mode_storage,
-        size_t storage_offset
-    );
-};
-
-class Decoder {
-public:
-    Decoder(std::istream& src_binary);
-    inline Instruction* next(void);
-
-private:
-
-};
+}
 
 
-
-
-
-#endif /* __DECODER_H__ */
+#endif /* __OBJECT_POOL_H__ */

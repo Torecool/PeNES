@@ -20,8 +20,8 @@
 
 
 StorageLocation::StorageLocation(
-    size_t storage_size,
-    size_t storage_range_start
+    std::size_t storage_size,
+    std::size_t storage_range_start
 ) : storage_size(storage_size), storage_range_start(storage_range_start)
 {
     this->storage_buffer = HEAPALLOCZ(storage_size);

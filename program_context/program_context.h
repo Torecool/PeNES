@@ -14,13 +14,33 @@
 
 #include "storage_location/storage_location.h"
 #include "memory_manager/memory_manager.h"
-
+#include "utils/object_pool.h"
 
 
 /** Structs ***************************************************************/
 class RegisterStorage : public StorageLocation {
 public:
-   inline explicit RegisterStorage(size_t register_size) : StorageLocation(register_size) {};
+   inline explicit RegisterStorage(std::size_t register_size) : StorageLocation(register_size) {};
+};
+
+
+class ImmediateStorage : public StorageLocation {
+public:
+    inline explicit ImmediateStorage(std::size_t immediate_size) : StorageLocation(immediate_size) {};
+
+    inline enum PeNESStatus write(
+        void *write_buffer,
+        std::size_t write_size,
+        std::size_t immediate_absolute_offset = 0
+    ) override;
+
+    inline enum PeNESStatus set(
+        void *write_buffer,
+        std::size_t write_size,
+        std::size_t immediate_absolute_offset = 0
+    );
+
+    inline enum PeNESStatus reset();
 };
 
 
@@ -49,9 +69,12 @@ private:
     RegisterStorage register_program_counter = RegisterStorage(sizeof(native_dword_t));
 };
 
+
 struct ProgramContext {
     RegisterFile register_file;
     MemoryManager memory_manager;
+    utils::ObjectPool<ImmediateStorage> immediate_storage_pool;
+
 };
 
 #endif /* __PROGRAM_CONTEXT_H__ */

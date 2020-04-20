@@ -12,8 +12,9 @@
 #include <vector>
 
 #include "penes_status.h"
+#include "system.h"
 
-#include "program_context/program_context.h"
+#include "storage_location/storage_location.h"
 
 /** Constants *************************************************************/
 /** Macros ****************************************************************/
@@ -27,14 +28,14 @@
 
 
 class MemoryStorage : public StorageLocation {};
-class ImmediateStorage : public StorageLocation {};
 
 
 class MemoryManager {
 public:
-    inline enum PeNESStatus data_at_address(
+    inline enum PeNESStatus get_memory_storage(
         native_address_t address,
-        StorageLocation **output_storage_location
+        MemoryStorage **output_storage,
+        size_t *output_storage_offset
     ) const;
 };
 
