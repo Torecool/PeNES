@@ -8,12 +8,14 @@
 #define __ACCUMULATOR_ADDRESS_MODE_H__
 
 /** Headers ***************************************************************/
+#include <cstddef>
+
 #include "penes_status.h"
 
 #include "address_mode/address_mode_interface.h"
 
 /** Namespaces ************************************************************/
-namespace address_modes {
+namespace address_mode {
 
 /** Classes ***************************************************************/
 class AccumulatorAddressMode : public IAddressMode {
@@ -24,7 +26,7 @@ public:
         const ProgramContext *program_context,
         native_dword_t operand,
         IStorageLocation **output_storage,
-        size_t *output_storage_offset = nullptr
+        std::size_t *output_storage_offset = nullptr
     ) override;
 };
 

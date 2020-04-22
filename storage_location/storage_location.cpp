@@ -5,6 +5,7 @@
  * */
 
 /** Headers ***************************************************************/
+#include <cstddef>
 #include <new>
 
 #include "common.h"

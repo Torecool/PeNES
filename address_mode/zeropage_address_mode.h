@@ -8,13 +8,15 @@
 #define __ZEROPAGE_ADDRESS_MODE_H__
 
 /** Headers ***************************************************************/
+#include <cstddef>
+
 #include "penes_status.h"
 #include "common.h"
 
 #include "address_mode/address_mode_interface.h"
 
 /** Namespaces ************************************************************/
-namespace address_modes {
+namespace address_mode {
 
 /** Classes ***************************************************************/
 class ZeropageAddressMode : public IAddressMode {

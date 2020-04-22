@@ -8,12 +8,13 @@
 #define __IMMEDIATE_ADDRESS_MODE_H__
 
 /** Headers ***************************************************************/
+#include <cstddef>
 #include "penes_status.h"
 
 #include "address_mode/address_mode_interface.h"
 
 /** Namespaces ************************************************************/
-namespace address_modes {
+namespace address_mode {
 
 /** Classes ***************************************************************/
 class ImmediateAddressMode : public IAddressMode {

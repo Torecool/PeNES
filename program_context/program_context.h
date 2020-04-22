@@ -8,7 +8,7 @@
 #define __PROGRAM_CONTEXT_H__
 
 /** Headers ***************************************************************/
-#include <cstdint>
+#include <cstddef>
 
 #include "system.h"
 
@@ -18,9 +18,18 @@
 
 
 /** Structs ***************************************************************/
+template<typename T>
 class RegisterStorage : public IStorageLocation {
 public:
-   inline explicit RegisterStorage(std::size_t register_size) : IStorageLocation(register_size) {};
+   inline explicit RegisterStorage() : IStorageLocation(sizeof(T)) {};
+
+   inline T get() {
+       return *static_cast<T *>(this->storage_buffer);
+   }
+
+   inline void set(T register_data) {
+        return *static_cast<T *>(this->storage_buffer) = register_data;
+   }
 };
 
 
@@ -46,27 +55,38 @@ public:
 
 class RegisterFile {
 public:
-    RegisterFile(void);
 
-    constexpr inline RegisterStorage *get_register_a(void) const;
+    constexpr inline RegisterStorage<native_word_t> *get_register_a(void) {
+        return &this->register_a;
+    };
 
-    constexpr inline RegisterStorage * get_register_x(void) const;
+    constexpr inline RegisterStorage<native_word_t> * get_register_x(void) {
+        return &this->register_x;
+    };
 
-    constexpr inline RegisterStorage *get_register_y(void) const;
+    constexpr inline RegisterStorage<native_word_t> *get_register_y(void) {
+        return &this->register_y;
+    };
 
-    constexpr inline RegisterStorage *get_register_status(void) const;
+    constexpr inline RegisterStorage<native_word_t> *get_register_status(void) {
+        return &this->register_status;
+    };
 
-    constexpr inline RegisterStorage *get_register_stack_pointer(void) const;
+    constexpr inline RegisterStorage<native_word_t> *get_register_stack_pointer(void) {
+        return &this->register_stack_pointer;
+    };
 
-    constexpr inline RegisterStorage *get_register_program_counter(void) const;
+    constexpr inline RegisterStorage<native_address_t> *get_register_program_counter(void) {
+        return &this->register_program_counter;
+    };
 
 private:
-    RegisterStorage register_a = RegisterStorage(sizeof(native_word_t));
-    RegisterStorage register_x = RegisterStorage(sizeof(native_word_t));
-    RegisterStorage register_y = RegisterStorage(sizeof(native_word_t));
-    RegisterStorage register_status = RegisterStorage(sizeof(native_word_t));
-    RegisterStorage register_stack_pointer = RegisterStorage(sizeof(native_word_t));
-    RegisterStorage register_program_counter = RegisterStorage(sizeof(native_dword_t));
+    RegisterStorage<native_word_t> register_a;
+    RegisterStorage<native_word_t> register_x;
+    RegisterStorage<native_word_t> register_y;
+    RegisterStorage<native_word_t> register_status;
+    RegisterStorage<native_word_t> register_stack_pointer;
+    RegisterStorage<native_address_t> register_program_counter;
 };
 
 

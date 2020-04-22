@@ -8,6 +8,7 @@
 #define __OBJECT_POOL_H__
 
 /** Headers ***************************************************************/
+#include <cstddef>
 #include <unordered_set>
 
 #include "penes_status.h"

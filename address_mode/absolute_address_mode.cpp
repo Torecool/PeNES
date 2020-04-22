@@ -5,6 +5,7 @@
  * */
 
 /** Headers ***************************************************************/
+#include <cstddef>
 #include <byteswap.h>
 
 #include "penes_status.h"
@@ -16,7 +17,7 @@
 #include "address_mode/absolute_address_mode.h"
 
 /** Namespaces ************************************************************/
-using namespace address_modes;
+using namespace address_mode;
 
 /** Functions *************************************************************/
 inline enum PeNESStatus AbsoluteAddressMode::get_storage(

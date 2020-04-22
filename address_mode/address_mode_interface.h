@@ -8,7 +8,7 @@
 #define __ADDRESS_MODE_INTERFACE_H__
 
 /** Headers ***************************************************************/
-#include <cstdint>
+#include <cstddef>
 
 #include "penes_status.h"
 #include "common.h"
@@ -16,10 +16,11 @@
 #include "program_context/program_context.h"
 
 /** Namespaces ************************************************************/
-namespace address_modes {
+namespace address_mode {
 
 /** Enums *****************************************************************/
 enum InstructionArgSize {
+    INSTRUCTION_ARG_SIZE_NONE = -1,
     INSTRUCTION_ARG_SIZE_NO_ARG = 0,
     INSTRUCTION_ARG_SIZE_WORD = sizeof(native_word_t),
     INSTRUCTION_ARG_SIZE_DWORD = sizeof(native_dword_t)

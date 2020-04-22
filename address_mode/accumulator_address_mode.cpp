@@ -5,6 +5,8 @@
  * */
 
 /** Headers ***************************************************************/
+#include <cstddef>
+
 #include "penes_status.h"
 #include "common.h"
 
@@ -14,14 +16,14 @@
 #include "address_mode/accumulator_address_mode.h"
 
 /** Namespaces ************************************************************/
-using namespace address_modes;
+using namespace address_mode;
 
 /** Functions *************************************************************/
 inline enum PeNESStatus AccumulatorAddressMode::get_storage(
     const ProgramContext *program_context,
     native_dword_t operand,
     IStorageLocation **output_storage,
-    size_t *output_storage_offset
+    std::size_t *output_storage_offset
 )
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;

@@ -14,37 +14,37 @@
 /** Typedefs **************************************************************/
 /** Structs ***************************************************************/
 /** Functions *************************************************************/
-static const address_modes::AddressModeTable address_mode_table0 = {
-    new address_modes::ImmediateAddressMode(),
-    new address_modes::ZeropageAddressMode(),
+static const address_mode::AddressModeTable address_mode_table0 = {
+    new address_mode::ImmediateAddressMode(),
+    new address_mode::ZeropageAddressMode(),
     nullptr,
-    new address_modes::AbsoluteAddressMode(),
+    new address_mode::AbsoluteAddressMode(),
     nullptr,
-    new address_modes::ZeropageXIndexedAddressMode(),
+    new address_mode::ZeropageXIndexedAddressMode(),
     nullptr,
-    new address_modes::AbsoluteXIndexedAddressMode()
+    new address_mode::AbsoluteXIndexedAddressMode()
 };
 
-static const address_modes::AddressModeTable address_mode_table1 = {
-    new address_modes::XIndexedIndirectAddressMode(),
-    new address_modes::ZeropageAddressMode(),
-    new address_modes::ImmediateAddressMode(),
-    new address_modes::AbsoluteAddressMode(),
-    new address_modes::IndirectYIndexedAddressMode(),
-    new address_modes::ZeropageXIndexedAddressMode(),
-    new address_modes::AbsoluteYIndexedAddressMode(),
-    new address_modes::AbsoluteXIndexedAddressMode()
+static const address_mode::AddressModeTable address_mode_table1 = {
+    new address_mode::XIndexedIndirectAddressMode(),
+    new address_mode::ZeropageAddressMode(),
+    new address_mode::ImmediateAddressMode(),
+    new address_mode::AbsoluteAddressMode(),
+    new address_mode::IndirectYIndexedAddressMode(),
+    new address_mode::ZeropageXIndexedAddressMode(),
+    new address_mode::AbsoluteYIndexedAddressMode(),
+    new address_mode::AbsoluteXIndexedAddressMode()
 };
 
-static const address_modes::AddressModeTable address_mode_table2 = {
-    new address_modes::ImmediateAddressMode(),
-    new address_modes::ZeropageAddressMode(),
+static const address_mode::AddressModeTable address_mode_table2 = {
+    new address_mode::ImmediateAddressMode(),
+    new address_mode::ZeropageAddressMode(),
     nullptr,
-    new address_modes::AbsoluteAddressMode(),
+    new address_mode::AbsoluteAddressMode(),
     nullptr,
-    new address_modes::ZeropageXIndexedAddressMode(),
+    new address_mode::ZeropageXIndexedAddressMode(),
     nullptr,
-    new address_modes::AbsoluteXIndexedAddressMode()
+    new address_mode::AbsoluteXIndexedAddressMode()
 };
 
 Decoder::Decoder()

@@ -8,6 +8,7 @@
 #define __STORAGE_LOCATION_H__
 
 /** Headers ***************************************************************/
+#include <cstddef>
 #include <cstdlib>
 
 #include "system.h"

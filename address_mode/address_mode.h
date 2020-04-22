@@ -25,7 +25,22 @@
 #include "address_mode/immediate_address_mode.h"
 
 /** Namespaces ************************************************************/
-namespace address_modes {
+namespace address_mode {
+
+enum class AddressModeType {
+    ADDRESS_MODE_TYPE_NONE = -1,
+    ADDRESS_MODE_TYPE_ABSOLUTE = 0,
+    ADDRESS_MODE_TYPE_ABSOLUTE_X_INDEXED,
+    ADDRESS_MODE_TYPE_ABSOLUTE_Y_INDEXED,
+    ADDRESS_MODE_TYPE_ACCUMULATOR,
+    ADDRESS_MODE_TYPE_IMMEDIATE,
+    ADDRESS_MODE_TYPE_INDIRECT,
+    ADDRESS_MODE_TYPE_X_INDEXED_INDIRECT,
+    ADDRESS_MODE_TYPE_INDIRECT_Y_INDEXED,
+    ADDRESS_MODE_TYPE_ZEROPAGE,
+    ADDRESS_MODE_TYPE_ZEROPAGE_X_INDEXED,
+    ADDRESS_MODE_TYPE_ZEROPAGE_Y_INDEXED
+};
 
 /** Classes ***************************************************************/
 class AddressModeTable {
@@ -35,7 +50,7 @@ public:
     ) : address_mode_list(address_mode_list) {};
 
     inline enum PeNESStatus get_address_mode(
-        std::size_t index,
+        enum AddressModeType address_mode_type,
         const IAddressMode **output_address_mode
     ) const;
 

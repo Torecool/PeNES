@@ -5,6 +5,8 @@
  * */
 
 /** Headers ***************************************************************/
+#include <cstddef>
+
 #include "penes_status.h"
 #include "common.h"
 
@@ -12,7 +14,7 @@
 #include "address_mode/address_mode.h"
 
 /** Namespaces ************************************************************/
-using namespace address_modes;
+using namespace address_mode;
 
 /** Functions *************************************************************/
 enum PeNESStatus AddressModeTable::get_address_mode(

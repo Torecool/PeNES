@@ -5,6 +5,8 @@
  * */
 
 /** Headers ***************************************************************/
+#include <cstddef>
+
 #include "penes_status.h"
 #include "common.h"
 
@@ -14,7 +16,7 @@
 #include "address_mode/immediate_address_mode.h"
 
 /** Namespaces ************************************************************/
-using namespace address_modes;
+using namespace address_mode;
 
 /** Functions *************************************************************/
 inline enum PeNESStatus ImmediateAddressMode::get_storage(
