@@ -22,7 +22,7 @@ using namespace address_modes;
 inline enum PeNESStatus AbsoluteAddressMode::get_storage(
     const ProgramContext *program_context,
     native_dword_t absolute_address,
-    StorageLocation **output_storage,
+    IStorageLocation **output_storage,
     std::size_t *output_storage_offset
 )
 {
@@ -58,7 +58,7 @@ l_cleanup:
 inline enum PeNESStatus AbsoluteXIndexedAddressMode::get_storage(
     const ProgramContext *program_context,
     native_dword_t absolute_address,
-    StorageLocation **output_storage,
+    IStorageLocation **output_storage,
     std::size_t *output_storage_offset
 )
 {
@@ -106,7 +106,7 @@ l_cleanup:
 inline enum PeNESStatus AbsoluteYIndexedAddressMode::get_storage(
     const ProgramContext *program_context,
     native_dword_t absolute_address,
-    StorageLocation **output_storage,
+    IStorageLocation **output_storage,
     std::size_t *output_storage_offset
 )
 {

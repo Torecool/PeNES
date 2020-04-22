@@ -23,7 +23,7 @@ public:
     inline enum PeNESStatus get_storage(
         const ProgramContext *program_context,
         native_dword_t immediate_value,
-        StorageLocation **output_storage,
+        IStorageLocation **output_storage,
         std::size_t *output_storage_offset = nullptr
     ) override;
 };

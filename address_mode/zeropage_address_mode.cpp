@@ -22,7 +22,7 @@ using namespace address_modes;
 inline enum PeNESStatus ZeropageAddressMode::get_storage(
     const ProgramContext *program_context,
     native_dword_t zeropage_address,
-    StorageLocation **output_storage,
+    IStorageLocation **output_storage,
     std::size_t *output_storage_offset
 )
 {
@@ -59,7 +59,7 @@ l_cleanup:
 inline enum PeNESStatus ZeropageXIndexedAddressMode::get_storage(
     const ProgramContext *program_context,
     native_dword_t zeropage_address,
-    StorageLocation **output_storage,
+    IStorageLocation **output_storage,
     std::size_t *output_storage_offset
 )
 {
@@ -110,7 +110,7 @@ l_cleanup:
 enum PeNESStatus ZeropageYIndexedAddressMode::get_storage(
     const ProgramContext *program_context,
     native_dword_t zeropage_address,
-    StorageLocation **output_storage,
+    IStorageLocation **output_storage,
     std::size_t *output_storage_offset
 )
 {

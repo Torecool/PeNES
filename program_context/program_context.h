@@ -18,15 +18,15 @@
 
 
 /** Structs ***************************************************************/
-class RegisterStorage : public StorageLocation {
+class RegisterStorage : public IStorageLocation {
 public:
-   inline explicit RegisterStorage(std::size_t register_size) : StorageLocation(register_size) {};
+   inline explicit RegisterStorage(std::size_t register_size) : IStorageLocation(register_size) {};
 };
 
 
-class ImmediateStorage : public StorageLocation {
+class ImmediateStorage : public IStorageLocation {
 public:
-    inline explicit ImmediateStorage(std::size_t immediate_size) : StorageLocation(immediate_size) {};
+    inline explicit ImmediateStorage(std::size_t immediate_size) : IStorageLocation(immediate_size) {};
 
     inline enum PeNESStatus write(
         void *write_buffer,

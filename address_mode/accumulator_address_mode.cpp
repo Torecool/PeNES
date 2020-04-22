@@ -20,7 +20,7 @@ using namespace address_modes;
 inline enum PeNESStatus AccumulatorAddressMode::get_storage(
     const ProgramContext *program_context,
     native_dword_t operand,
-    StorageLocation **output_storage,
+    IStorageLocation **output_storage,
     size_t *output_storage_offset
 )
 {

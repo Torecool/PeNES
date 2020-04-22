@@ -19,7 +19,7 @@
 /** Functions *************************************************************/
 
 
-StorageLocation::StorageLocation(
+IStorageLocation::IStorageLocation(
     std::size_t storage_size,
     std::size_t storage_range_start
 ) : storage_size(storage_size), storage_range_start(storage_range_start)
@@ -35,7 +35,7 @@ StorageLocation::StorageLocation(
 }
 
 
-StorageLocation::~StorageLocation()
+IStorageLocation::~IStorageLocation()
 {
     HEAPFREE(this->storage_buffer);
     this->storage_buffer = nullptr;

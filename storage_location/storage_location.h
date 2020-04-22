@@ -20,13 +20,13 @@
 /** Typedefs **************************************************************/
 /** Structs ***************************************************************/
 /** Functions *************************************************************/
-class StorageLocation {
+class IStorageLocation {
 public:
-    inline explicit StorageLocation(
+    inline explicit IStorageLocation(
         std::size_t storage_size
     );
 
-    inline ~StorageLocation();
+    inline ~IStorageLocation();
 
     virtual inline enum PeNESStatus read(
         void *read_buffer,

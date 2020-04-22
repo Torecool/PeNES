@@ -19,20 +19,9 @@
 /** Typedefs **************************************************************/
 /** Structs ***************************************************************/
 /** Functions *************************************************************/
-class Opcode {
-public:
-    virtual inline
-};
 
-class Instruction {
-public:
 
-    inline virtual void exec(
-        ProgramContext* program_ctx,
-        StorageLocation* address_mode_storage,
-        size_t storage_offset
-    );
-};
+
 
 class Decoder {
 public:
