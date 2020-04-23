@@ -20,8 +20,18 @@
 namespace instruction_set {
 
 /** Classes ***************************************************************/
+class IStoreOpcode : public IOpcode {
+public:
+    inline enum PeNESStatus store(
+        ProgramContext *program_ctx,
+        RegisterStorage<native_word_t> *store_register,
+        IStorageLocation *store_storage,
+        std::size_t storage_offset
+    );
+};
+
 /* Store Accumulator in memory. */
-class OpcodeSTA : public IOpcode {
+class OpcodeSTA : public IStoreOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -31,7 +41,7 @@ public:
 };
 
 /* Store Index X in memory. */
-class OpcodeSTX : public IOpcode {
+class OpcodeSTX : public IStoreOpcode {
 public:
     inline AddressModeType resolve_address_mode(AddressModeType default_address_mode) override {
         /* If the address mode was predicted as zp,X, this should actually be zp,Y.
@@ -52,7 +62,7 @@ public:
 };
 
 /* Store Index Y in memory. */
-class OpcodeSTY : public IOpcode {
+class OpcodeSTY : public IStoreOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,

@@ -22,7 +22,7 @@ namespace instruction_set {
 /** Classes ***************************************************************/
 class ILoadOpcode : public IUpdateDataStatusOpcode {
 public:
-    enum PeNESStatus load(
+    inline enum PeNESStatus load(
         ProgramContext *program_ctx,
         RegisterStorage<native_word_t> *load_register,
         IStorageLocation *load_storage,
