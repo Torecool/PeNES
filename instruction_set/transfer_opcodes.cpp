@@ -29,7 +29,6 @@ enum PeNESStatus OpcodeTAX::exec(
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     RegisterStorage<native_word_t> *register_a = nullptr;
     RegisterStorage<native_word_t> *register_x = nullptr;
-    RegisterStorage<native_word_t> *register_status = nullptr;
     native_word_t register_x_data = 0;
 
     ASSERT(nullptr != program_ctx);
@@ -37,10 +36,9 @@ enum PeNESStatus OpcodeTAX::exec(
     UNREFERENCED_PARAMETER(operand_storage);
     UNREFERENCED_PARAMETER(operand_storage_offset);
 
-    /* Get registers A, X and the status. */
+    /* Get registers A and X. */
     register_a = program_ctx->register_file.get_register_a();
     register_x = program_ctx->register_file.get_register_x();
-    register_status = program_ctx->register_file.get_register_status();
 
     /* Transfer the entire contents of register A to register X. */
     status = register_a->transfer(register_x, register_a->get_storage_size());
@@ -53,7 +51,7 @@ enum PeNESStatus OpcodeTAX::exec(
     register_x_data = register_x->read();
 
     /* Call the parent function to update the status flags. */
-    status = this->update_status(register_status, register_x_data);
+    status = this->update_status(program_ctx, register_x_data);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
         goto l_cleanup;
@@ -74,7 +72,6 @@ enum PeNESStatus OpcodeTAY::exec(
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     RegisterStorage<native_word_t> *register_a = nullptr;
     RegisterStorage<native_word_t> *register_y = nullptr;
-    RegisterStorage<native_word_t> *register_status = nullptr;
     native_word_t register_y_data = 0;
 
     ASSERT(nullptr != program_ctx);
@@ -82,10 +79,9 @@ enum PeNESStatus OpcodeTAY::exec(
     UNREFERENCED_PARAMETER(operand_storage);
     UNREFERENCED_PARAMETER(operand_storage_offset);
 
-    /* Get registers A, Y and the status. */
+    /* Get registers A and Y. */
     register_a = program_ctx->register_file.get_register_a();
     register_y = program_ctx->register_file.get_register_y();
-    register_status = program_ctx->register_file.get_register_status();
 
     /* Transfer the entire contents of register A to register Y. */
     status = register_a->transfer(register_y, register_a->get_storage_size());
@@ -98,7 +94,7 @@ enum PeNESStatus OpcodeTAY::exec(
     register_y_data = register_y->read();
 
     /* Call the parent function to update the status flags. */
-    status = this->update_status(register_status, register_y_data);
+    status = this->update_status(program_ctx, register_y_data);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
         goto l_cleanup;
@@ -119,7 +115,6 @@ enum PeNESStatus OpcodeTXA::exec(
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     RegisterStorage<native_word_t> *register_x = nullptr;
     RegisterStorage<native_word_t> *register_a = nullptr;
-    RegisterStorage<native_word_t> *register_status = nullptr;
     native_word_t register_a_data = 0;
 
     ASSERT(nullptr != program_ctx);
@@ -127,10 +122,9 @@ enum PeNESStatus OpcodeTXA::exec(
     UNREFERENCED_PARAMETER(operand_storage);
     UNREFERENCED_PARAMETER(operand_storage_offset);
 
-    /* Get registers X,A and the status. */
+    /* Get registers X and A. */
     register_x = program_ctx->register_file.get_register_x();
     register_a = program_ctx->register_file.get_register_a();
-    register_status = program_ctx->register_file.get_register_status();
 
     /* Transfer the entire contents of register X to register A. */
     status = register_x->transfer(register_a, register_x->get_storage_size());
@@ -143,7 +137,7 @@ enum PeNESStatus OpcodeTXA::exec(
     register_a_data = register_a->read();
 
     /* Call the parent function to update the status flags. */
-    status = this->update_status(register_status, register_a_data);
+    status = this->update_status(program_ctx, register_a_data);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
         goto l_cleanup;
@@ -164,7 +158,6 @@ enum PeNESStatus OpcodeTSX::exec(
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     RegisterStorage<native_word_t> *register_stack_pointer = nullptr;
     RegisterStorage<native_word_t> *register_x = nullptr;
-    RegisterStorage<native_word_t> *register_status = nullptr;
     native_word_t register_x_data = 0;
 
     ASSERT(nullptr != program_ctx);
@@ -172,10 +165,9 @@ enum PeNESStatus OpcodeTSX::exec(
     UNREFERENCED_PARAMETER(operand_storage);
     UNREFERENCED_PARAMETER(operand_storage_offset);
 
-    /* Get registers Stack pointer, X and the status. */
+    /* Get the Stack pointer and register X. */
     register_stack_pointer = program_ctx->register_file.get_register_stack_pointer();
     register_x = program_ctx->register_file.get_register_x();
-    register_status = program_ctx->register_file.get_register_status();
 
     /* Transfer the entire contents of the Stack pointer to register X. */
     status = register_stack_pointer->transfer(
@@ -191,7 +183,7 @@ enum PeNESStatus OpcodeTSX::exec(
     register_x_data = register_x->read();
 
     /* Call the parent function to update the status flags. */
-    status = this->update_status(register_status, register_x_data);
+    status = this->update_status(program_ctx, register_x_data);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
         goto l_cleanup;
@@ -212,17 +204,15 @@ enum PeNESStatus OpcodeTXS::exec(
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     RegisterStorage<native_word_t> *register_x = nullptr;
     RegisterStorage<native_word_t> *register_stack_pointer = nullptr;
-    RegisterStorage<native_word_t> *register_status = nullptr;
 
     ASSERT(nullptr != program_ctx);
 
     UNREFERENCED_PARAMETER(operand_storage);
     UNREFERENCED_PARAMETER(operand_storage_offset);
 
-    /* Get registers X, Stack pointer and the status. */
+    /* Get registers X and the Stack pointer. */
     register_x = program_ctx->register_file.get_register_x();
     register_stack_pointer = program_ctx->register_file.get_register_stack_pointer();
-    register_status = program_ctx->register_file.get_register_status();
 
     /* Transfer the entire contents of the register X to the Stack pointer. */
     status = register_x->transfer(
@@ -249,7 +239,6 @@ enum PeNESStatus OpcodeTYA::exec(
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     RegisterStorage<native_word_t> *register_y = nullptr;
     RegisterStorage<native_word_t> *register_a = nullptr;
-    RegisterStorage<native_word_t> *register_status = nullptr;
     native_word_t register_a_data = 0;
 
     ASSERT(nullptr != program_ctx);
@@ -260,7 +249,6 @@ enum PeNESStatus OpcodeTYA::exec(
     /* Get registers Y, A and the status. */
     register_y = program_ctx->register_file.get_register_y();
     register_a = program_ctx->register_file.get_register_a();
-    register_status = program_ctx->register_file.get_register_status();
 
     /* Transfer the entire contents of the Stack pointer to register X. */
     status = register_y->transfer(
@@ -276,7 +264,7 @@ enum PeNESStatus OpcodeTYA::exec(
     register_a_data = register_a->read();
 
     /* Call the parent function to update the status flags. */
-    status = this->update_status(register_status, register_a_data);
+    status = this->update_status(program_ctx, register_a_data);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
         goto l_cleanup;

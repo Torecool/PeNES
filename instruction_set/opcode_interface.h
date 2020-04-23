@@ -133,6 +133,31 @@ l_cleanup:
         return status;
     };
 
+    inline enum PeNESStatus update_status(
+        ProgramContext *program_ctx,
+        native_dword_t opcode_result
+    )
+    {
+        enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+        RegisterStorage<native_word_t> *register_status = nullptr;
+
+        ASSERT(nullptr != program_ctx);
+
+        /* Retrieve the Status register from the program context. */
+        register_status = program_ctx->register_file.get_register_status();
+
+        /* Call the "real" update_status. */
+        status = this->update_status(register_status, opcode_result);
+        if (PENES_STATUS_SUCCESS != status) {
+            DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("update_status failed. Status: %d", status);
+            goto l_cleanup;
+        }
+
+        status = PENES_STATUS_SUCCESS;
+l_cleanup:
+        return status;
+    }
+
 private:
     native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NONE;
     native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
