@@ -14,9 +14,7 @@
 #include "storage_location/storage_location.h"
 #include "instruction_set/opcode_interface.h"
 
-#include "instruction_set/transfer_opcodes.h"
-#include "inc_dec_opcodes.h"
-
+#include "instruction_set/inc_dec_opcodes.h"
 
 /** Namespaces ************************************************************/
 using namespace instruction_set;

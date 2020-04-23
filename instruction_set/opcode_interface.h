@@ -36,18 +36,14 @@ public:
 
     inline virtual enum PeNESStatus exec(
         ProgramContext *program_ctx,
-        IStorageLocation *operand_storage = nullptr,
-        std::size_t operand_storage_offset = 0
+        IStorageLocation *operand_storage,
+        std::size_t operand_storage_offset
     ) {};
 };
 
 
 class IUpdateStatusOpcode : public IOpcode {
 public:
-    inline AddressModeType resolve_address_mode(AddressModeType default_address_mode) override {
-        return address_mode::AddressModeType::ADDRESS_MODE_TYPE_IMPLIED;
-    }
-
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *operand_storage,
@@ -159,8 +155,16 @@ l_cleanup:
     }
 
 private:
-    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NONE;
+    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE | REGISTER_STATUS_FLAG_MASK_ZERO;
     native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
+};
+
+
+class IImpliedOperandOpcode : public IOpcode {
+public:
+    inline AddressModeType resolve_address_mode(AddressModeType default_address_mode) override {
+        return address_mode::AddressModeType::ADDRESS_MODE_TYPE_IMPLIED;
+    }
 };
 
 
@@ -170,10 +174,6 @@ public:
     {
         return address_mode::AddressModeType::ADDRESS_MODE_TYPE_NONE;
     }
-
-private:
-    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NONE;
-    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
 }

@@ -21,7 +21,7 @@ namespace instruction_set {
 
 /** Classes ***************************************************************/
 /* Set Carry flag. */
-class OpcodeSEC : public IUpdateStatusOpcode {
+class OpcodeSEC : public IUpdateStatusOpcode, IImpliedOperandOpcode {
 private:
     native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
     native_word_t update_values = REGISTER_STATUS_FLAG_MASK_CARRY;
@@ -29,7 +29,7 @@ private:
 
 
 /* Clear Carry flag. */
-class OpcodeCLC : public IUpdateStatusOpcode {
+class OpcodeCLC : public IUpdateStatusOpcode, IImpliedOperandOpcode {
 private:
     native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
     native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
@@ -37,7 +37,7 @@ private:
 
 
 /* Set Decimal flag. */
-class OpcodeSED : public IUpdateStatusOpcode {
+class OpcodeSED : public IUpdateStatusOpcode, IImpliedOperandOpcode {
 private:
     native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_DECIMAL;
     native_word_t update_values = REGISTER_STATUS_FLAG_MASK_DECIMAL;
@@ -45,7 +45,7 @@ private:
 
 
 /* Clear Decimal flag. */
-class OpcodeCLD : public IUpdateStatusOpcode {
+class OpcodeCLD : public IUpdateStatusOpcode, IImpliedOperandOpcode {
 private:
     native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_DECIMAL;
     native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
@@ -53,7 +53,7 @@ private:
 
 
 /* Set Interrupt flag. */
-class OpcodeSEI : public IUpdateStatusOpcode {
+class OpcodeSEI : public IUpdateStatusOpcode, IImpliedOperandOpcode {
 private:
     native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
     native_word_t update_values = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
@@ -61,7 +61,7 @@ private:
 
 
 /* Clear Interrupt flag. */
-class OpcodeCLI : public IUpdateStatusOpcode {
+class OpcodeCLI : public IUpdateStatusOpcode, IImpliedOperandOpcode {
 private:
     native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
     native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
@@ -69,7 +69,7 @@ private:
 
 
 /* Clear Overflow flag. */
-class OpcodeCLV : public IUpdateStatusOpcode {
+class OpcodeCLV : public IUpdateStatusOpcode, IImpliedOperandOpcode {
 private:
     native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_OVERFLOW;
     native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;

@@ -21,7 +21,7 @@ namespace instruction_set {
 
 /** Classes ***************************************************************/
 /* Transfer Accumulator to register X. */
-class OpcodeTAX : public IUpdateDataStatusOpcode {
+class OpcodeTAX : public IUpdateDataStatusOpcode, IImpliedOperandOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -35,7 +35,7 @@ private:
 };
 
 /* Transfer Accumulator to register Y. */
-class OpcodeTAY : public IUpdateDataStatusOpcode {
+class OpcodeTAY : public IUpdateDataStatusOpcode, IImpliedOperandOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -49,7 +49,7 @@ private:
 };
 
 /* Transfer register X to Accumulator. */
-class OpcodeTXA : public IUpdateDataStatusOpcode {
+class OpcodeTXA : public IUpdateDataStatusOpcode, IImpliedOperandOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -63,7 +63,7 @@ private:
 };
 
 /* Transfer register X to Stack pointer. */
-class OpcodeTXS : public IUpdateDataStatusOpcode {
+class OpcodeTXS : public IUpdateDataStatusOpcode, IImpliedOperandOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -77,7 +77,7 @@ private:
 };
 
 /* Transfer Stack pointer to register X. */
-class OpcodeTSX : public IUpdateDataStatusOpcode {
+class OpcodeTSX : public IUpdateDataStatusOpcode, IImpliedOperandOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -91,7 +91,7 @@ private:
 };
 
 /* Transfer register Y to Accumulator. */
-class OpcodeTYA : public IUpdateDataStatusOpcode {
+class OpcodeTYA : public IUpdateDataStatusOpcode, IImpliedOperandOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
