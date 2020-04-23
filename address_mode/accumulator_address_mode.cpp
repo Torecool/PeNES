@@ -27,7 +27,7 @@ inline enum PeNESStatus AccumulatorAddressMode::get_storage(
 )
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-    RegisterStorage *register_a = nullptr;
+    RegisterStorage<native_word_t> *register_a = nullptr;
 
     ASSERT(nullptr != program_context);
     ASSERT(nullptr != output_storage);

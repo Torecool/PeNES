@@ -23,11 +23,11 @@ class RegisterStorage : public IStorageLocation {
 public:
    inline explicit RegisterStorage() : IStorageLocation(sizeof(T)) {};
 
-   inline T get() {
+   inline T read() {
        return *static_cast<T *>(this->storage_buffer);
    }
 
-   inline void set(T register_data) {
+   inline void write(T register_data) {
         return *static_cast<T *>(this->storage_buffer) = register_data;
    }
 };
@@ -56,27 +56,27 @@ public:
 class RegisterFile {
 public:
 
-    constexpr inline RegisterStorage<native_word_t> *get_register_a(void) {
+    constexpr inline RegisterStorage<native_word_t> *get_register_a() {
         return &this->register_a;
     };
 
-    constexpr inline RegisterStorage<native_word_t> * get_register_x(void) {
+    constexpr inline RegisterStorage<native_word_t> * get_register_x() {
         return &this->register_x;
     };
 
-    constexpr inline RegisterStorage<native_word_t> *get_register_y(void) {
+    constexpr inline RegisterStorage<native_word_t> *get_register_y() {
         return &this->register_y;
     };
 
-    constexpr inline RegisterStorage<native_word_t> *get_register_status(void) {
+    constexpr inline RegisterStorage<native_word_t> *get_register_status() {
         return &this->register_status;
     };
 
-    constexpr inline RegisterStorage<native_word_t> *get_register_stack_pointer(void) {
+    constexpr inline RegisterStorage<native_word_t> *get_register_stack_pointer() {
         return &this->register_stack_pointer;
     };
 
-    constexpr inline RegisterStorage<native_address_t> *get_register_program_counter(void) {
+    constexpr inline RegisterStorage<native_address_t> *get_register_program_counter() {
         return &this->register_program_counter;
     };
 

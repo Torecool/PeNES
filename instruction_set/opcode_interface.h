@@ -44,7 +44,7 @@ public:
     inline virtual AddressModeType resolve_address_mode(
         AddressModeType default_address_mode = AddressModeType::ADDRESS_MODE_TYPE_NONE
     ) {
-        return AddressModeType::ADDRESS_MODE_TYPE_NONE;
+        return default_address_mode;
     }
 
     inline virtual enum PeNESStatus exec(
@@ -55,7 +55,14 @@ public:
 };
 
 
-class OpcodeNOP : public IOpcode {};
+class OpcodeNOP : public IOpcode {
+public:
+    inline AddressModeType resolve_address_mode(
+        AddressModeType default_address_mode = AddressModeType::ADDRESS_MODE_TYPE_NONE
+    ) override {
+        return address_mode::AddressModeType::ADDRESS_MODE_TYPE_NONE;
+    }
+};
 
 }
 

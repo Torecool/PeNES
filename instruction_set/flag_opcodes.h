@@ -16,42 +16,23 @@
 #include "storage_location/storage_location.h"
 #include "instruction_set/opcode_interface.h"
 
-/** Constants *************************************************************/
-/** Macros ****************************************************************/
-/** Enums *****************************************************************/
-/** Typedefs **************************************************************/
-/** Structs ***************************************************************/
-/** Functions *************************************************************/
-
+/** Namespaces ************************************************************/
 namespace instruction_set {
 
+/** Interfaces ************************************************************/
 class ISetFlagOpcode : public IOpcode {
 public:
+    inline AddressModeType resolve_address_mode(
+        AddressModeType default_address_mode = AddressModeType::ADDRESS_MODE_TYPE_NONE
+    ) override {
+        return address_mode::AddressModeType::ADDRESS_MODE_TYPE_IMPLIED;
+    }
+
     inline enum PeNESStatus exec(
         ProgramContext* program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset
-    ) override {
-        enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-        RegisterStorage<native_word_t> *register_status = nullptr;
-        native_word_t register_status_data = 0;
-
-        ASSERT(nullptr != program_ctx);
-
-        UNREFERENCED_PARAMETER(operand_storage);
-        UNREFERENCED_PARAMETER(operand_storage_offset);
-
-        /* Read contents of status register. */
-        register_status = program_ctx->register_file.get_register_status();
-        register_status_data = register_status->get();
-
-        /* Write the status register back with the turned on bits in the mask set to 1. */
-        register_status->set(register_status_data | set_flag_mask);
-
-        status = PENES_STATUS_SUCCESS;
-l_cleanup:
-        return status;
-    };
+    ) override;
 
 private:
     const enum FlagRegisterBitMask set_flag_mask = FLAG_REGISTER_BIT_MASK_NONE;
@@ -60,37 +41,23 @@ private:
 
 class IClearFlagOpcode : public IOpcode {
 public:
+    inline AddressModeType resolve_address_mode(
+        AddressModeType default_address_mode = AddressModeType::ADDRESS_MODE_TYPE_NONE
+    ) override {
+        return address_mode::AddressModeType::ADDRESS_MODE_TYPE_IMPLIED;
+    }
+
     inline enum PeNESStatus exec(
         ProgramContext* program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset
-    ) override {
-        enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-        RegisterStorage<native_word_t> *register_status = nullptr;
-        native_word_t register_status_data = 0;
-
-        ASSERT(nullptr != program_ctx);
-
-        UNREFERENCED_PARAMETER(operand_storage);
-        UNREFERENCED_PARAMETER(operand_storage_offset);
-
-        /* Read contents of status register. */
-        register_status = program_ctx->register_file.get_register_status();
-        register_status_data = register_status->get();
-
-        /* Write the status register back with the turned on bits in the mask set to 0. */
-        register_status->set(register_status_data & ~clear_flag_mask);
-
-        status = PENES_STATUS_SUCCESS;
-l_cleanup:
-        return status;
-    };
+    ) override;
 
 private:
     const enum FlagRegisterBitMask clear_flag_mask = FLAG_REGISTER_BIT_MASK_NONE;
 };
 
-
+/** Classes ***************************************************************/
 /* Set Carry flag. */
 class OpcodeSEC : public ISetFlagOpcode {
 private:
@@ -140,6 +107,5 @@ private:
 };
 
 }
-
 
 #endif /* __FLAG_OPCODES_H__ */

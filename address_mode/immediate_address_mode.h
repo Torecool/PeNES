@@ -29,6 +29,9 @@ public:
     ) override;
 };
 
+
+class RelativeAddressMode : public ImmediateAddressMode {};
+
 } /* namespace address_modes */
 
 #endif /* __IMMEDIATE_ADDRESS_MODE_H__ */

@@ -41,6 +41,13 @@ public:
         std::size_t write_offset = 0
     );
 
+    virtual inline enum PeNESStatus transfer(
+        IStorageLocation *dest_storage_location,
+        std::size_t transfer_size,
+        std::size_t source_transfer_offset = 0,
+        std::size_t dest_transfer_offset = 0
+    );
+
     constexpr inline std::size_t get_storage_size() const
     {
         return this->storage_size;
