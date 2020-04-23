@@ -22,9 +22,7 @@ namespace instruction_set {
 /** Interfaces ************************************************************/
 class IBranchOpcode : public IOpcode {
 public:
-    inline AddressModeType resolve_address_mode(
-        AddressModeType default_address_mode = AddressModeType::ADDRESS_MODE_TYPE_NONE
-    ) override {
+    inline AddressModeType resolve_address_mode(AddressModeType default_address_mode) override {
         return address_mode::AddressModeType::ADDRESS_MODE_TYPE_RELATIVE;
     }
 
@@ -35,13 +33,13 @@ public:
     );
 
     inline enum PeNESStatus exec(
-        ProgramContext* program_ctx,
+        ProgramContext *program_ctx,
         IStorageLocation *branch_operand_storage,
         std::size_t operand_storage_offset
     ) override;
 
 private:
-    const enum FlagRegisterBitMask branch_condition_mask = FLAG_REGISTER_BIT_MASK_NONE;
+    const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_NONE;
     const bool branch_on_set = false;
 };
 
@@ -49,7 +47,7 @@ private:
 /* Branch on Carry flag set. */
 class OpcodeBCS: public IBranchOpcode {
 private:
-    const enum FlagRegisterBitMask branch_condition_mask = FLAG_REGISTER_BIT_MASK_CARRY;
+    const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
     const bool branch_on_set = true;
 };
 
@@ -57,7 +55,7 @@ private:
 /* Branch on Carry flag clear. */
 class OpcodeBCC: public IBranchOpcode {
 private:
-    const enum FlagRegisterBitMask branch_condition_mask = FLAG_REGISTER_BIT_MASK_CARRY;
+    const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
     const bool branch_on_set = false;
 };
 
@@ -65,7 +63,7 @@ private:
 /* Branch on Zero flag set (ALU operation result is zero/equal). */
 class OpcodeBEQ: public IBranchOpcode {
 private:
-    const enum FlagRegisterBitMask branch_condition_mask = FLAG_REGISTER_BIT_MASK_ZERO;
+    const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_ZERO;
     const bool branch_on_set = true;
 };
 
@@ -73,7 +71,7 @@ private:
 /* Branch on Zero flag clear (ALU operation result is nonzero/unequal). */
 class OpcodeBNE: public IBranchOpcode {
 private:
-    const enum FlagRegisterBitMask branch_condition_mask = FLAG_REGISTER_BIT_MASK_ZERO;
+    const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_ZERO;
     const bool branch_on_set = false;
 };
 
@@ -81,7 +79,7 @@ private:
 /* Branch on Negative flag set (ALU operation result is negative). */
 class OpcodeBMI: public IBranchOpcode {
 private:
-    const enum FlagRegisterBitMask branch_condition_mask = FLAG_REGISTER_BIT_MASK_NEGATIVE;
+    const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE;
     const bool branch_on_set = true;
 };
 
@@ -89,7 +87,7 @@ private:
 /* Branch on Negative flag clear (ALU operation result is nonnegative). */
 class OpcodeBPL: public IBranchOpcode {
 private:
-    const enum FlagRegisterBitMask branch_condition_mask = FLAG_REGISTER_BIT_MASK_NEGATIVE;
+    const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE;
     const bool branch_on_set = false;
 };
 
@@ -97,7 +95,7 @@ private:
 /* Branch on Overflow flag set. */
 class OpcodeBVS: public IBranchOpcode {
 private:
-    const enum FlagRegisterBitMask branch_condition_mask = FLAG_REGISTER_BIT_MASK_OVERFLOW;
+    const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_OVERFLOW;
     const bool branch_on_set = true;
 };
 
@@ -105,7 +103,7 @@ private:
 /* Branch on Overflow flag clear. */
 class OpcodeBVC: public IBranchOpcode {
 private:
-    const enum FlagRegisterBitMask branch_condition_mask = FLAG_REGISTER_BIT_MASK_OVERFLOW;
+    const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_OVERFLOW;
     const bool branch_on_set = false;
 };
 

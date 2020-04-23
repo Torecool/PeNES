@@ -31,7 +31,7 @@ class OpcodeADC : public IOpcode {
 
 class OpcodeAND : public IOpcode {
     inline enum PeNESStatus exec(
-        ProgramContext* program_ctx,
+        ProgramContext *program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset
     ) override {

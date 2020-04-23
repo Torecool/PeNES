@@ -20,7 +20,7 @@ using namespace address_mode;
 
 /** Functions *************************************************************/
 inline enum PeNESStatus ImmediateAddressMode::get_storage(
-    const ProgramContext *program_context,
+    const ProgramContext *program_ctx,
     native_dword_t immediate_value,
     IStorageLocation **output_storage,
     std::size_t *output_storage_offset
@@ -29,10 +29,10 @@ inline enum PeNESStatus ImmediateAddressMode::get_storage(
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     ImmediateStorage *immediate_storage = nullptr;
 
-    ASSERT(nullptr != program_context);
+    ASSERT(nullptr != program_ctx);
     ASSERT(nullptr != output_storage);
 
-    status = program_context->immediate_storage_pool.retreive(&immediate_storage);
+    status = program_ctx->immediate_storage_pool.retreive(&immediate_storage);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("retrieve failed. Status: %d\n", status);
         goto l_cleanup;

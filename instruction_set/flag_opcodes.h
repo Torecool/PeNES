@@ -19,91 +19,60 @@
 /** Namespaces ************************************************************/
 namespace instruction_set {
 
-/** Interfaces ************************************************************/
-class ISetFlagOpcode : public IOpcode {
-public:
-    inline AddressModeType resolve_address_mode(
-        AddressModeType default_address_mode = AddressModeType::ADDRESS_MODE_TYPE_NONE
-    ) override {
-        return address_mode::AddressModeType::ADDRESS_MODE_TYPE_IMPLIED;
-    }
-
-    inline enum PeNESStatus exec(
-        ProgramContext* program_ctx,
-        IStorageLocation *operand_storage,
-        std::size_t operand_storage_offset
-    ) override;
-
-private:
-    const enum FlagRegisterBitMask set_flag_mask = FLAG_REGISTER_BIT_MASK_NONE;
-};
-
-
-class IClearFlagOpcode : public IOpcode {
-public:
-    inline AddressModeType resolve_address_mode(
-        AddressModeType default_address_mode = AddressModeType::ADDRESS_MODE_TYPE_NONE
-    ) override {
-        return address_mode::AddressModeType::ADDRESS_MODE_TYPE_IMPLIED;
-    }
-
-    inline enum PeNESStatus exec(
-        ProgramContext* program_ctx,
-        IStorageLocation *operand_storage,
-        std::size_t operand_storage_offset
-    ) override;
-
-private:
-    const enum FlagRegisterBitMask clear_flag_mask = FLAG_REGISTER_BIT_MASK_NONE;
-};
-
 /** Classes ***************************************************************/
 /* Set Carry flag. */
-class OpcodeSEC : public ISetFlagOpcode {
+class OpcodeSEC : public IUpdateStatusOpcode {
 private:
-    const enum FlagRegisterBitMask set_flag_mask = FLAG_REGISTER_BIT_MASK_CARRY;
+    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
+    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_CARRY;
 };
 
 
 /* Clear Carry flag. */
-class OpcodeCLC : public IClearFlagOpcode {
+class OpcodeCLC : public IUpdateStatusOpcode {
 private:
-    const enum FlagRegisterBitMask clear_flag_mask = FLAG_REGISTER_BIT_MASK_CARRY;
+    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
+    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
 
 /* Set Decimal flag. */
-class OpcodeSED : public ISetFlagOpcode {
+class OpcodeSED : public IUpdateStatusOpcode {
 private:
-    const enum FlagRegisterBitMask set_flag_mask = FLAG_REGISTER_BIT_MASK_DECIMAL;
+    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_DECIMAL;
+    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_DECIMAL;
 };
 
 
 /* Clear Decimal flag. */
-class OpcodeCLD : public IClearFlagOpcode {
+class OpcodeCLD : public IUpdateStatusOpcode {
 private:
-    const enum FlagRegisterBitMask clear_flag_mask = FLAG_REGISTER_BIT_MASK_DECIMAL;
+    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_DECIMAL;
+    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
 
 /* Set Interrupt flag. */
-class OpcodeSEI : public ISetFlagOpcode {
+class OpcodeSEI : public IUpdateStatusOpcode {
 private:
-    const enum FlagRegisterBitMask set_flag_mask = FLAG_REGISTER_BIT_MASK_INTERRUPT;
+    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
+    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
 };
 
 
 /* Clear Interrupt flag. */
-class OpcodeCLI : public IClearFlagOpcode {
+class OpcodeCLI : public IUpdateStatusOpcode {
 private:
-    const enum FlagRegisterBitMask clear_flag_mask = FLAG_REGISTER_BIT_MASK_INTERRUPT;
+    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
+    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
 
 /* Clear Overflow flag. */
-class OpcodeCLV : public IClearFlagOpcode {
+class OpcodeCLV : public IUpdateStatusOpcode {
 private:
-    const enum FlagRegisterBitMask clear_flag_mask = FLAG_REGISTER_BIT_MASK_OVERFLOW;
+    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_OVERFLOW;
+    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
 }

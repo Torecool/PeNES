@@ -19,8 +19,6 @@
 /** Namespaces ************************************************************/
 namespace instruction_set {
 
-/** Interfaces ************************************************************/
-
 /** Classes ***************************************************************/
 /* Store Accumulator in memory. */
 class OpcodeSTA : public IOpcode {
@@ -35,9 +33,7 @@ public:
 /* Store Index X in memory. */
 class OpcodeSTX : public IOpcode {
 public:
-    inline AddressModeType resolve_address_mode(
-        AddressModeType default_address_mode = AddressModeType::ADDRESS_MODE_TYPE_NONE
-    ) override {
+    inline AddressModeType resolve_address_mode(AddressModeType default_address_mode) override {
         /* If the address mode was predicted as zp,X, this should actually be zp,Y.
          * The reason for this is that the opcode's address mode bit pattern fits the otherwise zp,X template.
          * */
@@ -55,7 +51,7 @@ public:
     ) override;
 };
 
-
+/* Store Index Y in memory. */
 class OpcodeSTY : public IOpcode {
 public:
     inline enum PeNESStatus exec(
@@ -64,7 +60,7 @@ public:
         std::size_t operand_storage_offset
     ) override;
 };
-}
 
+}
 
 #endif /* __STORE_OPCODES_H__ */

@@ -21,7 +21,7 @@ using namespace address_mode;
 
 /** Functions *************************************************************/
 inline enum PeNESStatus AbsoluteAddressMode::get_storage(
-    const ProgramContext *program_context,
+    const ProgramContext *program_ctx,
     native_dword_t absolute_address,
     IStorageLocation **output_storage,
     std::size_t *output_storage_offset
@@ -32,12 +32,12 @@ inline enum PeNESStatus AbsoluteAddressMode::get_storage(
     std::size_t memory_offset = 0;
     native_address_t hardware_address = bswap_16(absolute_address);
 
-    ASSERT(nullptr != program_context);
+    ASSERT(nullptr != program_ctx);
     ASSERT(nullptr != output_storage);
     ASSERT(nullptr != output_storage_offset);
 
     /* Retrieve storage at absolute address. */
-    status = program_context->memory_manager.get_memory_storage(
+    status = program_ctx->memory_manager.get_memory_storage(
         hardware_address,
         &data_storage,
         &memory_offset
@@ -57,7 +57,7 @@ l_cleanup:
 
 
 inline enum PeNESStatus AbsoluteXIndexedAddressMode::get_storage(
-    const ProgramContext *program_context,
+    const ProgramContext *program_ctx,
     native_dword_t absolute_address,
     IStorageLocation **output_storage,
     std::size_t *output_storage_offset
@@ -70,12 +70,12 @@ inline enum PeNESStatus AbsoluteXIndexedAddressMode::get_storage(
     native_word_t register_index = 0;
     native_address_t hardware_address = bswap_16(absolute_address);
 
-    ASSERT(nullptr != program_context);
+    ASSERT(nullptr != program_ctx);
     ASSERT(nullptr != output_storage);
     ASSERT(nullptr != output_storage_offset);
 
     /* Add index offset from register X. */
-    register_x = program_context->register_file.get_register_x();
+    register_x = program_ctx->register_file.get_register_x();
     status = register_x->read(&register_index, sizeof(register_index));
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("read failed. Status: %d\n", status);
@@ -85,7 +85,7 @@ inline enum PeNESStatus AbsoluteXIndexedAddressMode::get_storage(
     hardware_address += register_index;
 
     /* Retrieve storage at absolute indexed address. */
-    status = program_context->memory_manager.get_memory_storage(
+    status = program_ctx->memory_manager.get_memory_storage(
         hardware_address,
         &data_storage,
         &memory_offset
@@ -105,7 +105,7 @@ l_cleanup:
 
 
 inline enum PeNESStatus AbsoluteYIndexedAddressMode::get_storage(
-    const ProgramContext *program_context,
+    const ProgramContext *program_ctx,
     native_dword_t absolute_address,
     IStorageLocation **output_storage,
     std::size_t *output_storage_offset
@@ -118,12 +118,12 @@ inline enum PeNESStatus AbsoluteYIndexedAddressMode::get_storage(
     std::size_t memory_offset = 0;
     native_address_t hardware_address = bswap_16(absolute_address);
 
-    ASSERT(nullptr != program_context);
+    ASSERT(nullptr != program_ctx);
     ASSERT(nullptr != output_storage);
     ASSERT(nullptr != output_storage_offset);
 
     /* Add index offset from register Y. */
-    register_y = program_context->register_file.get_register_y();
+    register_y = program_ctx->register_file.get_register_y();
     status = register_y->read(&register_data, sizeof(register_data));
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("read failed. Status: %d\n", status);
@@ -133,7 +133,7 @@ inline enum PeNESStatus AbsoluteYIndexedAddressMode::get_storage(
     hardware_address += register_data;
 
     /* Retrieve storage at absolute indexed address. */
-    status = program_context->memory_manager.get_memory_storage(
+    status = program_ctx->memory_manager.get_memory_storage(
         hardware_address,
         &data_storage,
         &memory_offset

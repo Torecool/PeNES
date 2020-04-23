@@ -20,7 +20,7 @@ using namespace address_mode;
 
 /** Functions *************************************************************/
 inline enum PeNESStatus ZeropageAddressMode::get_storage(
-    const ProgramContext *program_context,
+    const ProgramContext *program_ctx,
     native_dword_t zeropage_address,
     IStorageLocation **output_storage,
     std::size_t *output_storage_offset
@@ -32,12 +32,12 @@ inline enum PeNESStatus ZeropageAddressMode::get_storage(
     size_t data_storage_offset = 0;
     std::size_t num_bytes_read = sizeof(address_data);
 
-    ASSERT(nullptr != program_context);
+    ASSERT(nullptr != program_ctx);
     ASSERT(nullptr != output_storage);
     ASSERT(nullptr != output_storage_offset);
 
     /* Retrieve storage at absolute zeropage address. */
-    status = program_context->memory_manager.get_memory_storage(
+    status = program_ctx->memory_manager.get_memory_storage(
         zeropage_address,
         &data_storage,
         &data_storage_offset

@@ -26,19 +26,6 @@ using namespace address_mode;
 
 namespace instruction_set {
 
-enum FlagRegisterBitMask {
-    FLAG_REGISTER_BIT_MASK_NONE = 0,
-    FLAG_REGISTER_BIT_MASK_CARRY = 0x1,
-    FLAG_REGISTER_BIT_MASK_ZERO = 0x10,
-    FLAG_REGISTER_BIT_MASK_INTERRUPT = 0x100,
-    FLAG_REGISTER_BIT_MASK_DECIMAL = 0x1000,
-    FLAG_REGISTER_BIT_MASK_BREAK = 0x10000,
-    FLAG_REGISTER_BIT_MASK_UNUSED = 0x100000,
-    FLAG_REGISTER_BIT_MASK_OVERFLOW = 0x1000000,
-    FLAG_REGISTER_BIT_MASK_NEGATIVE = 0x1000000
-};
-
-
 class IOpcode {
 public:
     inline virtual AddressModeType resolve_address_mode(
@@ -48,20 +35,120 @@ public:
     }
 
     inline virtual enum PeNESStatus exec(
-        ProgramContext* program_ctx,
+        ProgramContext *program_ctx,
         IStorageLocation *operand_storage = nullptr,
         std::size_t operand_storage_offset = 0
     ) {};
 };
 
 
+class IUpdateStatusOpcode : public IOpcode {
+public:
+    inline AddressModeType resolve_address_mode(AddressModeType default_address_mode) override {
+        return address_mode::AddressModeType::ADDRESS_MODE_TYPE_IMPLIED;
+    }
+
+    inline enum PeNESStatus exec(
+        ProgramContext *program_ctx,
+        IStorageLocation *operand_storage,
+        std::size_t operand_storage_offset
+    ) override
+    {
+        enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+        RegisterStorage<native_word_t> *register_status = nullptr;
+
+        ASSERT(nullptr != program_ctx);
+
+        UNREFERENCED_PARAMETER(operand_storage);
+        UNREFERENCED_PARAMETER(operand_storage_offset);
+
+        /* Get the status register storage. */
+        register_status = program_ctx->register_file.get_register_status();
+
+        /* Call the method to update the status. */
+        status = update_status(register_status);
+
+        status = PENES_STATUS_SUCCESS;
+l_cleanup:
+        return status;
+    };
+
+protected:
+    inline virtual enum PeNESStatus update_status(RegisterStorage<native_word_t> *register_status)
+    {
+        enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+        native_word_t status_flags = 0;
+        native_word_t updated_status_flags = 0;
+
+        ASSERT(nullptr != register_status);
+
+        /* Read contents of the status register. */
+        status_flags = register_status->read();
+
+        /* Update the status register flags with the values from update_values.
+         * A flag will only be updated if it is set in update_mask.
+         * */
+        updated_status_flags = (status_flags & ~update_mask) | update_values;
+
+        /* Write the status register back. */
+        register_status->write(updated_status_flags);
+
+        status = PENES_STATUS_SUCCESS;
+l_cleanup:
+        return status;
+    }
+
+private:
+    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NONE;
+    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
+};
+
+
+class IUpdateDataStatusOpcode : public IUpdateStatusOpcode {
+protected:
+    inline enum PeNESStatus update_status(
+        RegisterStorage<native_word_t> *register_status,
+        native_dword_t opcode_result
+    )
+    {
+        enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+        bool is_zero = ((opcode_result << NATIVE_WORD_SIZE_BITS) == 0);
+        bool did_carry = ((opcode_result >> NATIVE_WORD_SIZE_BITS) != 0);
+
+        ASSERT(nullptr != register_status);
+
+        update_values |= (opcode_result & REGISTER_STATUS_FLAG_MASK_NEGATIVE);
+        update_values |= (true == is_zero)? REGISTER_STATUS_FLAG_MASK_ZERO: 0;
+        update_values |= (true == did_carry)? REGISTER_STATUS_FLAG_MASK_CARRY: 0;
+
+        /* Call the parent function to update the status flags. */
+        status = IUpdateStatusOpcode::update_status(register_status);
+        if (PENES_STATUS_SUCCESS != status) {
+            DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
+            goto l_cleanup;
+        }
+
+        status = PENES_STATUS_SUCCESS;
+l_cleanup:
+        return status;
+    };
+
+private:
+    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NONE;
+    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
+};
+
+
 class OpcodeNOP : public IOpcode {
 public:
-    inline AddressModeType resolve_address_mode(
-        AddressModeType default_address_mode = AddressModeType::ADDRESS_MODE_TYPE_NONE
-    ) override {
+    inline AddressModeType resolve_address_mode(AddressModeType default_address_mode) override
+    {
         return address_mode::AddressModeType::ADDRESS_MODE_TYPE_NONE;
     }
+
+private:
+    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NONE;
+    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
 }
