@@ -13,6 +13,7 @@
 
 /** Constants *************************************************************/
 #define SYSTEM_NATIVE_WORD_SIZE_BITS (8)
+#define SYSTEM_NATIVE_WORD_SIGN_BIT_MASK (1 << (SYSTEM_NATIVE_WORD_SIZE_BITS - 1))
 
 /** Typedefs **************************************************************/
 typedef std::uint8_t native_word_t;

@@ -68,7 +68,7 @@ public:
         std::size_t operand_storage_offset
     ) override;
 
-private:
+protected:
     native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 

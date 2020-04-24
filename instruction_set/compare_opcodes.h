@@ -29,8 +29,10 @@ public:
         std::size_t storage_offset
     );
 
-private:
-    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE | REGISTER_STATUS_FLAG_MASK_CARRY | REGISTER_STATUS_FLAG_MASK_ZERO;
+protected:
+    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE |
+                                REGISTER_STATUS_FLAG_MASK_CARRY |
+                                REGISTER_STATUS_FLAG_MASK_ZERO;
 };
 
 /* Compare data and Accumulator. */

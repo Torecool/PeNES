@@ -38,7 +38,7 @@ public:
         std::size_t operand_storage_offset
     ) override;
 
-private:
+protected:
     const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_NONE;
     const bool branch_on_set = false;
 };
@@ -46,7 +46,7 @@ private:
 /** Classes ***************************************************************/
 /* Branch on Carry flag set. */
 class OpcodeBCS: public IBranchOpcode {
-private:
+protected:
     const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
     const bool branch_on_set = true;
 };
@@ -54,7 +54,7 @@ private:
 
 /* Branch on Carry flag clear. */
 class OpcodeBCC: public IBranchOpcode {
-private:
+protected:
     const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
     const bool branch_on_set = false;
 };
@@ -62,7 +62,7 @@ private:
 
 /* Branch on Zero flag set (ALU operation result is zero/equal). */
 class OpcodeBEQ: public IBranchOpcode {
-private:
+protected:
     const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_ZERO;
     const bool branch_on_set = true;
 };
@@ -70,7 +70,7 @@ private:
 
 /* Branch on Zero flag clear (ALU operation result is nonzero/unequal). */
 class OpcodeBNE: public IBranchOpcode {
-private:
+protected:
     const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_ZERO;
     const bool branch_on_set = false;
 };
@@ -78,7 +78,7 @@ private:
 
 /* Branch on Negative flag set (ALU operation result is negative). */
 class OpcodeBMI: public IBranchOpcode {
-private:
+protected:
     const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE;
     const bool branch_on_set = true;
 };
@@ -86,7 +86,7 @@ private:
 
 /* Branch on Negative flag clear (ALU operation result is nonnegative). */
 class OpcodeBPL: public IBranchOpcode {
-private:
+protected:
     const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE;
     const bool branch_on_set = false;
 };
@@ -94,7 +94,7 @@ private:
 
 /* Branch on Overflow flag set. */
 class OpcodeBVS: public IBranchOpcode {
-private:
+protected:
     const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_OVERFLOW;
     const bool branch_on_set = true;
 };
@@ -102,7 +102,7 @@ private:
 
 /* Branch on Overflow flag clear. */
 class OpcodeBVC: public IBranchOpcode {
-private:
+protected:
     const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_OVERFLOW;
     const bool branch_on_set = false;
 };

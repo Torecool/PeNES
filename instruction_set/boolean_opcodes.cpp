@@ -34,7 +34,7 @@ enum PeNESStatus IBooleanOpcode::exec(
     RegisterStorage<native_word_t> *register_a = nullptr;
     native_word_t register_a_data = 0;
     native_word_t storage_data = 0;
-    native_dword_t operation_result = 0;
+    native_word_t operation_result = 0;
 
     ASSERT(nullptr != program_ctx);
     ASSERT(nullptr != data_operand_storage);
@@ -85,7 +85,7 @@ enum PeNESStatus OpcodeBIT::exec(
     RegisterStorage<native_word_t> *register_a = nullptr;
     native_word_t register_a_data = 0;
     native_word_t storage_data = 0;
-    native_dword_t and_result = 0;
+    native_word_t and_result = 0;
     bool is_bit6_set = false;
     bool is_bit7_set = false;
 

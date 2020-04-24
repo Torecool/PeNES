@@ -28,18 +28,20 @@ public:
         std::size_t storage_offset
     ) override;
 
-private:
+protected:
     inline virtual native_dword_t operation(
         native_word_t status_register_data,
         native_word_t storage_data
     ) = 0;
 
-    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE | REGISTER_STATUS_FLAG_MASK_CARRY | REGISTER_STATUS_FLAG_MASK_ZERO;
+    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE |
+                                REGISTER_STATUS_FLAG_MASK_CARRY |
+                                REGISTER_STATUS_FLAG_MASK_ZERO;
 };
 
 /* Shift left one bit. */
 class OpcodeASL : public IShiftOpcode {
-private:
+protected:
     inline native_dword_t operation(
         native_word_t status_register_data,
         native_word_t storage_data
@@ -53,7 +55,7 @@ private:
 
 /* Shift right one bit. */
 class OpcodeLSR : public IShiftOpcode {
-private:
+protected:
     inline native_dword_t operation(
         native_word_t status_register_data,
         native_word_t storage_data
@@ -67,7 +69,7 @@ private:
 
 /* Rotate left one bit. */
 class OpcodeROL : public IShiftOpcode {
-private:
+protected:
     inline native_dword_t operation(
         native_word_t status_register_data,
         native_word_t storage_data
@@ -84,7 +86,7 @@ private:
 
 /* Rotate right one bit. */
 class OpcodeROR : public IShiftOpcode {
-private:
+protected:
     inline native_dword_t operation(
         native_word_t status_register_data,
         native_word_t storage_data
@@ -92,9 +94,8 @@ private:
     {
         bool is_carry_set = (status_register_data & REGISTER_STATUS_FLAG_MASK_CARRY);
         native_dword_t shift_result = static_cast<native_dword_t>(storage_data) >> 1;
-        native_word_t shifted_carry = 1 << (SYSTEM_NATIVE_WORD_SIZE_BITS - 1);
 
-        shift_result |= (true == is_carry_set)? shifted_carry: 0;
+        shift_result |= (true == is_carry_set)? SYSTEM_NATIVE_WORD_SIGN_BIT_MASK: 0;
 
         return shift_result;
     }

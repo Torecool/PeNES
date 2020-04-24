@@ -80,10 +80,10 @@ public:
         std::size_t storage_offset
     ) override;
 
-private:
+protected:
     native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_ZERO;
-    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
+
 }
 
 #endif /* __BOOLEAN_OPCODES_H__ */

@@ -77,12 +77,13 @@ enum PeNESStatus IUpdateDataStatusOpcode::update_status(
 
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+    bool is_negative = (opcode_result & SYSTEM_NATIVE_WORD_SIGN_BIT_MASK);
     bool is_zero = ((opcode_result << SYSTEM_NATIVE_WORD_SIZE_BITS) == 0);
     bool did_carry = ((opcode_result >> SYSTEM_NATIVE_WORD_SIZE_BITS) != 0);
 
     ASSERT(nullptr != register_status);
 
-    update_values |= (opcode_result & REGISTER_STATUS_FLAG_MASK_NEGATIVE);
+    update_values |= (true == is_negative)? REGISTER_STATUS_FLAG_MASK_NEGATIVE: 0;
     update_values |= (true == is_zero)? REGISTER_STATUS_FLAG_MASK_ZERO: 0;
     update_values |= (true == did_carry)? REGISTER_STATUS_FLAG_MASK_CARRY: 0;
 
