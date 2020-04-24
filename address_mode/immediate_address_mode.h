@@ -22,10 +22,10 @@ public:
     const enum InstructionArgSize arg_size = INSTRUCTION_ARG_SIZE_WORD;
 
     inline enum PeNESStatus get_storage(
-        const ProgramContext *program_ctx,
+        ProgramContext *program_ctx,
         native_dword_t immediate_value,
         IStorageLocation **output_storage,
-        std::size_t *output_storage_offset = nullptr
+        std::size_t *output_storage_offset
     ) override;
 };
 

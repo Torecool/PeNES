@@ -81,13 +81,33 @@ public:
 };
 
 
-class OpcodeNOP : public IOpcode {
-public:
-    inline AddressModeType resolve_address_mode(AddressModeType default_address_mode) override
-    {
-        return AddressModeType::ADDRESS_MODE_TYPE_NONE;
-    }
+class IStackOpcode : public IImpliedOperandOpcode {
+protected:
+
+    inline enum PeNESStatus push(ProgramContext *program_ctx, native_word_t push_data);
+
+    inline enum PeNESStatus push(ProgramContext *program_ctx, native_address_t push_address);
+
+    inline enum PeNESStatus pull(ProgramContext *program_ctx, native_word_t *output_pull_word);
+
+    inline enum PeNESStatus pull(ProgramContext *program_ctx, native_address_t *output_pull_address);
+
+private:
+    inline enum PeNESStatus push(
+        ProgramContext *program_ctx,
+        void *push_data,
+        std::size_t push_size
+    );
+
+    inline enum PeNESStatus pull(
+        ProgramContext *program_ctx,
+        void *pull_buffer,
+        std::size_t pull_size
+    );
 };
+
+
+class OpcodeNOP : public IImpliedOperandOpcode {};
 
 }
 

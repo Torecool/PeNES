@@ -71,7 +71,8 @@ public:
         return &this->register_a;
     };
 
-    constexpr inline RegisterStorage<native_word_t> * get_register_x() {
+    constexpr inline RegisterStorage<native_word_t> *get_register_x()
+    {
         return &this->register_x;
     };
 

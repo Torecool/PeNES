@@ -24,7 +24,7 @@ public:
     const enum InstructionArgSize arg_size = INSTRUCTION_ARG_SIZE_WORD;
 
     inline enum PeNESStatus get_storage(
-        const ProgramContext *program_context,
+        ProgramContext *program_context,
         native_dword_t zeropage_address,
         IStorageLocation **output_storage,
         std::size_t *output_storage_offset
@@ -36,7 +36,7 @@ public:
     const enum InstructionArgSize arg_size = INSTRUCTION_ARG_SIZE_WORD;
 
     inline enum PeNESStatus get_storage(
-        const ProgramContext *program_context,
+        ProgramContext *program_context,
         native_dword_t zeropage_address,
         IStorageLocation **output_storage,
         std::size_t *output_storage_offset
@@ -48,7 +48,7 @@ public:
     const enum InstructionArgSize arg_size = INSTRUCTION_ARG_SIZE_WORD;
 
     inline enum PeNESStatus get_storage(
-        const ProgramContext *program_context,
+        ProgramContext *program_context,
         native_dword_t zeropage_address,
         IStorageLocation **output_storage,
         std::size_t *output_storage_offset

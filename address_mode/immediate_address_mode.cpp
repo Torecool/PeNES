@@ -19,8 +19,8 @@
 using namespace address_mode;
 
 /** Functions *************************************************************/
-inline enum PeNESStatus ImmediateAddressMode::get_storage(
-    const ProgramContext *program_ctx,
+enum PeNESStatus ImmediateAddressMode::get_storage(
+    ProgramContext *program_ctx,
     native_dword_t immediate_value,
     IStorageLocation **output_storage,
     std::size_t *output_storage_offset

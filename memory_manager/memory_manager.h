@@ -38,6 +38,8 @@ public:
         MemoryStorage **output_storage,
         std::size_t *output_storage_offset
     ) const;
+
+    inline enum PeNESStatus get_stack_storage(MemoryStorage **output_stack_storage) const;
 };
 
 

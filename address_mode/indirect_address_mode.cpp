@@ -6,10 +6,10 @@
 
 /** Headers ***************************************************************/
 #include <cstddef>
-#include <byteswap.h>
 
 #include "penes_status.h"
 #include "common.h"
+#include "system.h"
 
 #include "memory_manager/memory_manager.h"
 #include "address_mode/address_mode_interface.h"
@@ -20,8 +20,8 @@
 using namespace address_mode;
 
 /** Functions *************************************************************/
-inline enum PeNESStatus IndirectAddressMode::get_storage(
-    const ProgramContext *program_ctx,
+enum PeNESStatus IndirectAddressMode::get_storage(
+    ProgramContext *program_ctx,
     native_dword_t indirect_address,
     IStorageLocation **output_storage,
     std::size_t *output_storage_offset
@@ -33,7 +33,8 @@ inline enum PeNESStatus IndirectAddressMode::get_storage(
     size_t direct_storage_offset = 0;
     size_t data_storage_offset = 0;
     native_address_t direct_address = 0;
-    native_address_t hardware_indirect_address = bswap_16(indirect_address);
+    native_address_t converted_direct_address = 0;
+    native_address_t converted_indirect_address = system_native_to_big_endianess(indirect_address);
 
     ASSERT(nullptr != program_ctx);
     ASSERT(nullptr != output_storage);
@@ -41,7 +42,7 @@ inline enum PeNESStatus IndirectAddressMode::get_storage(
 
     /* Retrieve storage location containing the direct address using the indirect address. */
     status = program_ctx->memory_manager.get_memory_storage(
-        hardware_indirect_address,
+        converted_indirect_address,
         &direct_address_storage,
         &direct_storage_offset
     );
@@ -61,9 +62,12 @@ inline enum PeNESStatus IndirectAddressMode::get_storage(
         goto l_cleanup;
     }
 
+    /* Convert the direct address, stored in memory in native endianess, into big endianess. */
+    converted_direct_address = system_native_to_big_endianess(direct_address);
+
     /* Retrieve data at absolute direct address. */
     status = program_ctx->memory_manager.get_memory_storage(
-        direct_address,
+        converted_direct_address,
         &data_storage,
         &data_storage_offset
     );
@@ -81,21 +85,22 @@ l_cleanup:
 }
 
 
-inline enum PeNESStatus XIndexedIndirectAddressMode::get_storage(
-    const ProgramContext *program_ctx,
+enum PeNESStatus XIndexedIndirectAddressMode::get_storage(
+    ProgramContext *program_ctx,
     native_dword_t indirect_address,
     IStorageLocation **output_storage,
     std::size_t *output_storage_offset
 )
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-    RegisterStorage *register_x = nullptr;
+    RegisterStorage<native_word_t> *register_x = nullptr;
     MemoryStorage *data_storage = nullptr;
     MemoryStorage *direct_address_storage = nullptr;
     size_t direct_storage_offset = 0;
     size_t data_storage_offset = 0;
     native_word_t register_index = 0;
     native_address_t direct_address = 0;
+    native_address_t converted_direct_address = 0;
     native_address_t indexed_indirect_address = 0;
 
     ASSERT(nullptr != program_ctx);
@@ -106,11 +111,8 @@ inline enum PeNESStatus XIndexedIndirectAddressMode::get_storage(
      * Note: We don't want carry behavior. If the summation overflows the address should wrap around.
      * */
     register_x = program_ctx->register_file.get_register_x();
-    status = register_x->read(&register_index, sizeof(register_index));
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("read failed. Status: %d\n", status);
-        goto l_cleanup;
-    }
+    register_index = register_x->read();
+
     indexed_indirect_address = static_cast<native_address_t>(
         static_cast<native_word_t>(indirect_address) + register_index
     );
@@ -137,9 +139,12 @@ inline enum PeNESStatus XIndexedIndirectAddressMode::get_storage(
         goto l_cleanup;
     }
 
+    /* Convert the direct address, stored in memory in native endianess, into big endianess. */
+    converted_direct_address = system_native_to_big_endianess(direct_address);
+
     /* Retrieve data at absolute indexed direct address. */
     status = program_ctx->memory_manager.get_memory_storage(
-        direct_address,
+        converted_direct_address,
         &data_storage,
         &data_storage_offset
     );
@@ -157,15 +162,15 @@ l_cleanup:
 }
 
 
-inline enum PeNESStatus IndirectYIndexedAddressMode::get_storage(
-    const ProgramContext *program_ctx,
+enum PeNESStatus IndirectYIndexedAddressMode::get_storage(
+    ProgramContext *program_ctx,
     native_dword_t indirect_address,
     IStorageLocation **output_storage,
     std::size_t *output_storage_offset
 )
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-    RegisterStorage *register_y = nullptr;
+    RegisterStorage<native_word_t> *register_y = nullptr;
     MemoryStorage *data_storage = nullptr;
     MemoryStorage *direct_address_storage = nullptr;
     size_t direct_storage_offset = 0;
@@ -180,11 +185,7 @@ inline enum PeNESStatus IndirectYIndexedAddressMode::get_storage(
 
     /* Retrieve value of register Y. */
     register_y = program_ctx->register_file.get_register_y();
-    status = register_y->read(&register_index, sizeof(register_index));
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("read failed. Status: %d\n", status);
-        goto l_cleanup;
-    }
+    register_index = register_y->read();
 
     /* Retrieve storage location containing the direct address using the indirect address. */
     status = program_ctx->memory_manager.get_memory_storage(
@@ -211,9 +212,9 @@ inline enum PeNESStatus IndirectYIndexedAddressMode::get_storage(
     /* Add index offset from register Y.
      * Note: Here, we do want carry behavior.
      * Note: Addresses are saved as little endian,
-     * so we need to swap it to machine endianness, add the index, and swap it back.
+     * so we need to swap it to host machine endianness before adding the index.
      * */
-    indexed_direct_address = bswap_16(bswap_16(direct_address) + register_index);
+    indexed_direct_address = system_native_to_big_endianess(direct_address) + register_index;
 
     /* Retrieve data at absolute indexed direct address. */
     status = program_ctx->memory_manager.get_memory_storage(

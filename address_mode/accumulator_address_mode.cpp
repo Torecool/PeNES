@@ -19,8 +19,8 @@
 using namespace address_mode;
 
 /** Functions *************************************************************/
-inline enum PeNESStatus AccumulatorAddressMode::get_storage(
-    const ProgramContext *program_ctx,
+enum PeNESStatus AccumulatorAddressMode::get_storage(
+    ProgramContext *program_ctx,
     native_dword_t operand,
     IStorageLocation **output_storage,
     std::size_t *output_storage_offset
@@ -38,6 +38,7 @@ inline enum PeNESStatus AccumulatorAddressMode::get_storage(
     register_a = program_ctx->register_file.get_register_a();
 
     *output_storage = register_a;
+
     if (nullptr != output_storage_offset) {
         *output_storage_offset = 0;
     }

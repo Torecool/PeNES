@@ -20,7 +20,7 @@ using namespace address_mode;
 
 /** Functions *************************************************************/
 inline enum PeNESStatus ZeropageAddressMode::get_storage(
-    const ProgramContext *program_ctx,
+    ProgramContext *program_ctx,
     native_dword_t zeropage_address,
     IStorageLocation **output_storage,
     std::size_t *output_storage_offset
@@ -30,7 +30,6 @@ inline enum PeNESStatus ZeropageAddressMode::get_storage(
     MemoryStorage *data_storage = nullptr;
     native_word_t address_data = 0;
     size_t data_storage_offset = 0;
-    std::size_t num_bytes_read = sizeof(address_data);
 
     ASSERT(nullptr != program_ctx);
     ASSERT(nullptr != output_storage);
@@ -57,7 +56,7 @@ l_cleanup:
 
 
 inline enum PeNESStatus ZeropageXIndexedAddressMode::get_storage(
-    const ProgramContext *program_context,
+    ProgramContext *program_context,
     native_dword_t zeropage_address,
     IStorageLocation **output_storage,
     std::size_t *output_storage_offset
@@ -65,7 +64,7 @@ inline enum PeNESStatus ZeropageXIndexedAddressMode::get_storage(
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     MemoryStorage *data_storage = nullptr;
-    RegisterStorage *register_x = nullptr;
+    RegisterStorage<native_word_t> *register_x = nullptr;
     size_t data_storage_offset = 0;
     native_address_t indexed_zeropage_address = 0;
     native_word_t register_index = 0;
@@ -78,11 +77,8 @@ inline enum PeNESStatus ZeropageXIndexedAddressMode::get_storage(
      * Note: We don't want carry behavior. If the summation overflows the address should wrap around.
      * */
     register_x = program_context->register_file.get_register_x();
-    status = register_x->read(&register_index, sizeof(register_index));
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("read failed. Status: %d\n", status);
-        goto l_cleanup;
-    }
+    register_index = register_x->read();
+
     indexed_zeropage_address = static_cast<native_address_t>(
         static_cast<native_word_t>(zeropage_address) + register_index
     );
@@ -108,7 +104,7 @@ l_cleanup:
 
 
 enum PeNESStatus ZeropageYIndexedAddressMode::get_storage(
-    const ProgramContext *program_context,
+    ProgramContext *program_context,
     native_dword_t zeropage_address,
     IStorageLocation **output_storage,
     std::size_t *output_storage_offset
@@ -116,7 +112,7 @@ enum PeNESStatus ZeropageYIndexedAddressMode::get_storage(
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     MemoryStorage *data_storage = nullptr;
-    RegisterStorage *register_y = nullptr;
+    RegisterStorage<native_word_t> *register_y = nullptr;
     size_t data_storage_offset = 0;
     native_address_t indexed_zeropage_address = 0;
     native_word_t register_index = 0;
@@ -129,11 +125,8 @@ enum PeNESStatus ZeropageYIndexedAddressMode::get_storage(
      * Note: We don't want carry behavior. If the summation overflows the address should wrap around.
      * */
     register_y = program_context->register_file.get_register_y();
-    status = register_y->read(&register_index, sizeof(register_index));
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("read failed. Status: %d\n", status);
-        goto l_cleanup;
-    }
+    register_index = register_y->read();
+
     indexed_zeropage_address = static_cast<native_address_t>(
         static_cast<native_word_t>(zeropage_address) + register_index
     );

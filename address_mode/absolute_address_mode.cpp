@@ -6,11 +6,12 @@
 
 /** Headers ***************************************************************/
 #include <cstddef>
-#include <byteswap.h>
 
 #include "penes_status.h"
 #include "common.h"
+#include "system.h"
 
+#include "program_context/program_context.h"
 #include "memory_manager/memory_manager.h"
 #include "address_mode/address_mode_interface.h"
 
@@ -20,8 +21,8 @@
 using namespace address_mode;
 
 /** Functions *************************************************************/
-inline enum PeNESStatus AbsoluteAddressMode::get_storage(
-    const ProgramContext *program_ctx,
+enum PeNESStatus AbsoluteAddressMode::get_storage(
+    ProgramContext *program_ctx,
     native_dword_t absolute_address,
     IStorageLocation **output_storage,
     std::size_t *output_storage_offset
@@ -30,7 +31,7 @@ inline enum PeNESStatus AbsoluteAddressMode::get_storage(
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     MemoryStorage *data_storage = nullptr;
     std::size_t memory_offset = 0;
-    native_address_t hardware_address = bswap_16(absolute_address);
+    native_address_t converted_address = system_native_to_big_endianess(absolute_address);
 
     ASSERT(nullptr != program_ctx);
     ASSERT(nullptr != output_storage);
@@ -38,7 +39,7 @@ inline enum PeNESStatus AbsoluteAddressMode::get_storage(
 
     /* Retrieve storage at absolute address. */
     status = program_ctx->memory_manager.get_memory_storage(
-        hardware_address,
+        converted_address,
         &data_storage,
         &memory_offset
     );
@@ -56,8 +57,8 @@ l_cleanup:
 }
 
 
-inline enum PeNESStatus AbsoluteXIndexedAddressMode::get_storage(
-    const ProgramContext *program_ctx,
+enum PeNESStatus AbsoluteXIndexedAddressMode::get_storage(
+    ProgramContext *program_ctx,
     native_dword_t absolute_address,
     IStorageLocation **output_storage,
     std::size_t *output_storage_offset
@@ -65,10 +66,10 @@ inline enum PeNESStatus AbsoluteXIndexedAddressMode::get_storage(
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     MemoryStorage *data_storage = nullptr;
-    RegisterStorage *register_x = nullptr;
+    RegisterStorage<native_word_t> *register_x = nullptr;
     std::size_t memory_offset = 0;
     native_word_t register_index = 0;
-    native_address_t hardware_address = bswap_16(absolute_address);
+    native_address_t hardware_address = system_native_to_big_endianess(absolute_address);
 
     ASSERT(nullptr != program_ctx);
     ASSERT(nullptr != output_storage);
@@ -76,11 +77,7 @@ inline enum PeNESStatus AbsoluteXIndexedAddressMode::get_storage(
 
     /* Add index offset from register X. */
     register_x = program_ctx->register_file.get_register_x();
-    status = register_x->read(&register_index, sizeof(register_index));
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("read failed. Status: %d\n", status);
-        goto l_cleanup;
-    }
+    register_index = register_x->read();
 
     hardware_address += register_index;
 
@@ -104,8 +101,8 @@ l_cleanup:
 }
 
 
-inline enum PeNESStatus AbsoluteYIndexedAddressMode::get_storage(
-    const ProgramContext *program_ctx,
+enum PeNESStatus AbsoluteYIndexedAddressMode::get_storage(
+    ProgramContext *program_ctx,
     native_dword_t absolute_address,
     IStorageLocation **output_storage,
     std::size_t *output_storage_offset
@@ -113,10 +110,10 @@ inline enum PeNESStatus AbsoluteYIndexedAddressMode::get_storage(
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     MemoryStorage *data_storage = nullptr;
-    RegisterStorage *register_y = nullptr;
+    RegisterStorage<native_word_t> *register_y = nullptr;
     native_word_t register_data = 0;
     std::size_t memory_offset = 0;
-    native_address_t hardware_address = bswap_16(absolute_address);
+    native_address_t converted_address = system_native_to_big_endianess(absolute_address);
 
     ASSERT(nullptr != program_ctx);
     ASSERT(nullptr != output_storage);
@@ -124,17 +121,13 @@ inline enum PeNESStatus AbsoluteYIndexedAddressMode::get_storage(
 
     /* Add index offset from register Y. */
     register_y = program_ctx->register_file.get_register_y();
-    status = register_y->read(&register_data, sizeof(register_data));
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("read failed. Status: %d\n", status);
-        goto l_cleanup;
-    }
+    register_data = register_y->read();
 
-    hardware_address += register_data;
+    converted_address += register_data;
 
     /* Retrieve storage at absolute indexed address. */
     status = program_ctx->memory_manager.get_memory_storage(
-        hardware_address,
+        converted_address,
         &data_storage,
         &memory_offset
     );
