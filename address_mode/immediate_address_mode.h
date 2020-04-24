@@ -30,6 +30,12 @@ public:
 };
 
 
+class ImmediateDoubleAddressMode : public ImmediateAddressMode {
+public:
+    const enum InstructionArgSize arg_size = INSTRUCTION_ARG_SIZE_DWORD;
+};
+
+
 class RelativeAddressMode : public ImmediateAddressMode {};
 
 } /* namespace address_modes */

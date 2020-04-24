@@ -35,8 +35,8 @@ enum PeNESStatus OpcodePHA::exec(
     UNREFERENCED_PARAMETER(operand_storage);
     UNREFERENCED_PARAMETER(operand_storage_offset);
 
-    /* Retrieve the register A from the program context. */
-    register_a = program_ctx->register_file.get_register_status();
+    /* Retrieve register A from the program context. */
+    register_a = program_ctx->register_file.get_register_a();
 
     /* Read the data stored in the register. */
     register_a_data = register_a->read();
