@@ -146,14 +146,7 @@ enum PeNESStatus IStackOpcode::push(
     stack_pointer_address = register_stack_pointer->read();
 
     /* Retrieve the memory storage containing the stack from the program context's memory manager. */
-    status = program_ctx->memory_manager.get_stack_storage(&stack_storage);
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("get_stack_storage failed. Status: %d", status);
-        goto l_cleanup;
-    }
-
-    /* Decrement the Stack pointer to point to the new top of the stack. */
-    stack_pointer_address -= sizeof(push_size);
+    stack_storage = program_ctx->memory_manager.get_stack_storage();
 
     /* Write the data to the location in the stack just above the data on top.
      * Note that the stack grows top-down.
@@ -167,6 +160,9 @@ enum PeNESStatus IStackOpcode::push(
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("write stack storage failed. Status: %d", status);
         goto l_cleanup;
     }
+
+    /* Decrement the Stack pointer to point to the new top of the stack. */
+    stack_pointer_address -= sizeof(push_size);
 
     /* Write the updated Stack address back to the register. */
     register_stack_pointer->write(stack_pointer_address);
@@ -198,11 +194,10 @@ enum PeNESStatus IStackOpcode::pull(
     stack_pointer_address = register_stack_pointer->read();
 
     /* Retrieve the memory storage containing the stack from the program context's memory manager. */
-    status = program_ctx->memory_manager.get_stack_storage(&stack_storage);
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("get_stack_storage failed. Status: %d", status);
-        goto l_cleanup;
-    }
+    stack_storage = program_ctx->memory_manager.get_stack_storage();
+
+    /* Increment the Stack pointer to point to the data at the top of the stack. */
+    stack_pointer_address += sizeof(pull_size);
 
     /* Read the data from the storage location representing the top of the stack.
      * Note that the stack grows top-down.
@@ -216,9 +211,6 @@ enum PeNESStatus IStackOpcode::pull(
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("read stack storage failed. Status: %d", status);
         goto l_cleanup;
     }
-
-    /* Increment the Stack pointer to point to the new top of the stack. */
-    stack_pointer_address += sizeof(pull_size);
 
     /* Write the updated Stack address back to the register. */
     register_stack_pointer->write(stack_pointer_address);

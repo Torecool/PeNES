@@ -82,6 +82,16 @@ public:
     ) override;
 };
 
+/* Software interrupt. Save Stack pointer and Status, jump to interrupt handling routine. */
+class OpcodeBRK : public IJumpOpcode, IStackOpcode {
+public:
+    inline enum PeNESStatus exec(
+        ProgramContext *program_ctx,
+        IStorageLocation *operand_storage,
+        std::size_t operand_storage_offset
+    ) override;
+};
+
 /* Return from interrupt, restoring Status register and Program counter. */
 class OpcodeRTI : public IStackOpcode {
 public:

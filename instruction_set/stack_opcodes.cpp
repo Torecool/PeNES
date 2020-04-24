@@ -62,7 +62,7 @@ enum PeNESStatus OpcodePHP::exec(
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     RegisterStorage<native_word_t> *register_status = nullptr;
-    native_word_t register_status_data = 0;
+    native_word_t program_status = 0;
 
     ASSERT(nullptr != program_ctx);
 
@@ -73,10 +73,15 @@ enum PeNESStatus OpcodePHP::exec(
     register_status = program_ctx->register_file.get_register_status();
 
     /* Read the data stored in the register. */
-    register_status_data = register_status->read();
+    program_status = register_status->read();
+
+    /* Set the Break flag on the status that is pushed to the stack,
+     * to mirror the BRK opcode, indicating that a software interrupt is occurring.
+     * */
+    program_status |= REGISTER_STATUS_FLAG_MASK_BREAK;
 
     /* Push the data from the register onto the stack. */
-    status = this->push(program_ctx, register_status_data);
+    status = this->push(program_ctx, program_status);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass push failed. Status: %d", status);
         goto l_cleanup;
@@ -137,7 +142,7 @@ enum PeNESStatus OpcodePLP::exec(
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     RegisterStorage<native_word_t> *register_status = nullptr;
-    native_word_t pull_data = 0;
+    native_word_t pull_status = 0;
 
     ASSERT(nullptr != program_ctx);
 
@@ -148,14 +153,19 @@ enum PeNESStatus OpcodePLP::exec(
     register_status = program_ctx->register_file.get_register_status();
 
     /* Pull a data word from the stack. */
-    status = this->pull(program_ctx, &pull_data);
+    status = this->pull(program_ctx, &pull_status);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass push failed. Status: %d", status);
         goto l_cleanup;
     }
 
+    /* Clear the Break flag before writing the status to the register,
+     * because it is only relevant to the status that is pushed onto the stack.
+     * */
+    pull_status &= ~REGISTER_STATUS_FLAG_MASK_BREAK;
+
     /* Write the data word to the register. */
-    register_status->write(pull_data);
+    register_status->write(pull_status);
 
     status = PENES_STATUS_SUCCESS;
 l_cleanup:

@@ -28,7 +28,7 @@ public:
         std::size_t storage_offset
     ) override;
 
-private:
+protected:
     inline virtual native_word_t operation(
         native_word_t register_a_data,
         native_word_t storage_data
@@ -37,7 +37,7 @@ private:
 
 /* AND data and Accumulator. */
 class OpcodeAND : public IBooleanOpcode {
-private:
+protected:
     inline native_word_t operation(
         native_word_t register_a_data,
         native_word_t storage_data
@@ -49,7 +49,7 @@ private:
 
 /* XOR data and register X. */
 class OpcodeEOR : public IBooleanOpcode {
-private:
+protected:
     inline native_word_t operation(
         native_word_t register_a_data,
         native_word_t storage_data
@@ -61,7 +61,7 @@ private:
 
 /* OR data and register Y. */
 class OpcodeORA : public IBooleanOpcode {
-private:
+protected:
     inline native_word_t operation(
         native_word_t register_a_data,
         native_word_t storage_data
@@ -71,6 +71,19 @@ private:
     };
 };
 
+/* Test bits in memory with Accumulator. */
+class OpcodeBIT : public OpcodeAND {
+public:
+    inline enum PeNESStatus exec(
+        ProgramContext *program_ctx,
+        IStorageLocation *data_operand_storage,
+        std::size_t storage_offset
+    ) override;
+
+private:
+    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_ZERO;
+    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
+};
 }
 
 #endif /* __BOOLEAN_OPCODES_H__ */
