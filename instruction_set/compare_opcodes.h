@@ -31,7 +31,6 @@ public:
 
 private:
     native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE | REGISTER_STATUS_FLAG_MASK_CARRY | REGISTER_STATUS_FLAG_MASK_ZERO;
-    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
 /* Compare data and Accumulator. */

@@ -20,50 +20,47 @@
 namespace instruction_set {
 
 /** Classes ***************************************************************/
+class ITransferOpcode : public IUpdateDataStatusOpcode, IImpliedOperandOpcode {
+public:
+    inline enum PeNESStatus transfer(
+        ProgramContext *program_ctx,
+        RegisterStorage<native_word_t> *src_register,
+        RegisterStorage<native_word_t> *dest_register
+    );
+};
+
 /* Transfer Accumulator to register X. */
-class OpcodeTAX : public IUpdateDataStatusOpcode, IImpliedOperandOpcode {
+class OpcodeTAX : public ITransferOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset
     ) override;
-
-private:
-    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE | REGISTER_STATUS_FLAG_MASK_ZERO;
-    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
 /* Transfer Accumulator to register Y. */
-class OpcodeTAY : public IUpdateDataStatusOpcode, IImpliedOperandOpcode {
+class OpcodeTAY : public ITransferOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset
     ) override;
-
-private:
-    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE | REGISTER_STATUS_FLAG_MASK_ZERO;
-    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
 /* Transfer register X to Accumulator. */
-class OpcodeTXA : public IUpdateDataStatusOpcode, IImpliedOperandOpcode {
+class OpcodeTXA : public ITransferOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset
     ) override;
-
-private:
-    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE | REGISTER_STATUS_FLAG_MASK_ZERO;
-    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
 /* Transfer register X to Stack pointer. */
-class OpcodeTXS : public IUpdateDataStatusOpcode, IImpliedOperandOpcode {
+class OpcodeTXS : public ITransferOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -73,35 +70,26 @@ public:
 
 private:
     native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NONE;
-    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
 /* Transfer Stack pointer to register X. */
-class OpcodeTSX : public IUpdateDataStatusOpcode, IImpliedOperandOpcode {
+class OpcodeTSX : public ITransferOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset
     ) override;
-
-private:
-    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE | REGISTER_STATUS_FLAG_MASK_ZERO;
-    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
 /* Transfer register Y to Accumulator. */
-class OpcodeTYA : public IUpdateDataStatusOpcode, IImpliedOperandOpcode {
+class OpcodeTYA : public ITransferOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset
     ) override;
-
-private:
-    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE | REGISTER_STATUS_FLAG_MASK_ZERO;
-    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
 }
