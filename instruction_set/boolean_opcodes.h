@@ -81,7 +81,7 @@ public:
     ) override;
 
 protected:
-    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_ZERO;
+    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_ZERO;
 };
 
 }

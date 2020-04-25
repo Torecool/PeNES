@@ -270,9 +270,9 @@ enum PeNESStatus IStackOpcode::pull(ProgramContext *program_ctx, native_word_t *
     ASSERT(nullptr != output_pull_word);
 
     /* Call the "real" pull implementation with a buffer to contain the data word being pulled. */
-    status = push(program_ctx, &pull_data, sizeof(pull_data));
+    status = pull(program_ctx, &pull_data, sizeof(pull_data));
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("push failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("pull failed. Status: %d", status);
         goto l_cleanup;
     }
 
@@ -294,9 +294,9 @@ enum PeNESStatus IStackOpcode::pull(ProgramContext *program_ctx, native_address_
     ASSERT(nullptr != output_pull_address);
 
     /* Call the "real" pull implementation with a buffer to contain the address being pulled. */
-    status = push(program_ctx, &pull_address, sizeof(pull_address));
+    status = pull(program_ctx, &pull_address, sizeof(pull_address));
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("push failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("pull failed. Status: %d", status);
         goto l_cleanup;
     }
 

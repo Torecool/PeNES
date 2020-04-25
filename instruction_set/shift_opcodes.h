@@ -34,9 +34,9 @@ protected:
         native_word_t storage_data
     ) = 0;
 
-    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE |
-                                REGISTER_STATUS_FLAG_MASK_CARRY |
-                                REGISTER_STATUS_FLAG_MASK_ZERO;
+    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE |
+                                      REGISTER_STATUS_FLAG_MASK_CARRY |
+                                      REGISTER_STATUS_FLAG_MASK_ZERO;
 };
 
 /* Shift left one bit. */

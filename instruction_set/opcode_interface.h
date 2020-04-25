@@ -49,7 +49,7 @@ public:
 protected:
     inline virtual enum PeNESStatus update_status(RegisterStorage<native_word_t> *register_status);
 
-    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NONE;
+    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NONE;
     native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
@@ -66,7 +66,7 @@ protected:
         native_dword_t opcode_result
     );
 
-    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE | REGISTER_STATUS_FLAG_MASK_ZERO;
+    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE | REGISTER_STATUS_FLAG_MASK_ZERO;
 };
 
 

@@ -23,7 +23,7 @@ namespace instruction_set {
 /* Set Carry flag. */
 class OpcodeSEC : public IUpdateStatusOpcode, IImpliedOperandOpcode {
 protected:
-    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
+    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
     native_word_t update_values = REGISTER_STATUS_FLAG_MASK_CARRY;
 };
 
@@ -31,7 +31,7 @@ protected:
 /* Clear Carry flag. */
 class OpcodeCLC : public IUpdateStatusOpcode, IImpliedOperandOpcode {
 protected:
-    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
+    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
     native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
@@ -39,7 +39,7 @@ protected:
 /* Set Decimal flag. */
 class OpcodeSED : public IUpdateStatusOpcode, IImpliedOperandOpcode {
 protected:
-    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_DECIMAL;
+    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_DECIMAL;
     native_word_t update_values = REGISTER_STATUS_FLAG_MASK_DECIMAL;
 };
 
@@ -47,7 +47,7 @@ protected:
 /* Clear Decimal flag. */
 class OpcodeCLD : public IUpdateStatusOpcode, IImpliedOperandOpcode {
 protected:
-    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_DECIMAL;
+    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_DECIMAL;
     native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
@@ -55,7 +55,7 @@ protected:
 /* Set Interrupt flag. */
 class OpcodeSEI : public IUpdateStatusOpcode, IImpliedOperandOpcode {
 protected:
-    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
+    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
     native_word_t update_values = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
 };
 
@@ -63,7 +63,7 @@ protected:
 /* Clear Interrupt flag. */
 class OpcodeCLI : public IUpdateStatusOpcode, IImpliedOperandOpcode {
 protected:
-    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
+    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
     native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
@@ -71,7 +71,7 @@ protected:
 /* Clear Overflow flag. */
 class OpcodeCLV : public IUpdateStatusOpcode, IImpliedOperandOpcode {
 protected:
-    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_OVERFLOW;
+    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_OVERFLOW;
     native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 

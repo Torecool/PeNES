@@ -39,7 +39,7 @@ public:
     ) override;
 
 protected:
-    const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_NONE;
+    const native_word_t branch_condition_mask = REGISTER_STATUS_FLAG_MASK_NONE;
     const bool branch_on_set = false;
 };
 
@@ -47,7 +47,7 @@ protected:
 /* Branch on Carry flag set. */
 class OpcodeBCS: public IBranchOpcode {
 protected:
-    const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
+    const native_word_t branch_condition_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
     const bool branch_on_set = true;
 };
 
@@ -55,7 +55,7 @@ protected:
 /* Branch on Carry flag clear. */
 class OpcodeBCC: public IBranchOpcode {
 protected:
-    const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
+    const native_word_t branch_condition_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
     const bool branch_on_set = false;
 };
 
@@ -63,7 +63,7 @@ protected:
 /* Branch on Zero flag set (ALU operation result is zero/equal). */
 class OpcodeBEQ: public IBranchOpcode {
 protected:
-    const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_ZERO;
+    const native_word_t branch_condition_mask = REGISTER_STATUS_FLAG_MASK_ZERO;
     const bool branch_on_set = true;
 };
 
@@ -71,7 +71,7 @@ protected:
 /* Branch on Zero flag clear (ALU operation result is nonzero/unequal). */
 class OpcodeBNE: public IBranchOpcode {
 protected:
-    const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_ZERO;
+    const native_word_t branch_condition_mask = REGISTER_STATUS_FLAG_MASK_ZERO;
     const bool branch_on_set = false;
 };
 
@@ -79,7 +79,7 @@ protected:
 /* Branch on Negative flag set (ALU operation result is negative). */
 class OpcodeBMI: public IBranchOpcode {
 protected:
-    const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE;
+    const native_word_t branch_condition_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE;
     const bool branch_on_set = true;
 };
 
@@ -87,7 +87,7 @@ protected:
 /* Branch on Negative flag clear (ALU operation result is nonnegative). */
 class OpcodeBPL: public IBranchOpcode {
 protected:
-    const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE;
+    const native_word_t branch_condition_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE;
     const bool branch_on_set = false;
 };
 
@@ -95,7 +95,7 @@ protected:
 /* Branch on Overflow flag set. */
 class OpcodeBVS: public IBranchOpcode {
 protected:
-    const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_OVERFLOW;
+    const native_word_t branch_condition_mask = REGISTER_STATUS_FLAG_MASK_OVERFLOW;
     const bool branch_on_set = true;
 };
 
@@ -103,7 +103,7 @@ protected:
 /* Branch on Overflow flag clear. */
 class OpcodeBVC: public IBranchOpcode {
 protected:
-    const enum RegisterStatusFlagMask branch_condition_mask = REGISTER_STATUS_FLAG_MASK_OVERFLOW;
+    const native_word_t branch_condition_mask = REGISTER_STATUS_FLAG_MASK_OVERFLOW;
     const bool branch_on_set = false;
 };
 

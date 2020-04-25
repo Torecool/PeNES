@@ -30,9 +30,9 @@ public:
     );
 
 protected:
-    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE |
-                                REGISTER_STATUS_FLAG_MASK_CARRY |
-                                REGISTER_STATUS_FLAG_MASK_ZERO;
+    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE |
+                                      REGISTER_STATUS_FLAG_MASK_CARRY |
+                                      REGISTER_STATUS_FLAG_MASK_ZERO;
 };
 
 /* Compare data and Accumulator. */

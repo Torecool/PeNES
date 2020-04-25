@@ -69,7 +69,7 @@ public:
     ) override;
 
 protected:
-    native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NONE;
+    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
 /* Transfer Stack pointer to register X. */
