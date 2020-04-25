@@ -9,8 +9,11 @@
 
 /** Headers ***************************************************************/
 #include <cstddef>
+#include <initializer_list>
 
 #include "penes_status.h"
+
+#include "utils/utils.h"
 
 #include "program_context/program_context.h"
 #include "storage_location/storage_location.h"
@@ -24,7 +27,7 @@
 /** Functions *************************************************************/
 namespace instruction_set {
 
-enum class OpcodeType {
+enum OpcodeType {
     OPCODE_TYPE_NONE = -1,
     OPCODE_TYPE_ADC = 0,
     OPCODE_TYPE_AND,
@@ -54,6 +57,7 @@ enum class OpcodeType {
     OPCODE_TYPE_INX,
     OPCODE_TYPE_INY,
     OPCODE_TYPE_JMP,
+    OPCODE_TYPE_INDIRECT_JMP,
     OPCODE_TYPE_JSR,
     OPCODE_TYPE_LDA,
     OPCODE_TYPE_LDX,
@@ -81,23 +85,20 @@ enum class OpcodeType {
     OPCODE_TYPE_TSX,
     OPCODE_TYPE_TXA,
     OPCODE_TYPE_TXS,
-    OPCODE_TYPE_TYA
+    OPCODE_TYPE_TYA,
+    OPCODE_TYPE_NUM_OPCODES
 };
 
+typedef IOpcode *(*opcode_instance_factory_t)();
 
-class OpcodeTable {
+class OpcodeTable : public utils::ObjectTable<IOpcode, enum OpcodeType> {
 public:
-    OpcodeTable(
-        const std::initializer_list<IOpcode *> opcode_list
-    ) : opcode_list(opcode_list) {};
-
-    inline enum PeNESStatus get_opcode(
-        enum OpcodeType opcode_type,
-        const IOpcode **output_opcode
-    ) const;
+    OpcodeTable(const std::initializer_list<enum OpcodeType> &opcode_type_list):
+        ObjectTable<IOpcode, enum OpcodeType>(opcode_instance_factory_list, opcode_type_list)
+    {};
 
 private:
-    const std::vector<IOpcode *> opcode_list;
+    static const std::array<opcode_instance_factory_t, OPCODE_TYPE_NUM_OPCODES> opcode_instance_factory_list;
 };
 
 
