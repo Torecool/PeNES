@@ -22,13 +22,13 @@ typedef native_dword_t native_address_t;
 
 
 /** Functions *************************************************************/
-static inline native_address_t system_big_to_native_endianess(native_address_t address)
+static inline native_address_t system_big_to_native_endianness(native_address_t address)
 {
     return bswap_16(address);
 }
 
 
-static inline native_address_t system_native_to_big_endianess(native_address_t address)
+static inline native_address_t system_native_to_big_endianness(native_address_t address)
 {
     return bswap_16(address);
 }

@@ -34,7 +34,7 @@ enum PeNESStatus IndirectAddressMode::get_storage(
     size_t data_storage_offset = 0;
     native_address_t direct_address = 0;
     native_address_t converted_direct_address = 0;
-    native_address_t converted_indirect_address = system_native_to_big_endianess(indirect_address);
+    native_address_t converted_indirect_address = system_native_to_big_endianness(indirect_address);
 
     ASSERT(nullptr != program_ctx);
     ASSERT(nullptr != output_storage);
@@ -62,8 +62,8 @@ enum PeNESStatus IndirectAddressMode::get_storage(
         goto l_cleanup;
     }
 
-    /* Convert the direct address, stored in memory in native endianess, into big endianess. */
-    converted_direct_address = system_native_to_big_endianess(direct_address);
+    /* Convert the direct address, stored in memory in native endianness, into big endianness. */
+    converted_direct_address = system_native_to_big_endianness(direct_address);
 
     /* Retrieve data at absolute direct address. */
     status = program_ctx->memory_manager.get_memory_storage(
@@ -139,8 +139,8 @@ enum PeNESStatus XIndexedIndirectAddressMode::get_storage(
         goto l_cleanup;
     }
 
-    /* Convert the direct address, stored in memory in native endianess, into big endianess. */
-    converted_direct_address = system_native_to_big_endianess(direct_address);
+    /* Convert the direct address, stored in memory in native endianness, into big endianness. */
+    converted_direct_address = system_native_to_big_endianness(direct_address);
 
     /* Retrieve data at absolute indexed direct address. */
     status = program_ctx->memory_manager.get_memory_storage(
@@ -214,7 +214,7 @@ enum PeNESStatus IndirectYIndexedAddressMode::get_storage(
      * Note: Addresses are saved as little endian,
      * so we need to swap it to host machine endianness before adding the index.
      * */
-    indexed_direct_address = system_native_to_big_endianess(direct_address) + register_index;
+    indexed_direct_address = system_native_to_big_endianness(direct_address) + register_index;
 
     /* Retrieve data at absolute indexed direct address. */
     status = program_ctx->memory_manager.get_memory_storage(

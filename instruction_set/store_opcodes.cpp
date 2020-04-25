@@ -21,7 +21,6 @@ using namespace instruction_set;
 
 /** Functions *************************************************************/
 enum PeNESStatus IStoreOpcode::store(
-    ProgramContext *program_ctx,
     RegisterStorage<native_word_t> *store_register,
     IStorageLocation *store_storage,
     std::size_t storage_offset
@@ -29,7 +28,6 @@ enum PeNESStatus IStoreOpcode::store(
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
 
-    ASSERT(nullptr != program_ctx);
     ASSERT(nullptr != store_register);
     ASSERT(nullptr != store_storage);
 
@@ -67,7 +65,7 @@ enum PeNESStatus OpcodeSTA::exec(
     register_a = program_ctx->register_file.get_register_a();
 
     /* Store the contents of register A in the operand memory location. */
-    status = store(program_ctx, register_a, store_operand_storage, operand_storage_offset);
+    status = store(register_a, store_operand_storage, operand_storage_offset);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("store failed. Status: %d", status);
         goto l_cleanup;
@@ -95,7 +93,7 @@ enum PeNESStatus OpcodeSTX::exec(
     register_x = program_ctx->register_file.get_register_x();
 
     /* Store the contents of register X in the operand memory location. */
-    status = store(program_ctx, register_x, store_operand_storage, operand_storage_offset);
+    status = store(register_x, store_operand_storage, operand_storage_offset);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("store failed. Status: %d", status);
         goto l_cleanup;
@@ -123,7 +121,7 @@ enum PeNESStatus OpcodeSTY::exec(
     register_y = program_ctx->register_file.get_register_y();
 
     /* Store the contents of register Y in the operand memory location. */
-    status = store(program_ctx, register_y, store_operand_storage, operand_storage_offset);
+    status = store(register_y, store_operand_storage, operand_storage_offset);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("store failed. Status: %d", status);
         goto l_cleanup;

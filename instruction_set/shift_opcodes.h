@@ -1,5 +1,5 @@
 /**
- * @brief  
+ * @brief  Definitions for shift-related opcodes.
  * @author TBK
  * @date   24/04/2020
  * */
@@ -20,6 +20,10 @@
 namespace instruction_set {
 
 /** Classes ***************************************************************/
+/** @brief Interface of an opcode performing a shift operation using the Accumulator or a memory location.
+ *         Each subclass implements the operation method for performing various shift/rotate operations,
+ *         which is then invoked by the interface's exec method.
+ * */
 class IShiftOpcode : public IUpdateDataStatusOpcode {
 public:
     inline enum PeNESStatus exec(
@@ -29,6 +33,18 @@ public:
     ) override;
 
 protected:
+    /** @brief          Perform a shift operation on the given data, using flags from the status register.
+     *                  The return value is the new value of the operand storage location.
+     *
+     *  @param[in]      status_register_data        The data of the Status register.
+     *  @param[in]      storage_data                The data from the storage location to shift.
+     *
+     *  @return         The result of the shift operation, to be written back to the storage location.
+     *
+     *  @note           Although both operands are of size WORD, the return value is of size DWORD.
+     *                  This is in order to retain data needed for the calculation of the updated status,
+     *                  namely the value of the Carry flag.
+     * */
     inline virtual native_dword_t operation(
         native_word_t status_register_data,
         native_word_t storage_data
@@ -39,7 +55,7 @@ protected:
                                       REGISTER_STATUS_FLAG_MASK_ZERO;
 };
 
-/* Shift left one bit. */
+/** @brief Shift left one bit. */
 class OpcodeASL : public IShiftOpcode {
 protected:
     inline native_dword_t operation(
@@ -53,7 +69,7 @@ protected:
     }
 };
 
-/* Shift right one bit. */
+/** @brief Shift right one bit. */
 class OpcodeLSR : public IShiftOpcode {
 protected:
     inline native_dword_t operation(
@@ -67,7 +83,7 @@ protected:
     }
 };
 
-/* Rotate left one bit. */
+/** @brief Rotate left one bit. */
 class OpcodeROL : public IShiftOpcode {
 protected:
     inline native_dword_t operation(
@@ -84,7 +100,7 @@ protected:
     }
 };
 
-/* Rotate right one bit. */
+/** @brief Rotate right one bit. */
 class OpcodeROR : public IShiftOpcode {
 protected:
     inline native_dword_t operation(
@@ -101,6 +117,6 @@ protected:
     }
 };
 
-}
+} /* namespace instruction_set */
 
 #endif /* __SHIFT_OPCODES_H__ */

@@ -141,16 +141,12 @@ enum PeNESStatus OpcodePLP::exec(
 )
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-    RegisterStorage<native_word_t> *register_status = nullptr;
     native_word_t pull_status = 0;
 
     ASSERT(nullptr != program_ctx);
 
     UNREFERENCED_PARAMETER(operand_storage);
     UNREFERENCED_PARAMETER(operand_storage_offset);
-
-    /* Retrieve the Status register from the program context. */
-    register_status = program_ctx->register_file.get_register_status();
 
     /* Pull a data word from the stack. */
     status = this->pull(program_ctx, &pull_status);
@@ -159,13 +155,15 @@ enum PeNESStatus OpcodePLP::exec(
         goto l_cleanup;
     }
 
-    /* Clear the Break flag before writing the status to the register,
-     * because it is only relevant to the status that is pushed onto the stack.
-     * */
-    pull_status &= ~REGISTER_STATUS_FLAG_MASK_BREAK;
+    /* Queue the status values pulled from the stack to update the Status register. */
+    update_values = pull_status;
 
-    /* Write the data word to the register. */
-    register_status->write(pull_status);
+    /* Call the parent function to update the status flags based on the update mask. */
+    status = this->update_status(program_ctx);
+    if (PENES_STATUS_SUCCESS != status) {
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
+        goto l_cleanup;
+    }
 
     status = PENES_STATUS_SUCCESS;
 l_cleanup:

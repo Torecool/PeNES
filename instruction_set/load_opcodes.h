@@ -1,5 +1,5 @@
 /**
- * @brief  
+ * @brief  Definitions for load-related opcodes.
  * @author TBK
  * @date   23/04/2020
  * */
@@ -20,17 +20,29 @@
 namespace instruction_set {
 
 /** Classes ***************************************************************/
+/** @brief Interface of an opcode performing a load operation.
+ *         Extends the standard data-status-updating opcode interface by adding the load method.
+ * */
 class ILoadOpcode : public IUpdateDataStatusOpcode {
 public:
+    /** @brief          Load a WORD of data from a storage location into a register and update the Status register accordingly.
+     *
+     *  @param[in]      program_ctx                 The program context containing the Status register to update.
+     *  @param[in]      load_register               The register to load the data into.
+     *  @param[in]      load_storage                The storage location containing the data to load.
+     *  @param[in]      storage_offset              The offset within the storage location to read the data from.
+     *
+     *  @return         Status indicating the success of the operation.
+     * */
     inline enum PeNESStatus load(
         ProgramContext *program_ctx,
         RegisterStorage<native_word_t> *load_register,
         IStorageLocation *load_storage,
-        std::size_t storage_offset
+        std::size_t storage_offset = 0
     );
 };
 
-/* Load Accumulator with Data. */
+/** @brief Load Accumulator with Data. */
 class OpcodeLDA : public ILoadOpcode {
 public:
     inline enum PeNESStatus exec(
@@ -40,7 +52,7 @@ public:
     ) override;
 };
 
-/* Load register X with Data. */
+/** @brief Load register X with Data. */
 class OpcodeLDX : public ILoadOpcode {
 public:
     inline AddressModeType resolve_address_mode(AddressModeType default_address_mode) override {
@@ -64,7 +76,7 @@ public:
     ) override;
 };
 
-/* Load register Y with Data. */
+/** @brief Load register Y with Data. */
 class OpcodeLDY : public ILoadOpcode {
 public:
     inline enum PeNESStatus exec(
@@ -74,6 +86,6 @@ public:
     ) override;
 };
 
-}
+} /* namespace instruction_set */
 
 #endif /* __LOAD_OPCODES_H__ */

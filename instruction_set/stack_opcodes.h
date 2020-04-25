@@ -1,5 +1,5 @@
 /**
- * @brief  
+ * @brief  Definitions for stack-related opcodes.
  * @author TBK
  * @date   24/04/2020
  * */
@@ -20,7 +20,7 @@
 namespace instruction_set {
 
 /** Classes ***************************************************************/
-/* Push Accumulator on Stack. */
+/** @brief Push Accumulator on Stack. */
 class OpcodePHA : public IStackOpcode {
 public:
     inline enum PeNESStatus exec(
@@ -30,7 +30,7 @@ public:
     ) override;
 };
 
-/* Push Status register on Stack. */
+/** @brief Push Status register on Stack. */
 class OpcodePHP : public IStackOpcode {
 public:
     inline enum PeNESStatus exec(
@@ -40,8 +40,8 @@ public:
     ) override;
 };
 
-/* Pull Accumulator from Stack. */
-class OpcodePLA : public IStackOpcode, IUpdateDataStatusOpcode {
+/** @brief Pull Accumulator from Stack. */
+class OpcodePLA : public IStackOpcode, public IUpdateDataStatusOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -50,16 +50,23 @@ public:
     ) override;
 };
 
-/* Pull Status register from Stack. */
-class OpcodePLP : public IStackOpcode {
+/** @brief Pull Status register from Stack. */
+class OpcodePLP : public IStackOpcode, public IUpdateStatusOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset
     ) override;
+
+protected:
+    /* We will never set the Break flag in the status written to the register,
+     * because it is only relevant to the status that is pushed onto the stack.
+     * */
+    const native_word_t update_mask = ~REGISTER_STATUS_FLAG_MASK_BREAK;
+
 };
 
-}
+} /* namespace instruction_set */
 
 #endif /* __STACK_OPCODES_H__ */

@@ -1,5 +1,5 @@
 /**
- * @brief  
+ * @brief  Definitions for ALU-related opcodes.
  * @author TBK
  * @date   22/04/2020
  * */
@@ -20,8 +20,18 @@
 namespace instruction_set {
 
 /** Classes ***************************************************************/
+/** @brief Interface of an opcode performing an addition operation using the Accumulator.
+ *         Extends the standard data-status-updating opcode interface by adding the add method.
+ */
 class IAddOpcode : public IUpdateDataStatusOpcode {
 protected:
+    /** @brief          Add (with carry) a given WORD of data to the Accumulator and update the Status register accordingly.
+     *
+     *  @param[in]      program_ctx                 The program context containing the Accumulator to add to.
+     *  @param[in]      add_operand                 The WORD of data to add.
+     *
+     *  @return         Status indicating the success of the operation.
+     * */
     inline enum PeNESStatus add(
         ProgramContext *program_ctx,
         native_word_t add_operand
@@ -33,7 +43,7 @@ protected:
                                       REGISTER_STATUS_FLAG_MASK_OVERFLOW;
 };
 
-/* Add data to Accumulator with Carry. */
+/** @brief Add data to Accumulator with Carry. */
 class OpcodeADC : public IAddOpcode {
 public:
     inline enum PeNESStatus exec(
@@ -43,7 +53,7 @@ public:
     ) override;
 };
 
-/* Subtract data from Accumulator with Borrow (== ~Carry). */
+/** @brief Subtract data from Accumulator with Borrow (== ~Carry). */
 class OpcodeSBC : public IAddOpcode {
 public:
     inline enum PeNESStatus exec(
@@ -53,6 +63,6 @@ public:
     ) override;
 };
 
-}
+} /* namespace instruction_set */
 
 #endif /* __ALU_OPCODES_H__ */

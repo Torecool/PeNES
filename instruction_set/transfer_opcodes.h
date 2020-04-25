@@ -1,5 +1,5 @@
 /**
- * @brief  
+ * @brief  Definitions for transfer-related opcodes.
  * @author TBK
  * @date   23/04/2020
  * */
@@ -20,8 +20,20 @@
 namespace instruction_set {
 
 /** Classes ***************************************************************/
-class ITransferOpcode : public IUpdateDataStatusOpcode, IImpliedOperandOpcode {
-public:
+/** @brief Interface of an opcode performing a transfer operation.
+ *         Extends the standard implied-data-status-updating opcode interface by adding the transfer method.
+ * */
+class ITransferOpcode : public IUpdateDataStatusOpcode, public IImpliedOperandOpcode {
+protected:
+    /** @brief          Transfer a WORD of data from a source register to a destination register,
+     *                  and update the Status register accordingly.
+     *
+     *  @param[in]      program_ctx                 The program context containing the Status register to update.
+     *  @param[in]      src_register                The source register containing the data to transfer.
+     *  @param[in]      dest_register               The destination register to transfer the data to.
+     *
+     *  @return         Status indicating the success of the operation.
+     * */
     inline enum PeNESStatus transfer(
         ProgramContext *program_ctx,
         RegisterStorage<native_word_t> *src_register,
@@ -29,7 +41,7 @@ public:
     );
 };
 
-/* Transfer Accumulator to register X. */
+/** @brief Transfer Accumulator to register X. */
 class OpcodeTAX : public ITransferOpcode {
 public:
     inline enum PeNESStatus exec(
@@ -39,7 +51,7 @@ public:
     ) override;
 };
 
-/* Transfer Accumulator to register Y. */
+/** @brief Transfer Accumulator to register Y. */
 class OpcodeTAY : public ITransferOpcode {
 public:
     inline enum PeNESStatus exec(
@@ -49,7 +61,7 @@ public:
     ) override;
 };
 
-/* Transfer register X to Accumulator. */
+/** @brief Transfer register X to Accumulator. */
 class OpcodeTXA : public ITransferOpcode {
 public:
     inline enum PeNESStatus exec(
@@ -59,7 +71,7 @@ public:
     ) override;
 };
 
-/* Transfer register X to Stack pointer. */
+/** @brief Transfer register X to Stack pointer. */
 class OpcodeTXS : public ITransferOpcode {
 public:
     inline enum PeNESStatus exec(
@@ -72,7 +84,7 @@ protected:
     const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
-/* Transfer Stack pointer to register X. */
+/** @brief Transfer Stack pointer to register X. */
 class OpcodeTSX : public ITransferOpcode {
 public:
     inline enum PeNESStatus exec(
@@ -82,7 +94,7 @@ public:
     ) override;
 };
 
-/* Transfer register Y to Accumulator. */
+/** @brief Transfer register Y to Accumulator. */
 class OpcodeTYA : public ITransferOpcode {
 public:
     inline enum PeNESStatus exec(
@@ -92,6 +104,6 @@ public:
     ) override;
 };
 
-}
+} /* namespace instruction_set */
 
 #endif /* __TRANSFER_OPCODES_H__ */

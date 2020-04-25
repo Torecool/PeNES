@@ -1,5 +1,5 @@
 /**
- * @brief  
+ * @brief  Definitions for store-related opcodes.
  * @author TBK
  * @date   23/04/2020
  * */
@@ -20,17 +20,27 @@
 namespace instruction_set {
 
 /** Classes ***************************************************************/
+/** @brief Interface of an opcode performing a store operation.
+ *         Extends the standard opcode interface by adding the store method.
+ * */
 class IStoreOpcode : public IOpcode {
-public:
+protected:
+    /** @brief          Store a WORD of data from a register into a storage location.
+     *
+     *  @param[in]      store_register              The register containing the data to store.
+     *  @param[in]      store_storage               The storage location to write the data to.
+     *  @param[in]      storage_offset              The offset within the storage location to write the data to.
+     *
+     *  @return         Status indicating the success of the operation.
+     * */
     inline enum PeNESStatus store(
-        ProgramContext *program_ctx,
         RegisterStorage<native_word_t> *store_register,
         IStorageLocation *store_storage,
         std::size_t storage_offset
     );
 };
 
-/* Store Accumulator in memory. */
+/** @brief Store Accumulator in memory. */
 class OpcodeSTA : public IStoreOpcode {
 public:
     inline enum PeNESStatus exec(
@@ -40,7 +50,7 @@ public:
     ) override;
 };
 
-/* Store Index X in memory. */
+/** @brief Store Index X in memory. */
 class OpcodeSTX : public IStoreOpcode {
 public:
     inline AddressModeType resolve_address_mode(AddressModeType default_address_mode) override {
@@ -61,7 +71,7 @@ public:
     ) override;
 };
 
-/* Store Index Y in memory. */
+/** @brief Store Index Y in memory. */
 class OpcodeSTY : public IStoreOpcode {
 public:
     inline enum PeNESStatus exec(
@@ -71,6 +81,6 @@ public:
     ) override;
 };
 
-}
+} /* namespace instruction_set */
 
 #endif /* __STORE_OPCODES_H__ */

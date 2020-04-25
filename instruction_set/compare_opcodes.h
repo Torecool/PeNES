@@ -1,5 +1,5 @@
 /**
- * @brief  
+ * @brief  Definitions for comparison-related opcodes.
  * @author TBK
  * @date   23/04/2020
  * */
@@ -20,22 +20,34 @@
 namespace instruction_set {
 
 /** Classes ***************************************************************/
+/** @brief Interface of an opcode performing a comparison operation.
+ *         Extends the standard data-status-updating opcode interface by adding the compare method.
+ * */
 class ICompareOpcode : public IUpdateDataStatusOpcode {
-public:
+protected:
+    /** @brief          Perform a compare operation between a register operand and a generic storage location operand.
+     *                  Subtract the second operand from the first and update the Status register's data flags accordingly.
+     *
+     *  @param[in]      program_ctx                 The program context containing the Status register to update.
+     *  @param[in]      compare_register            The first, register operand.
+     *  @param[in]      compare_storage             The second, generic storage location operand.
+     *  @param[in]      storage_offset              The offset within the storage location to read the data from.
+     *
+     *  @return         Status indicating the success of the operation.
+     * */
     inline enum PeNESStatus compare(
         ProgramContext *program_ctx,
         RegisterStorage<native_word_t> *compare_register,
         IStorageLocation *compare_storage,
-        std::size_t storage_offset
+        std::size_t storage_offset = 0
     );
 
-protected:
     const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE |
                                       REGISTER_STATUS_FLAG_MASK_CARRY |
                                       REGISTER_STATUS_FLAG_MASK_ZERO;
 };
 
-/* Compare data and Accumulator. */
+/** @brief Compare Accumulator with data (A - M). */
 class OpcodeCMP : public ICompareOpcode {
 public:
     inline enum PeNESStatus exec(
@@ -45,7 +57,7 @@ public:
     ) override;
 };
 
-/* Compare data and register X. */
+/** @brief Compare register X with data (X - M). */
 class OpcodeCPX : public ICompareOpcode {
 public:
     inline enum PeNESStatus exec(
@@ -55,7 +67,7 @@ public:
     ) override;
 };
 
-/* Compare data and register Y. */
+/** @brief Compare register Y with data (Y - M). */
 class OpcodeCPY : public ICompareOpcode {
 public:
     inline enum PeNESStatus exec(
@@ -65,6 +77,6 @@ public:
     ) override;
 };
 
-}
+} /* namespace instruction_set */
 
 #endif /* __COMPARE_OPCODES_H__ */

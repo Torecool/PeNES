@@ -26,18 +26,18 @@ enum PeNESStatus IUpdateStatusOpcode::exec(
 )
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-    RegisterStorage<native_word_t> *register_status = nullptr;
 
     ASSERT(nullptr != program_ctx);
 
     UNREFERENCED_PARAMETER(operand_storage);
     UNREFERENCED_PARAMETER(operand_storage_offset);
 
-    /* Get the status register storage. */
-    register_status = program_ctx->register_file.get_register_status();
-
     /* Call the method to update the status. */
-    status = this->update_status(register_status);
+    status = this->update_status(program_ctx);
+    if (PENES_STATUS_SUCCESS != status) {
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("update_status failed. Status: %d", status);
+        goto l_cleanup;
+    }
 
     status = PENES_STATUS_SUCCESS;
 l_cleanup:
@@ -63,6 +63,29 @@ enum PeNESStatus IUpdateStatusOpcode::update_status(RegisterStorage<native_word_
 
     /* Write the status register back. */
     register_status->write(updated_status_flags);
+
+    status = PENES_STATUS_SUCCESS;
+l_cleanup:
+    return status;
+}
+
+
+enum PeNESStatus IUpdateStatusOpcode::update_status(ProgramContext *program_ctx)
+{
+    enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+    RegisterStorage<native_word_t> *register_status = nullptr;
+
+    ASSERT(nullptr != program_ctx);
+
+    /* Retrieve the Status register from the program context. */
+    register_status = program_ctx->register_file.get_register_status();
+
+    /* Call the "real" update_status. */
+    status = this->update_status(register_status);
+    if (PENES_STATUS_SUCCESS != status) {
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("update_status failed. Status: %d", status);
+        goto l_cleanup;
+    }
 
     status = PENES_STATUS_SUCCESS;
 l_cleanup:
@@ -244,7 +267,7 @@ l_cleanup:
 enum PeNESStatus IStackOpcode::push(ProgramContext *program_ctx, native_address_t push_address)
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-    native_address_t converted_push_address = system_big_to_native_endianess(push_address);
+    native_address_t converted_push_address = system_big_to_native_endianness(push_address);
 
     ASSERT(nullptr != program_ctx);
 
@@ -300,8 +323,8 @@ enum PeNESStatus IStackOpcode::pull(ProgramContext *program_ctx, native_address_
         goto l_cleanup;
     }
 
-    /* Convert the address from its storage endianess, little endian, to big endian. */
-    converted_pull_address = system_native_to_big_endianess(pull_address);
+    /* Convert the address from its storage endianness, little endian, to big endian. */
+    converted_pull_address = system_native_to_big_endianness(pull_address);
 
     *output_pull_address = converted_pull_address;
 

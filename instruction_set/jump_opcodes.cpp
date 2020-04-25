@@ -45,7 +45,7 @@ enum PeNESStatus IJumpOpcode::jump(
     }
 
     /* Convert the jump address to big endian because addresses are kept in little endian in memory. */
-    converted_jump_address = system_native_to_big_endianess(jump_address);
+    converted_jump_address = system_native_to_big_endianness(jump_address);
 
     /* Write the converted jump address to the program counter. */
     register_program_counter->write(converted_jump_address);
@@ -142,7 +142,6 @@ enum PeNESStatus OpcodeBRK::exec(
     MemoryStorage *interrupt_vector_storage = nullptr;
     native_address_t program_counter_address = 0;
     native_address_t program_status = 0;
-    native_address_t stack_program_status = 0;
 
     ASSERT(nullptr != program_ctx);
 
@@ -160,20 +159,11 @@ enum PeNESStatus OpcodeBRK::exec(
     program_counter_address = register_program_counter->read();
     program_status = register_status->read();
 
-    /* Duplicate the program status,
-     * because the value pushed onto the stack is different from the value written back to the register.
-     * */
-    stack_program_status = program_status;
-
-    /* Set the Interrupt flag on the status written back to the register,
-     * to disable all maskable interrupt handling during the handling of the current interrupt.
-     * */
-    program_status |= REGISTER_STATUS_FLAG_MASK_INTERRUPT;
-
     /* Set the Break flag on the status that is pushed to the stack,
      * to indicate that a software interrupt is occurring.
+     * Note that due to the update mask, this value will not be written back to the register.
      * */
-    stack_program_status |= REGISTER_STATUS_FLAG_MASK_BREAK;
+    program_status |= REGISTER_STATUS_FLAG_MASK_BREAK;
 
     /* Increment the program counter we push onto the stack by 2,
      * so that when we return from the interrupt handler,
@@ -189,7 +179,7 @@ enum PeNESStatus OpcodeBRK::exec(
     }
 
     /* Save the stack version of the status on the stack. */
-    status = this->push(program_ctx, stack_program_status);
+    status = this->push(program_ctx, program_status);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass status push failed. Status: %d", status);
         goto l_cleanup;
@@ -202,8 +192,12 @@ enum PeNESStatus OpcodeBRK::exec(
         goto l_cleanup;
     }
 
-    /* Write the register version of the status back to the register. */
-    register_status->write(program_status);
+    /* Call the parent function to update the status flags based on the update mask. */
+    status = this->update_status(register_status);
+    if (PENES_STATUS_SUCCESS != status) {
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
+        goto l_cleanup;
+    }
 
     status = PENES_STATUS_SUCCESS;
 l_cleanup:
@@ -246,16 +240,18 @@ enum PeNESStatus OpcodeRTI::exec(
         goto l_cleanup;
     }
 
-    /* Clear the Break flag before writing the status to the register,
-     * because it is only relevant to the status that is pushed onto the stack.
-     * */
-    saved_status &= ~REGISTER_STATUS_FLAG_MASK_BREAK;
+    /* Queue the status values pulled from the stack to update the Status register. */
+    update_values = saved_status;
 
     /* Restore the saved address to the Program counter. */
     register_program_counter->write(saved_program_counter);
 
-    /* Restore the saved status to the Status register. */
-    register_status->write(saved_status);
+    /* Call the parent function to update the status flags based on the update mask. */
+    status = this->update_status(program_ctx);
+    if (PENES_STATUS_SUCCESS != status) {
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
+        goto l_cleanup;
+    }
 
     status = PENES_STATUS_SUCCESS;
 l_cleanup:

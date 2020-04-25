@@ -1,5 +1,5 @@
 /**
- * @brief  
+ * @brief  Definitions for increment/decrement-related opcodes.
  * @author TBK
  * @date   23/04/2020
  * */
@@ -20,7 +20,7 @@
 namespace instruction_set {
 
 /** Classes ***************************************************************/
-/* Increment memory by 1. */
+/** @brief Increment memory by 1. */
 class OpcodeINC : public IUpdateDataStatusOpcode {
 public:
     inline enum PeNESStatus exec(
@@ -30,7 +30,7 @@ public:
     ) override;
 };
 
-/* Decrement memory by 1. */
+/** @brief Decrement memory by 1. */
 class OpcodeDEC : public IUpdateDataStatusOpcode {
 public:
     inline enum PeNESStatus exec(
@@ -40,8 +40,8 @@ public:
     ) override;
 };
 
-/* Increment register X by 1. */
-class OpcodeINX : public IUpdateDataStatusOpcode, IImpliedOperandOpcode {
+/** @brief Increment register X by 1. */
+class OpcodeINX : public IUpdateDataStatusOpcode, public IImpliedOperandOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -50,8 +50,8 @@ public:
     ) override;
 };
 
-/* Decrement register X by 1. */
-class OpcodeDEX : public IUpdateDataStatusOpcode, IImpliedOperandOpcode {
+/** @brief Decrement register X by 1. */
+class OpcodeDEX : public IUpdateDataStatusOpcode, public IImpliedOperandOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -60,8 +60,8 @@ public:
     ) override;
 };
 
-/* Increment register Y by 1. */
-class OpcodeINY : public IUpdateDataStatusOpcode, IImpliedOperandOpcode {
+/** @brief Increment register Y by 1. */
+class OpcodeINY : public IUpdateDataStatusOpcode, public IImpliedOperandOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -70,8 +70,8 @@ public:
     ) override;
 };
 
-/* Decrement register Y by 1. */
-class OpcodeDEY : public IUpdateDataStatusOpcode, IImpliedOperandOpcode {
+/** @brief Decrement register Y by 1. */
+class OpcodeDEY : public IUpdateDataStatusOpcode, public IImpliedOperandOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -80,6 +80,6 @@ public:
     ) override;
 };
 
-}
+} /* namespace instruction_set */
 
 #endif /* __INC_DEC_OPCODES_H__ */
