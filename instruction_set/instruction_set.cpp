@@ -28,12 +28,8 @@
 /** Namespaces ************************************************************/
 using namespace instruction_set;
 
-/** Typedefs **************************************************************/
-typedef IOpcode *(*opcode_instance_factory_t)();
-
-/** Globals ***************************************************************/
-//static const std::array<opcode_instance_factory_t, OPCODE_TYPE_NUM_OPCODES> opcode_instance_factory_list = {
-const std::array<opcode_instance_factory_t, OPCODE_TYPE_NUM_OPCODES> OpcodeTable::opcode_instance_factory_list = {
+/** Static Variables ******************************************************/
+const std::array<opcode_instance_factory_t, OPCODE_TYPE_NUM_OPCODES> OpcodeTable::opcode_instance_factory_table = {
     utils::SubClassFactory<IOpcode>::create_instance<OpcodeADC>,
     utils::SubClassFactory<IOpcode>::create_instance<OpcodeAND>,
     utils::SubClassFactory<IOpcode>::create_instance<OpcodeBCC>,

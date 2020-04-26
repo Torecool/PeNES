@@ -9,6 +9,7 @@
 
 /** Headers ***************************************************************/
 #include <cstddef>
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
@@ -49,19 +50,36 @@ class ObjectTable {
 public:
     template<size_t instance_factory_list_size>
     ObjectTable(
-        const std::array<BaseClass *(*)(), instance_factory_list_size> &object_instance_factory_list,
-        const std::initializer_list<TypeIndex> &type_list
+        const std::array<BaseClass *(*)(), instance_factory_list_size> *object_instance_factory_list,
+        std::initializer_list<TypeIndex> type_list
     );
 
     ~ObjectTable();
+
+    inline enum PeNESStatus get_type(
+        std::size_t table_index,
+        TypeIndex *output_type
+    ) const;
 
     inline enum PeNESStatus get_object(
         std::size_t table_index,
         BaseClass **output_object
     ) const;
 
+    inline enum PeNESStatus get_object_by_type(
+        TypeIndex type,
+        BaseClass **output_object
+    ) const;
+
+    inline std::size_t get_size() const
+    {
+        return this->instance_table.size();
+    };
+
 private:
-    std::vector<BaseClass *> object_instance_table;
+    const std::vector<TypeIndex> type_table;
+    std::vector<BaseClass *> instance_table;
+    std::unordered_map<TypeIndex, BaseClass *> type_instance_map;
 };
 
 }

@@ -10,6 +10,8 @@
 /** Headers ***************************************************************/
 #include <cstddef>
 #include <initializer_list>
+#include <decoder/decoder.h>
+
 
 #include "penes_status.h"
 
@@ -19,14 +21,10 @@
 #include "storage_location/storage_location.h"
 #include "instruction_set/opcode_interface.h"
 
-/** Constants *************************************************************/
-/** Macros ****************************************************************/
-/** Enums *****************************************************************/
-/** Typedefs **************************************************************/
-/** Structs ***************************************************************/
-/** Functions *************************************************************/
+/** Namespaces ************************************************************/
 namespace instruction_set {
 
+/** Enums *****************************************************************/
 enum OpcodeType {
     OPCODE_TYPE_NONE = -1,
     OPCODE_TYPE_ADC = 0,
@@ -89,29 +87,34 @@ enum OpcodeType {
     OPCODE_TYPE_NUM_OPCODES
 };
 
+/** Typedefs **************************************************************/
 typedef IOpcode *(*opcode_instance_factory_t)();
 
+/** Classes ***************************************************************/
 class OpcodeTable : public utils::ObjectTable<IOpcode, enum OpcodeType> {
 public:
-    OpcodeTable(const std::initializer_list<enum OpcodeType> &opcode_type_list):
-        ObjectTable<IOpcode, enum OpcodeType>(opcode_instance_factory_list, opcode_type_list)
+    explicit OpcodeTable(std::initializer_list<enum OpcodeType> opcode_types):
+        ObjectTable<IOpcode, enum OpcodeType>(
+            &opcode_instance_factory_table,
+            opcode_types
+        )
     {};
 
 private:
-    static const std::array<opcode_instance_factory_t, OPCODE_TYPE_NUM_OPCODES> opcode_instance_factory_list;
+    static const std::array<opcode_instance_factory_t, OPCODE_TYPE_NUM_OPCODES> opcode_instance_factory_table;
 };
 
 
 class Instruction {
 public:
     explicit Instruction(
-        IOpcode *instruction_opcode = nullptr,
         ProgramContext *program_context = nullptr,
+        IOpcode *instruction_opcode = nullptr,
         IStorageLocation *operand_storage = nullptr,
         std::size_t operand_storage_offset = 0
     ) :
-        instruction_opcode(instruction_opcode),
         program_context(program_context),
+        instruction_opcode(instruction_opcode),
         operand_storage(operand_storage),
         operand_storage_offset(operand_storage_offset)
     {};

@@ -19,23 +19,23 @@
 namespace address_mode {
 
 /** Enums *****************************************************************/
-enum InstructionArgSize {
-    INSTRUCTION_ARG_SIZE_NONE = -1,
-    INSTRUCTION_ARG_SIZE_NO_ARG = 0,
-    INSTRUCTION_ARG_SIZE_WORD = sizeof(native_word_t),
-    INSTRUCTION_ARG_SIZE_DWORD = sizeof(native_dword_t)
+enum InstructionOperandSize {
+    INSTRUCTION_OPERAND_SIZE_NONE = -1,
+    INSTRUCTION_OPERAND_SIZE_NO_OPERAND = 0,
+    INSTRUCTION_OPERAND_SIZE_WORD = sizeof(native_word_t),
+    INSTRUCTION_OPERAND_SIZE_DWORD = sizeof(native_dword_t)
 };
 
 /** Classes ***************************************************************/
 class IAddressMode {
 public:
-    const enum InstructionArgSize arg_size = INSTRUCTION_ARG_SIZE_NO_ARG;
+    const enum InstructionOperandSize operand_size = INSTRUCTION_OPERAND_SIZE_NO_OPERAND;
 
     virtual inline enum PeNESStatus get_storage(
         ProgramContext *program_ctx,
         native_dword_t operand,
         IStorageLocation **output_storage,
-        std::size_t *output_storage_offset = nullptr
+        std::size_t *output_storage_offset
     ) = 0;
 };
 

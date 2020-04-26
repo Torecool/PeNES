@@ -18,16 +18,12 @@
 
 #include "program_context/program_context.h"
 #include "address_mode/address_mode_interface.h"
-#include "address_mode/absolute_address_mode.h"
-#include "address_mode/indirect_address_mode.h"
-#include "address_mode/zeropage_address_mode.h"
-#include "address_mode/accumulator_address_mode.h"
-#include "address_mode/immediate_address_mode.h"
+
 
 /** Namespaces ************************************************************/
 namespace address_mode {
 
-enum class AddressModeType {
+enum AddressModeType {
     ADDRESS_MODE_TYPE_NONE = -1,
     ADDRESS_MODE_TYPE_IMPLIED = 0,
     ADDRESS_MODE_TYPE_ACCUMULATOR,
@@ -42,23 +38,25 @@ enum class AddressModeType {
     ADDRESS_MODE_TYPE_INDIRECT_Y_INDEXED,
     ADDRESS_MODE_TYPE_ZEROPAGE,
     ADDRESS_MODE_TYPE_ZEROPAGE_X_INDEXED,
-    ADDRESS_MODE_TYPE_ZEROPAGE_Y_INDEXED
+    ADDRESS_MODE_TYPE_ZEROPAGE_Y_INDEXED,
+    ADDRESS_MODE_TYPE_NUM_ADDRESS_MODES
 };
 
-/** Classes ***************************************************************/
-class AddressModeTable {
-public:
-    AddressModeTable(
-        const std::initializer_list<IAddressMode *> address_mode_list
-    ) : address_mode_list(address_mode_list) {};
+/** Typedefs **************************************************************/
+typedef IAddressMode *(*address_mode_instance_factory_t)();
 
-    inline enum PeNESStatus get_address_mode(
-        enum AddressModeType address_mode_type,
-        const IAddressMode **output_address_mode
-    ) const;
+/** Classes ***************************************************************/
+class AddressModeTable : public utils::ObjectTable<IAddressMode, enum AddressModeType> {
+public:
+    explicit AddressModeTable(std::initializer_list<enum AddressModeType> address_mode_types):
+        ObjectTable<IAddressMode, enum AddressModeType>(
+            &address_mode_instance_factory_table,
+            address_mode_types
+        )
+    {};
 
 private:
-    const std::vector<IAddressMode *> address_mode_list;
+    static const std::array<address_mode_instance_factory_t, ADDRESS_MODE_TYPE_NUM_ADDRESS_MODES> address_mode_instance_factory_table;
 };
 
 } /* namespace address_modes */

@@ -20,7 +20,7 @@ namespace address_mode {
 /** Classes ***************************************************************/
 class AccumulatorAddressMode : public IAddressMode {
 public:
-    const enum InstructionArgSize arg_size = INSTRUCTION_ARG_SIZE_NO_ARG;
+    const enum InstructionOperandSize operand_size = INSTRUCTION_OPERAND_SIZE_NO_OPERAND;
 
     inline enum PeNESStatus get_storage(
         ProgramContext *program_ctx,

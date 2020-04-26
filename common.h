@@ -51,6 +51,12 @@
 #endif
 
 /** Macros ****************************************************************/
+/* Copy a buffer of memory. */
+#define COPY_MEMORY(dest, src, size) ((void)memcpy(dest, src, size))
+#ifdef COPY_MEMORY
+#include <cstring>
+#endif
+
 /* Dynamically allocate and initialize memory on the heap. */
 #define HEAPALLOCZ(size) (calloc(1, (size)))
 #ifdef HEAPALLOCZ
@@ -123,7 +129,6 @@
     do {                                                    \
         (param) = (param);                                  \
     } while (0)
-
 
 /* Determine which item is smaller by integer comparison. */
 #define MIN(a, b) (((a) <= (b))? (a): (b))
