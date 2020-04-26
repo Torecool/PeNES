@@ -5,7 +5,6 @@
  * */
 
 /** Headers ***************************************************************/
-#include <cstddef>
 #include <array>
 
 #include "penes_status.h"

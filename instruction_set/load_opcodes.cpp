@@ -49,9 +49,9 @@ enum PeNESStatus ILoadOpcode::load(
     load_register->write(operand_storage_data);
 
     /* Call the parent function to update the status flags. */
-    status = this->update_status(program_ctx, operand_storage_data);
+    status = this->update_data_status(program_ctx, operand_storage_data);
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_data_status failed. Status: %d", status);
         goto l_cleanup;
     }
 

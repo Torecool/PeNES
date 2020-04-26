@@ -58,9 +58,9 @@ enum PeNESStatus OpcodeINC::exec(
     }
 
     /* Call the parent function to update the status flags. */
-    status = this->update_status(program_ctx, memory_storage_data);
+    status = this->update_data_status(program_ctx, memory_storage_data);
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_data_status failed. Status: %d", status);
         goto l_cleanup;
     }
 
@@ -108,9 +108,9 @@ enum PeNESStatus OpcodeDEC::exec(
     }
 
     /* Call the parent function to update the status flags. */
-    status = this->update_status(program_ctx, memory_storage_data);
+    status = this->update_data_status(program_ctx, memory_storage_data, 0);
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_data_status failed. Status: %d", status);
         goto l_cleanup;
     }
 
@@ -148,9 +148,9 @@ enum PeNESStatus OpcodeINX::exec(
     register_x->write(register_x_data);
 
     /* Call the parent function to update the status flags. */
-    status = this->update_status(program_ctx, register_x_data);
+    status = this->update_data_status(program_ctx, register_x_data, 0);
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_data_status failed. Status: %d", status);
         goto l_cleanup;
     }
 
@@ -188,9 +188,9 @@ enum PeNESStatus OpcodeDEX::exec(
     register_x->write(register_x_data);
 
     /* Call the parent function to update the status flags. */
-    status = this->update_status(program_ctx, register_x_data);
+    status = this->update_data_status(program_ctx, register_x_data, 0);
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_data_status failed. Status: %d", status);
         goto l_cleanup;
     }
 
@@ -228,9 +228,9 @@ enum PeNESStatus OpcodeINY::exec(
     register_y->write(register_y_data);
 
     /* Call the parent function to update the status flags. */
-    status = this->update_status(program_ctx, register_y_data);
+    status = this->update_data_status(program_ctx, register_y_data, 0);
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_data_status failed. Status: %d", status);
         goto l_cleanup;
     }
 
@@ -268,9 +268,9 @@ enum PeNESStatus OpcodeDEY::exec(
     register_y->write(register_y_data);
 
     /* Call the parent function to update the status flags. */
-    status = this->update_status(program_ctx, register_y_data);
+    status = this->update_data_status(program_ctx, register_y_data, 0);
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_data_status failed. Status: %d", status);
         goto l_cleanup;
     }
 

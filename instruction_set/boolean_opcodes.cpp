@@ -63,9 +63,9 @@ enum PeNESStatus IBooleanOpcode::exec(
     register_a->write(operation_result);
 
     /* Call the parent function to update the status flags. */
-    status = this->update_status(program_ctx, operation_result);
+    status = this->update_data_status(program_ctx, operation_result);
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_data_status failed. Status: %d", status);
         goto l_cleanup;
     }
 
@@ -86,6 +86,7 @@ enum PeNESStatus OpcodeBIT::exec(
     native_word_t register_a_data = 0;
     native_word_t storage_data = 0;
     native_word_t and_result = 0;
+    native_word_t update_values = 0;
     bool is_bit6_set = false;
     bool is_bit7_set = false;
 
@@ -122,9 +123,9 @@ enum PeNESStatus OpcodeBIT::exec(
     update_values |= (true == is_bit7_set)? REGISTER_STATUS_FLAG_MASK_NEGATIVE: 0;
 
     /* Call the parent function to update the status flags. */
-    status = this->update_status(program_ctx, and_result);
+    status = this->update_data_status(program_ctx, and_result, update_values);
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_data_status failed. Status: %d", status);
         goto l_cleanup;
     }
 

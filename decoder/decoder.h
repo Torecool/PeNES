@@ -19,14 +19,6 @@
 
 /** Macros ****************************************************************/
 /** Enums *****************************************************************/
-enum InstructionDecodeGroupIndex {
-    INSTRUCTION_DECODE_GROUP_INDEX_NONE = -1,
-    INSTRUCTION_DECODE_GROUP_INDEX_0 = 0,
-    INSTRUCTION_DECODE_GROUP_INDEX_1,
-    INSTRUCTION_DECODE_GROUP_INDEX_2,
-    INSTRUCTION_DECODE_GROUP_NUM_DECODE_GROUPS
-};
-
 /** Typedefs **************************************************************/
 /** Structs ***************************************************************/
 /** Functions *************************************************************/
@@ -95,9 +87,5 @@ private:
 
     static const std::array<const InstructionDecodeGroup *, DECODER_NUM_INSTRUCTION_DECODE_GROUPS> instruction_group_table;
 };
-
-
-
-
 
 #endif /* __DECODER_H__ */

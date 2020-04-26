@@ -59,9 +59,10 @@ public:
 };
 
 /** @brief General interface for all instruction set opcodes that modify the value of the Status register.
- *         The interface extends the standard opcode interface by adding the protected update_status method.
+ *         The interface extends the standard opcode interface by adding the update_status method.
  *         A subclass wishing to update the status register should perform the following operations:
  *         - Declare via the update_mask which flags are allowed to be modified. Only flags set in this variable will be modified.
+ *         - Declare via the base_values the flag values to be set by any instance of the class regardless of the update_values parameter.
  *         - Set via update_values the new values for the flags that are allowed to be modified. The rest of the flag values are ignored.
  *         - Call this->update_status to perform the update operation.
  * */
@@ -75,32 +76,45 @@ public:
 
 protected:
     /** @brief          Update the Status register based on the mask of flags allowed to be modified (set through update_mask),
+     *                  the base update values (set through base_values),
      *                  and the new values for those flags (set through update_values).
      *
      *  @param[in,out]  register_status             The Status register to update.
+     *  @param[in]      update_values               The new flag values to set in the modifiable flags of the Status register.
+     *                                              The rest of the flag values are ignored.
      *
      *  @return         Status indicating the success of the operation.
      * */
-    inline enum PeNESStatus update_status(RegisterStorage<native_word_t> *register_status);
+    inline enum PeNESStatus update_status(
+        RegisterStorage<native_word_t> *register_status,
+        native_word_t update_values = 0
+    );
 
     /** @brief          Utility wrapper for the update_status method that receives the Status register.
      *                  Retrieves the Status register from the program context and calls update_status.
      *
      *  @param[in]      program_ctx                 The program context containing the Status register to update.
+     *  @param[in]      update_values               The new flag values to set in the modifiable flags of the Status register.
+     *                                              The rest of the flag values are ignored.
      *
      *  @return         Status indicating the success of the operation.
      * */
-    inline enum PeNESStatus update_status(ProgramContext *program_ctx);
+    inline enum PeNESStatus update_status(
+        ProgramContext *program_ctx,
+        native_word_t update_values = 0
+    );
 
     /** @brief The mask of status flags that are allowed to be modified in the Status register. */
     const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NONE;
 
-    /** @brief The new flag values to set in the modifiable flags of the Status register. The rest of the flag values are ignored. */
-    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
+    /** @brief The base flag values to set in the modifiable flags of the Status register.
+     *         The actual updated flag values will be equal to base_values | update_values.
+     * */
+    const native_word_t base_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
 /** @brief General interface for all instruction set opcodes that modify the value of the Status register based on the contents of given data.
- *         The interface extends the standard status-updating opcode interface by overloading the update_status method with a variant that
+ *         The interface extends the standard status-updating opcode interface by adding the update_data_status method that
  *         receives a DWORD of data and decides which status flags to update based on the state of the data.
  *         The supported data flags to be decided on by the method are the Negative, Zero and Carry flags.
  *         Since the Overflow flag requires more data for the decision, it must be manually updated by the opcode subclass.
@@ -108,34 +122,41 @@ protected:
 class IUpdateDataStatusOpcode : public IUpdateStatusOpcode {
 protected:
     /** @brief          Update the Status register based on the mask of flags allowed to be modified (set through update_mask)
+     *                  the base update values (set through base_values),
      *                  the new values for those flags (set through update_values),
      *                  and the state of the parameter data.
      *
      *  @param[in,out]  register_status             The Status register to update.
      *  @param[in]      opcode_result               The data to use for deciding which flags to update.
+     *  @param[in]      update_values               The new flag values to set in the modifiable flags of the Status register.
+     *                                              The rest of the flag values are ignored.
      *
      *  @return         Status indicating the success of the operation.
      *
      *  @note           This method is an extension of the superclass update_status method,
      *                  meaning that it still performs the functionality provided by the superclass method.
-     *                  Flag values set manually via update_values will not be overridden.
+     *                  Flags set manually via update_values will not be overridden.
      * */
-    inline enum PeNESStatus update_status(
+    inline enum PeNESStatus update_data_status(
         RegisterStorage<native_word_t> *register_status,
-        native_dword_t opcode_result
+        native_dword_t opcode_result,
+        native_word_t update_values = 0
     );
 
-    /** @brief          Utility wrapper for the update_status method that receives the Status register.
-     *                  Retrieves the Status register from the program context and calls update_status.
+    /** @brief          Utility wrapper for the update_data_status method that receives the Status register.
+     *                  Retrieves the Status register from the program context and calls update_data_status.
      *
      *  @param[in]      program_ctx                 The program context containing the Status register to update.
      *  @param[in]      opcode_result               The data to use for deciding which flags to update.
+     *  @param[in]      update_values               The new flag values to set in the modifiable flags of the Status register.
+     *                                              The rest of the flag values are ignored.
      *
      *  @return         Status indicating the success of the operation.
      * */
-    inline enum PeNESStatus update_status(
+    inline enum PeNESStatus update_data_status(
         ProgramContext *program_ctx,
-        native_dword_t opcode_result
+        native_dword_t opcode_result,
+        native_word_t update_values = 0
     );
 
     const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE | REGISTER_STATUS_FLAG_MASK_ZERO;

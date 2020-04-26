@@ -24,7 +24,7 @@ namespace instruction_set {
 class OpcodeSEC : public IUpdateStatusOpcode, public IImpliedOperandOpcode {
 protected:
     const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
-    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_CARRY;
+    const native_word_t base_values = REGISTER_STATUS_FLAG_MASK_CARRY;
 };
 
 
@@ -32,7 +32,6 @@ protected:
 class OpcodeCLC : public IUpdateStatusOpcode, public IImpliedOperandOpcode {
 protected:
     const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
-    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
 
@@ -40,7 +39,7 @@ protected:
 class OpcodeSED : public IUpdateStatusOpcode, public IImpliedOperandOpcode {
 protected:
     const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_DECIMAL;
-    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_DECIMAL;
+    const native_word_t base_values = REGISTER_STATUS_FLAG_MASK_DECIMAL;
 };
 
 
@@ -48,7 +47,6 @@ protected:
 class OpcodeCLD : public IUpdateStatusOpcode, public IImpliedOperandOpcode {
 protected:
     const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_DECIMAL;
-    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
 
@@ -56,7 +54,7 @@ protected:
 class OpcodeSEI : public IUpdateStatusOpcode, public IImpliedOperandOpcode {
 protected:
     const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
-    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
+    const native_word_t base_values = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
 };
 
 
@@ -64,7 +62,6 @@ protected:
 class OpcodeCLI : public IUpdateStatusOpcode, public IImpliedOperandOpcode {
 protected:
     const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
-    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
 
@@ -72,7 +69,6 @@ protected:
 class OpcodeCLV : public IUpdateStatusOpcode, public IImpliedOperandOpcode {
 protected:
     const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_OVERFLOW;
-    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_NONE;
 };
 
 } /* namespace instruction_set */

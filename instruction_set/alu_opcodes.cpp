@@ -28,6 +28,7 @@ enum PeNESStatus IAddOpcode::add(ProgramContext *program_ctx, native_word_t add_
     native_word_t register_a_data = 0;
     native_word_t register_status_data = 0;
     native_dword_t operation_result = 0;
+    native_word_t update_values = 0;
     bool is_carry_set = false;
 
     ASSERT(nullptr != program_ctx);
@@ -62,9 +63,9 @@ enum PeNESStatus IAddOpcode::add(ProgramContext *program_ctx, native_word_t add_
     register_a->write(operation_result);
 
     /* Call the parent function to update the status flags. */
-    status = this->update_status(register_status, operation_result);
+    status = this->update_data_status(register_status, operation_result, update_values);
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_data_status failed. Status: %d", status);
         goto l_cleanup;
     }
 

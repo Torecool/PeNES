@@ -44,9 +44,9 @@ enum PeNESStatus ITransferOpcode::transfer(
     dest_register_data = dest_register->read();
 
     /* Call the parent function to update the status flags. */
-    status = this->update_status(program_ctx, dest_register_data);
+    status = this->update_data_status(program_ctx, dest_register_data);
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_data_status failed. Status: %d", status);
         goto l_cleanup;
     }
 

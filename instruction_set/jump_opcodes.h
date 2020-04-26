@@ -115,7 +115,7 @@ protected:
      * Since this flag is not written to the status pushed on the stack,
      * after RTI/PLP, the flag will be cleared.
      * */
-    native_word_t update_values = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
+    const native_word_t base_values = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
 };
 
 /** @brief Return from interrupt, restoring Status register and Program counter. */

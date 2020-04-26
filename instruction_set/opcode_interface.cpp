@@ -33,9 +33,9 @@ enum PeNESStatus IUpdateStatusOpcode::exec(
     UNREFERENCED_PARAMETER(operand_storage_offset);
 
     /* Call the method to update the status. */
-    status = this->update_status(program_ctx);
+    status = this->update_status(program_ctx, 0);
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("update_status failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("update_data_status failed. Status: %d", status);
         goto l_cleanup;
     }
 
@@ -45,7 +45,10 @@ l_cleanup:
 }
 
 
-enum PeNESStatus IUpdateStatusOpcode::update_status(RegisterStorage<native_word_t> *register_status)
+enum PeNESStatus IUpdateStatusOpcode::update_status(
+    RegisterStorage<native_word_t> *register_status,
+    native_word_t update_values
+)
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     native_word_t status_flags = 0;
@@ -56,10 +59,10 @@ enum PeNESStatus IUpdateStatusOpcode::update_status(RegisterStorage<native_word_
     /* Read contents of the status register. */
     status_flags = register_status->read();
 
-    /* Update the status register flags with the values from update_values.
+    /* Update the status register flags with the values from base_values together with update_values.
      * A flag will only be updated if it is set in update_mask.
      * */
-    updated_status_flags = (status_flags & ~update_mask) | update_values;
+    updated_status_flags = (status_flags & ~this->update_mask) | this->base_values | update_values;
 
     /* Write the status register back. */
     register_status->write(updated_status_flags);
@@ -70,7 +73,10 @@ l_cleanup:
 }
 
 
-enum PeNESStatus IUpdateStatusOpcode::update_status(ProgramContext *program_ctx)
+enum PeNESStatus IUpdateStatusOpcode::update_status(
+    ProgramContext *program_ctx,
+    native_word_t update_values
+)
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     RegisterStorage<native_word_t> *register_status = nullptr;
@@ -81,9 +87,9 @@ enum PeNESStatus IUpdateStatusOpcode::update_status(ProgramContext *program_ctx)
     register_status = program_ctx->register_file.get_register_status();
 
     /* Call the "real" update_status. */
-    status = this->update_status(register_status);
+    status = this->update_status(register_status, update_values);
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("update_status failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("update_data_status failed. Status: %d", status);
         goto l_cleanup;
     }
 
@@ -93,9 +99,10 @@ l_cleanup:
 }
 
 
-enum PeNESStatus IUpdateDataStatusOpcode::update_status(
+enum PeNESStatus IUpdateDataStatusOpcode::update_data_status(
     RegisterStorage<native_word_t> *register_status,
-    native_dword_t opcode_result
+    native_dword_t opcode_result,
+    native_word_t update_values
 )
 
 {
@@ -111,9 +118,9 @@ enum PeNESStatus IUpdateDataStatusOpcode::update_status(
     update_values |= (true == did_carry)? REGISTER_STATUS_FLAG_MASK_CARRY: 0;
 
     /* Call the parent function to update the status flags. */
-    status = IUpdateStatusOpcode::update_status(register_status);
+    status = IUpdateStatusOpcode::update_status(register_status, update_values);
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_data_status failed. Status: %d", status);
         goto l_cleanup;
     }
 
@@ -123,9 +130,10 @@ l_cleanup:
 }
 
 
-enum PeNESStatus IUpdateDataStatusOpcode::update_status(
+enum PeNESStatus IUpdateDataStatusOpcode::update_data_status(
     ProgramContext *program_ctx,
-    native_dword_t opcode_result
+    native_dword_t opcode_result,
+    native_word_t update_values
 )
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
@@ -136,10 +144,10 @@ enum PeNESStatus IUpdateDataStatusOpcode::update_status(
     /* Retrieve the Status register from the program context. */
     register_status = program_ctx->register_file.get_register_status();
 
-    /* Call the "real" update_status. */
-    status = this->update_status(register_status, opcode_result);
+    /* Call the "real" update_data_status. */
+    status = this->update_data_status(register_status, opcode_result, update_values);
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("update_status failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("update_data_status failed. Status: %d", status);
         goto l_cleanup;
     }
 

@@ -409,6 +409,9 @@ enum PeNESStatus Decoder::next_instruction(
         operand_storage_offset
     );
 
+    /* Write the updated program counter back to the Program counter register. */
+    register_program_counter->write(program_counter_address);
+
     *output_instruction = instruction;
 
     status = PENES_STATUS_SUCCESS;

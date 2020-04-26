@@ -161,7 +161,7 @@ enum PeNESStatus OpcodeBRK::exec(
 
     /* Set the Break flag on the status that is pushed to the stack,
      * to indicate that a software interrupt is occurring.
-     * Note that due to the update mask, this value will not be written back to the register.
+     * Note that this value will not be written back to the register.
      * */
     program_status |= REGISTER_STATUS_FLAG_MASK_BREAK;
 
@@ -195,7 +195,7 @@ enum PeNESStatus OpcodeBRK::exec(
     /* Call the parent function to update the status flags based on the update mask. */
     status = this->update_status(register_status);
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_data_status failed. Status: %d", status);
         goto l_cleanup;
     }
 
@@ -240,16 +240,13 @@ enum PeNESStatus OpcodeRTI::exec(
         goto l_cleanup;
     }
 
-    /* Queue the status values pulled from the stack to update the Status register. */
-    update_values = saved_status;
-
     /* Restore the saved address to the Program counter. */
     register_program_counter->write(saved_program_counter);
 
     /* Call the parent function to update the status flags based on the update mask. */
-    status = this->update_status(program_ctx);
+    status = this->update_status(program_ctx, saved_status);
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_data_status failed. Status: %d", status);
         goto l_cleanup;
     }
 
