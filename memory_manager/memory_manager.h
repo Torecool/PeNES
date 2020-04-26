@@ -46,6 +46,10 @@ public:
     inline MemoryStorage *get_reset_interrupt_vector() const;
 
     inline MemoryStorage *get_irq_interrupt_vector() const;
+
+private:
+    static const std::vector<native_address_t> address_keys;
+    static const std::vector<MemoryStorage *> memory_map;
 };
 
 

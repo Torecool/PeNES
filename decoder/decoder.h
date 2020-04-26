@@ -46,7 +46,6 @@ private:
 };
 
 
-
 class Decoder {
 public:
     Decoder(
