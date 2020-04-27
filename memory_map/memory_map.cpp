@@ -12,55 +12,76 @@
 
 #include "memory_map/memory_map.h"
 
-/** Constants *************************************************************/
-#define MEMORY_MAP_ZERO_PAGE_START_ADDRESS (0x0)
-#define MEMORY_MAP_STACK_START_ADDRESS (0x100)
-#define MEMORY_MAP_RAM_START_ADDRESS (0x200)
-#define MEMORY_MAP_RAM_MIRROR_START_ADDRESS (0x800)
-#define MEMORY_MAP_IO_REGISTERS_START_ADDRESS (0x2000)
-#define MEMORY_MAP_IO_MIRROR_START_ADDRESS (0x2008)
-#define MEMORY_MAP_IO_REGISTERS_2_START_ADDRESS (0x4000)
-#define MEMORY_MAP_EXPANSION_ROM_START_ADDRESS (0x4020)
-#define MEMORY_MAP_SRAM_START_ADDRESS (0x6000)
-#define MEMORY_MAP_PRG_ROM_LOWER_START_ADDRESS (0x8000)
-#define MEMORY_MAP_PRG_ROM_UPPER_START_ADDRESS (0xC000)
-#define MEMORY_MAP_END_ADDRESS (0x10000)
-
-/** Macros ****************************************************************/
-/** Enums *****************************************************************/
-/** Typedefs **************************************************************/
-/** Structs ***************************************************************/
-static const std::vector<native_address_t> address_keys = {
-    MEMORY_MAP_ZERO_PAGE_START_ADDRESS,         /* Zero Page */
-    MEMORY_MAP_STACK_START_ADDRESS,             /* Stack */
-    MEMORY_MAP_RAM_START_ADDRESS,               /* RAM */
-    MEMORY_MAP_RAM_MIRROR_START_ADDRESS,        /* Mirrors 0x0000-0x7FF */
-    MEMORY_MAP_IO_REGISTERS_START_ADDRESS,      /* I/O Registers */
-    MEMORY_MAP_IO_MIRROR_START_ADDRESS,         /* Mirrors 0x2000-0x2007 */
-    MEMORY_MAP_IO_REGISTERS_2_START_ADDRESS,    /* I/O Registers */
-    MEMORY_MAP_EXPANSION_ROM_START_ADDRESS,     /* Expansion ROM */
-    MEMORY_MAP_SRAM_START_ADDRESS,              /* SRAM */
-    MEMORY_MAP_PRG_ROM_LOWER_START_ADDRESS,     /* PRG-ROM Lower Bank */
-    MEMORY_MAP_PRG_ROM_UPPER_START_ADDRESS      /* PRG-ROM Upper Bank */
+/** Static Variables ******************************************************/
+const std::vector<enum MemoryMapAddress> MemoryMap::address_keys = {
+    MEMORY_MAP_ADDRESS_START_ZERO_PAGE,            /* Zero Page */
+    MEMORY_MAP_ADDRESS_START_STACK,                /* Stack */
+    MEMORY_MAP_ADDRESS_START_RAM,                  /* RAM */
+    MEMORY_MAP_ADDRESS_START_RAM_MIRROR,           /* Mirrors 0x0000-0x7FF */
+    MEMORY_MAP_ADDRESS_START_IO_REGISTERS,         /* I/O Registers */
+    MEMORY_MAP_ADDRESS_START_IO_MIRROR,            /* Mirrors 0x2000-0x2007 */
+    MEMORY_MAP_ADDRESS_START_IO_REGISTERS_2,       /* I/O Registers */
+    MEMORY_MAP_ADDRESS_START_EXPANSION_ROM,        /* Expansion ROM */
+    MEMORY_MAP_ADDRESS_START_SRAM,                 /* SRAM */
+    MEMORY_MAP_ADDRESS_START_PRG_ROM_LOWER,        /* PRG-ROM Lower Bank */
+    MEMORY_MAP_ADDRESS_START_PRG_ROM_UPPER,        /* PRG-ROM Upper Bank */
+    MEMORY_MAP_ADDRESS_START_NMI_JUMP_VECTOR,      /* NMI Jump Vector */
+    MEMORY_MAP_ADDRESS_START_RESET_JUMP_VECTOR,    /* RESET Jump Vector */
+    MEMORY_MAP_ADDRESS_START_IRQ_JUMP_VECTOR       /* IRQ Jump Vector */
 };
 
 /** Functions *************************************************************/
 MemoryMap::MemoryMap()
 {
-    this->storage_table = {
-        new MemoryStorage(MEMORY_MAP_STACK_START_ADDRESS - MEMORY_MAP_ZERO_PAGE_START_ADDRESS),
-        new MemoryStorage(MEMORY_MAP_RAM_START_ADDRESS - MEMORY_MAP_STACK_START_ADDRESS),
-        new MemoryStorage(MEMORY_MAP_RAM_MIRROR_START_ADDRESS - MEMORY_MAP_RAM_START_ADDRESS),
-        new MemoryStorage(MEMORY_MAP_IO_REGISTERS_START_ADDRESS - MEMORY_MAP_RAM_MIRROR_START_ADDRESS),
-        new MemoryStorage(MEMORY_MAP_IO_MIRROR_START_ADDRESS - MEMORY_MAP_IO_REGISTERS_START_ADDRESS),
-        new MemoryStorage(MEMORY_MAP_IO_REGISTERS_2_START_ADDRESS - MEMORY_MAP_IO_MIRROR_START_ADDRESS),
-        new MemoryStorage(MEMORY_MAP_EXPANSION_ROM_START_ADDRESS - MEMORY_MAP_IO_REGISTERS_2_START_ADDRESS),
-        new MemoryStorage(MEMORY_MAP_SRAM_START_ADDRESS - MEMORY_MAP_EXPANSION_ROM_START_ADDRESS),
-        new MemoryStorage(MEMORY_MAP_PRG_ROM_LOWER_START_ADDRESS - MEMORY_MAP_SRAM_START_ADDRESS),
-        new MemoryStorage(MEMORY_MAP_PRG_ROM_LOWER_START_ADDRESS - MEMORY_MAP_PRG_ROM_LOWER_START_ADDRESS),
-        new MemoryStorage(MEMORY_MAP_PRG_ROM_UPPER_START_ADDRESS - MEMORY_MAP_PRG_ROM_LOWER_START_ADDRESS),
-        new MemoryStorage(MEMORY_MAP_END_ADDRESS - MEMORY_MAP_PRG_ROM_UPPER_START_ADDRESS),
-    };
+    enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+    std::vector<enum MemoryMapAddress>::const_iterator address_key_iter;
+    std::size_t memory_storage_size = 0;
+    std::size_t next_address_start = 0;
+
+    /* Iterate through the address key table.
+     * Create a new storage object for each entry in the map,
+     * with the size being the distance between the entry's start address and the following entry's start address.
+     * */
+    for (
+        address_key_iter = MemoryMap::address_keys.begin();
+        address_key_iter < MemoryMap::address_keys.end();
+        address_key_iter++
+    )
+    {
+        if (MemoryMap::address_keys.end() > address_key_iter + 1) {
+            next_address_start = *(address_key_iter + 1);
+        } else {
+            next_address_start = MEMORY_MAP_ADDRESS_END;
+        }
+
+        memory_storage_size = next_address_start - *address_key_iter;
+        this->storage_table.push_back(new MemoryStorage(memory_storage_size));
+    }
+
+    /* Search the table for "common" memory storage objects, in able to provide a "shortcut" retrieval method. */
+    status = this->get_memory_storage(
+        MEMORY_MAP_ADDRESS_START_STACK,
+        &this->stack_storage
+    );
+    ASSERT(PENES_STATUS_SUCCESS == status);
+
+    status = this->get_memory_storage(
+        MEMORY_MAP_ADDRESS_START_NMI_JUMP_VECTOR,
+        &this->nmi_jump_vector_storage
+    );
+    ASSERT(PENES_STATUS_SUCCESS == status);
+
+    status = this->get_memory_storage(
+        MEMORY_MAP_ADDRESS_START_RESET_JUMP_VECTOR,
+        &this->reset_jump_vector_storage
+    );
+    ASSERT(PENES_STATUS_SUCCESS == status);
+
+    status = this->get_memory_storage(
+        MEMORY_MAP_ADDRESS_START_IRQ_JUMP_VECTOR,
+        &this->irq_jump_vector_storage
+    );
+    ASSERT(PENES_STATUS_SUCCESS == status);
 }
 
 
@@ -71,11 +92,10 @@ enum PeNESStatus MemoryMap::get_memory_storage(
 ) const
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-    std::vector<native_address_t>::const_iterator address_key_iter;
+    std::vector<enum MemoryMapAddress>::const_iterator address_key_iter;
     std::size_t memory_storage_index = 0;
 
     ASSERT(nullptr != output_storage);
-    ASSERT(nullptr != output_storage_offset);
 
     /* Find the memory storage key that "contains" the address,
      * meaning the closest key that is a lower bound.
@@ -116,15 +136,12 @@ enum PeNESStatus MemoryMap::get_memory_storage(
      * since the key represents the first cell of the storage object.
      * */
     *output_storage = this->storage_table.at(memory_storage_index);
-    *output_storage_offset = address - *address_key_iter;
+
+    if (nullptr != output_storage_offset) {
+        *output_storage_offset = address - *address_key_iter;
+    }
 
     status = PENES_STATUS_SUCCESS;
 l_cleanup:
     return status;
-}
-
-
-MemoryStorage *MemoryMap::get_stack_storage() const
-{
-    return nullptr;
 }

@@ -15,11 +15,7 @@
 /** Constants *************************************************************/
 #define DECODER_NUM_INSTRUCTION_DECODE_GROUPS (3)
 
-/** Macros ****************************************************************/
-/** Enums *****************************************************************/
-/** Typedefs **************************************************************/
-/** Structs ***************************************************************/
-/** Functions *************************************************************/
+/** Classes ***************************************************************/
 class InstructionDecodeGroup {
 public:
     InstructionDecodeGroup(
@@ -27,7 +23,7 @@ public:
         std::initializer_list<std::initializer_list<instruction_set::OpcodeType>> opcode_type_groups
     );
 
-    ~InstructionDecodeGroup()
+    inline ~InstructionDecodeGroup()
     {
         this->opcode_tables.clear();
     };
@@ -52,7 +48,7 @@ public:
         std::size_t src_binary_size
     );
 
-    inline enum PeNESStatus next_instruction(
+    enum PeNESStatus next_instruction(
         instruction_set::Instruction **output_instruction
     ) const;
 

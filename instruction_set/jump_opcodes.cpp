@@ -117,7 +117,7 @@ enum PeNESStatus OpcodeBRK::exec(
     register_status = program_ctx->register_file.get_register_status();
 
     /* Retrieve the IRQ interrupt handler vector from the program context. */
-    interrupt_vector_storage = program_ctx->memory_map.get_irq_interrupt_vector();
+    interrupt_vector_storage = program_ctx->memory_map.get_irq_jump_vector();
 
     /* Read the current program counter address and status. */
     program_counter_address = register_program_counter->read();
