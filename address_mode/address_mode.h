@@ -48,7 +48,7 @@ typedef IAddressMode *(*address_mode_instance_factory_t)();
 /** Classes ***************************************************************/
 class AddressModeTable : public utils::ObjectTable<IAddressMode, enum AddressModeType> {
 public:
-    explicit AddressModeTable(std::initializer_list<enum AddressModeType> address_mode_types):
+    AddressModeTable(std::initializer_list<enum AddressModeType> address_mode_types):
         ObjectTable<IAddressMode, enum AddressModeType>(
             &address_mode_instance_factory_table,
             address_mode_types

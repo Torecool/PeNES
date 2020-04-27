@@ -10,28 +10,22 @@
 /** Headers ***************************************************************/
 #include <cstddef>
 
+#include "penes_status.h"
 #include "system.h"
 
 #include "storage_location/storage_location.h"
-#include "memory_manager/memory_manager.h"
+#include "memory_map/memory_map.h"
 #include "utils/utils.h"
 
+/** Constants *************************************************************/
+#define PROGRAM_CONTEXT_REGISTER_A_INITIAL_VALUE (0)
+#define PROGRAM_CONTEXT_REGISTER_X_INITIAL_VALUE (0)
+#define PROGRAM_CONTEXT_REGISTER_Y_INITIAL_VALUE (0)
+#define PROGRAM_CONTEXT_REGISTER_STATUS_INITIAL_VALUE (0)
+#define PROGRAM_CONTEXT_REGISTER_STACK_POINTER_INITIAL_VALUE (0)
+#define PROGRAM_CONTEXT_REGISTER_PROGRAM_COUNTER_INITIAL_VALUE (0)
 
-/** Structs ***************************************************************/
-template<typename T>
-class RegisterStorage : public IStorageLocation {
-public:
-   inline explicit RegisterStorage() : IStorageLocation(sizeof(T)) {};
-
-   inline T read() {
-       return *static_cast<T *>(this->storage_buffer);
-   }
-
-   inline void write(T register_data) {
-        return *static_cast<T *>(this->storage_buffer) = register_data;
-   }
-};
-
+/** Enums *****************************************************************/
 enum RegisterStatusFlagMask {
     REGISTER_STATUS_FLAG_MASK_NONE = 0,
     REGISTER_STATUS_FLAG_MASK_CARRY = 1 << 0,
@@ -44,28 +38,26 @@ enum RegisterStatusFlagMask {
     REGISTER_STATUS_FLAG_MASK_NEGATIVE = 1 << 7
 };
 
-class ImmediateStorage : public IStorageLocation {
-public:
-    inline explicit ImmediateStorage(std::size_t immediate_size) : IStorageLocation(immediate_size) {};
-
-    inline enum PeNESStatus write(
-        void *write_buffer,
-        std::size_t write_size,
-        std::size_t immediate_absolute_offset = 0
-    ) override;
-
-    inline enum PeNESStatus set(
-        void *write_buffer,
-        std::size_t write_size,
-        std::size_t immediate_absolute_offset = 0
-    );
-
-    inline enum PeNESStatus reset();
-};
-
-
+/** Classes ***************************************************************/
 class RegisterFile {
 public:
+    explicit RegisterFile(
+        native_word_t register_a_data = PROGRAM_CONTEXT_REGISTER_A_INITIAL_VALUE,
+        native_word_t register_x_data = PROGRAM_CONTEXT_REGISTER_X_INITIAL_VALUE,
+        native_word_t register_y_data = PROGRAM_CONTEXT_REGISTER_Y_INITIAL_VALUE,
+        native_word_t register_status_data = PROGRAM_CONTEXT_REGISTER_STATUS_INITIAL_VALUE,
+        native_word_t register_stack_pointer_data = PROGRAM_CONTEXT_REGISTER_STACK_POINTER_INITIAL_VALUE,
+        native_address_t register_program_data = PROGRAM_CONTEXT_REGISTER_PROGRAM_COUNTER_INITIAL_VALUE
+    )
+    {
+        /* Initialize each register with its initial value. */
+        register_a.write(register_a_data);
+        register_x.write(register_x_data);
+        register_y.write(register_y_data);
+        register_status.write(register_status_data);
+        register_stack_pointer.write(register_stack_pointer_data);
+        register_program_counter.write(register_program_data);
+    };
 
     constexpr inline RegisterStorage<native_word_t> *get_register_a() {
         return &this->register_a;
@@ -101,12 +93,10 @@ private:
     RegisterStorage<native_address_t> register_program_counter;
 };
 
-
+/** Structs ***************************************************************/
 struct ProgramContext {
     RegisterFile register_file;
-    MemoryManager memory_manager;
-    utils::ObjectPool<ImmediateStorage> immediate_storage_pool;
-
+    MemoryMap memory_map;
 };
 
 #endif /* __PROGRAM_CONTEXT_H__ */

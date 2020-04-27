@@ -33,7 +33,7 @@ enum PeNESStatus IUpdateStatusOpcode::exec(
     UNREFERENCED_PARAMETER(operand_storage_offset);
 
     /* Call the method to update the status. */
-    status = this->update_status(program_ctx, 0);
+    status = this->update_status(program_ctx);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("update_data_status failed. Status: %d", status);
         goto l_cleanup;
@@ -48,7 +48,7 @@ l_cleanup:
 enum PeNESStatus IUpdateStatusOpcode::update_status(
     RegisterStorage<native_word_t> *register_status,
     native_word_t update_values
-)
+) const
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     native_word_t status_flags = 0;
@@ -76,7 +76,7 @@ l_cleanup:
 enum PeNESStatus IUpdateStatusOpcode::update_status(
     ProgramContext *program_ctx,
     native_word_t update_values
-)
+) const
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     RegisterStorage<native_word_t> *register_status = nullptr;
@@ -178,7 +178,7 @@ enum PeNESStatus IStackOpcode::push(
     stack_pointer_address = register_stack_pointer->read();
 
     /* Retrieve the memory storage containing the stack from the program context's memory manager. */
-    stack_storage = program_ctx->memory_manager.get_stack_storage();
+    stack_storage = program_ctx->memory_map.get_stack_storage();
 
     /* Write the data to the location in the stack just above the data on top.
      * Note that the stack grows top-down.
@@ -226,7 +226,7 @@ enum PeNESStatus IStackOpcode::pull(
     stack_pointer_address = register_stack_pointer->read();
 
     /* Retrieve the memory storage containing the stack from the program context's memory manager. */
-    stack_storage = program_ctx->memory_manager.get_stack_storage();
+    stack_storage = program_ctx->memory_map.get_stack_storage();
 
     /* Increment the Stack pointer to point to the data at the top of the stack. */
     stack_pointer_address += sizeof(pull_size);

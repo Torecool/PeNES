@@ -37,6 +37,21 @@ public:
         IStorageLocation **output_storage,
         std::size_t *output_storage_offset
     ) = 0;
+
+    virtual inline enum PeNESStatus release_storage(
+        ProgramContext *program_ctx,
+        IStorageLocation *storage
+    )
+    {
+        enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+
+        ASSERT(nullptr != program_ctx);
+        ASSERT(nullptr != storage);
+
+        status = PENES_STATUS_SUCCESS;
+    l_cleanup:
+        return status;
+    }
 };
 
 } /* namespace address_modes */

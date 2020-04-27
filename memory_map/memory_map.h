@@ -4,8 +4,8 @@
  * @date   18/04/2020
  * */
 
-#ifndef __MEMORY_MANAGER_H__
-#define __MEMORY_MANAGER_H__
+#ifndef __MEMORY_MAP_H__
+#define __MEMORY_MAP_H__
 
 /** Headers ***************************************************************/
 #include <cstddef>
@@ -28,11 +28,19 @@
 
 
 
-class MemoryStorage : public IStorageLocation {};
-
-
-class MemoryManager {
+class MemoryStorage : public IStorageLocation {
 public:
+    explicit MemoryStorage(std::size_t num_storage_words): IStorageLocation(num_storage_words)
+    {};
+};
+
+
+class MemoryMap {
+public:
+    MemoryMap();
+
+     ~MemoryMap();
+
     inline enum PeNESStatus get_memory_storage(
         native_address_t address,
         MemoryStorage **output_storage,
@@ -49,8 +57,8 @@ public:
 
 private:
     static const std::vector<native_address_t> address_keys;
-    static const std::vector<MemoryStorage *> memory_map;
+    std::vector<MemoryStorage *> storage_table;
 };
 
 
-#endif /* __MEMORY_MANAGER_H__ */
+#endif /* __MEMORY_MAP_H__ */

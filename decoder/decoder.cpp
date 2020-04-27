@@ -359,7 +359,7 @@ Decoder::Decoder(
 
 enum PeNESStatus Decoder::next_instruction(
     instruction_set::Instruction **output_instruction
-)
+) const
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     instruction_set::Instruction *instruction = nullptr;
@@ -405,6 +405,7 @@ enum PeNESStatus Decoder::next_instruction(
     instruction = new instruction_set::Instruction(
         program_ctx,
         instruction_opcode,
+        instruction_address_mode,
         operand_storage,
         operand_storage_offset
     );
@@ -424,7 +425,7 @@ enum PeNESStatus Decoder::decode_opcode(
     native_address_t *decode_address,
     instruction_set::IOpcode **output_opcode,
     address_mode::IAddressMode **output_address_mode
-)
+) const
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     const InstructionDecodeGroup *instruction_group = nullptr;
@@ -498,7 +499,7 @@ enum PeNESStatus Decoder::decode_operand(
     address_mode::IAddressMode *address_mode,
     IStorageLocation **output_storage_location,
     std::size_t *output_storage_offset
-)
+) const
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     enum address_mode::InstructionOperandSize operand_size = INSTRUCTION_OPERAND_SIZE_NONE;

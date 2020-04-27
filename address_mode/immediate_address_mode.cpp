@@ -10,7 +10,7 @@
 #include "penes_status.h"
 #include "common.h"
 
-#include "memory_manager/memory_manager.h"
+#include "memory_map/memory_map.h"
 #include "address_mode/address_mode_interface.h"
 
 #include "address_mode/immediate_address_mode.h"
@@ -19,7 +19,8 @@
 using namespace address_mode;
 
 /** Functions *************************************************************/
-enum PeNESStatus ImmediateAddressMode::get_storage(
+template<typename SizeType>
+enum PeNESStatus ImmediateAddressMode<SizeType>::get_storage(
     ProgramContext *program_ctx,
     native_dword_t immediate_value,
     IStorageLocation **output_storage,
@@ -27,30 +28,18 @@ enum PeNESStatus ImmediateAddressMode::get_storage(
 )
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-    ImmediateStorage *immediate_storage = nullptr;
+    ImmediateStorage<SizeType> *immediate_storage = nullptr;
 
     ASSERT(nullptr != program_ctx);
     ASSERT(nullptr != output_storage);
 
-    status = program_ctx->immediate_storage_pool.retreive(&immediate_storage);
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("retrieve failed. Status: %d\n", status);
-        goto l_cleanup;
-    }
+    /* Create a new immediate storage object. */
+    immediate_storage = new ImmediateStorage<SizeType>();
 
-    /* First, reset the contents of the immediate storage. */
-    status = immediate_storage->reset();
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("reset failed. Status: %d\n", status);
-        goto l_cleanup;
-    }
-
-    /* Now, write the immediate value to the storage. */
-    status = immediate_storage->set(&immediate_value, sizeof(immediate_value));
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("set failed. Status: %d\n", status);
-        goto l_cleanup;
-    }
+    /* Set the immediate value of the storage object.
+     * This will be the return value when calling read.
+     * */
+    immediate_storage->set(immediate_value);
 
     *output_storage = immediate_storage;
     if (nullptr != output_storage_offset) {
@@ -62,3 +51,23 @@ l_cleanup:
     return status;
 }
 
+
+template<typename SizeType>
+enum PeNESStatus ImmediateAddressMode<SizeType>::release_storage(
+    ProgramContext *program_ctx,
+    IStorageLocation *storage
+)
+{
+    enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+    ImmediateStorage<SizeType> *immediate_storage = nullptr;
+
+    ASSERT(nullptr != program_ctx);
+    ASSERT(nullptr != storage);
+
+    /* Release the allocated memory of the immediate storage object. */
+    delete storage;
+
+    status = PENES_STATUS_SUCCESS;
+l_cleanup:
+    return status;
+}

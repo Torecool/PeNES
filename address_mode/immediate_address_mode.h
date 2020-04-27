@@ -17,26 +17,39 @@
 namespace address_mode {
 
 /** Classes ***************************************************************/
+template<typename SizeType>
 class ImmediateAddressMode : public IAddressMode {
 public:
-    const enum InstructionOperandSize operand_size = INSTRUCTION_OPERAND_SIZE_WORD;
-
     inline enum PeNESStatus get_storage(
         ProgramContext *program_ctx,
         native_dword_t immediate_value,
         IStorageLocation **output_storage,
         std::size_t *output_storage_offset
     ) override;
+
+    inline enum PeNESStatus release_storage(
+        ProgramContext *program_ctx,
+        IStorageLocation *storage
+    ) override;
 };
 
 
-class ImmediateDoubleAddressMode : public ImmediateAddressMode {
+class ImmediateSingleAddressMode : public ImmediateAddressMode<native_word_t> {
+public:
+    const enum InstructionOperandSize operand_size = INSTRUCTION_OPERAND_SIZE_WORD;
+};
+
+
+class RelativeAddressMode : public ImmediateAddressMode<native_word_t> {
+public:
+    const enum InstructionOperandSize operand_size = INSTRUCTION_OPERAND_SIZE_WORD;
+};
+
+
+class ImmediateDoubleAddressMode : public ImmediateAddressMode<native_dword_t> {
 public:
     const enum InstructionOperandSize operand_size = INSTRUCTION_OPERAND_SIZE_DWORD;
 };
-
-
-class RelativeAddressMode : public ImmediateAddressMode {};
 
 } /* namespace address_modes */
 

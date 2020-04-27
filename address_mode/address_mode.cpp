@@ -31,7 +31,7 @@ static const std::array<address_mode_instance_factory_t, ADDRESS_MODE_TYPE_NUM_A
     utils::SubClassFactory<IAddressMode>::create_instance<AbsoluteAddressMode>,
     utils::SubClassFactory<IAddressMode>::create_instance<AbsoluteXIndexedAddressMode>,
     utils::SubClassFactory<IAddressMode>::create_instance<AbsoluteYIndexedAddressMode>,
-    utils::SubClassFactory<IAddressMode>::create_instance<ImmediateAddressMode>,
+    utils::SubClassFactory<IAddressMode>::create_instance<ImmediateSingleAddressMode>,
     utils::SubClassFactory<IAddressMode>::create_instance<ImmediateDoubleAddressMode>,
     utils::SubClassFactory<IAddressMode>::create_instance<RelativeAddressMode>,
     utils::SubClassFactory<IAddressMode>::create_instance<IndirectAddressMode>,

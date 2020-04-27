@@ -40,7 +40,7 @@ enum PeNESStatus IBranchOpcode::branch(
 
     /* Read relative branch address from operand. */
     status = branch_operand_storage->read(
-        &relative_branch_address,
+        reinterpret_cast<native_word_t *>(&relative_branch_address),
         sizeof(relative_branch_address),
         operand_storage_offset
     );

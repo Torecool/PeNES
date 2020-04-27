@@ -28,7 +28,16 @@ public:
         std::size_t src_binary_size
     );
 
+    CPU(
+        const native_word_t *src_binary,
+        std::size_t src_binary_size
+    ): CPU(new ProgramContext(), src_binary, src_binary_size)
+    {};
+
+    enum PeNESStatus run();
+
 private:
+    ProgramContext *program_ctx;
     const Decoder instruction_decoder;
 };
 

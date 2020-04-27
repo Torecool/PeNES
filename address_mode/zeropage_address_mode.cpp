@@ -10,7 +10,7 @@
 #include "penes_status.h"
 #include "common.h"
 
-#include "memory_manager/memory_manager.h"
+#include "memory_map/memory_map.h"
 #include "address_mode/address_mode_interface.h"
 
 #include "address_mode/zeropage_address_mode.h"
@@ -36,7 +36,7 @@ inline enum PeNESStatus ZeropageAddressMode::get_storage(
     ASSERT(nullptr != output_storage_offset);
 
     /* Retrieve storage at absolute zeropage address. */
-    status = program_ctx->memory_manager.get_memory_storage(
+    status = program_ctx->memory_map.get_memory_storage(
         zeropage_address,
         &data_storage,
         &data_storage_offset
@@ -84,7 +84,7 @@ inline enum PeNESStatus ZeropageXIndexedAddressMode::get_storage(
     );
 
     /* Retrieve storage at absolute indexed zeropage address. */
-    status = program_context->memory_manager.get_memory_storage(
+    status = program_context->memory_map.get_memory_storage(
         indexed_zeropage_address,
         &data_storage,
         &data_storage_offset
@@ -132,7 +132,7 @@ enum PeNESStatus ZeropageYIndexedAddressMode::get_storage(
     );
 
     /* Retrieve storage at absolute indexed zeropage address. */
-    status = program_context->memory_manager.get_memory_storage(
+    status = program_context->memory_map.get_memory_storage(
         indexed_zeropage_address,
         &data_storage,
         &data_storage_offset

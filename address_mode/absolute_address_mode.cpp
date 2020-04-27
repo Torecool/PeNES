@@ -12,7 +12,7 @@
 #include "system.h"
 
 #include "program_context/program_context.h"
-#include "memory_manager/memory_manager.h"
+#include "memory_map/memory_map.h"
 #include "address_mode/address_mode_interface.h"
 
 #include "address_mode/absolute_address_mode.h"
@@ -38,7 +38,7 @@ enum PeNESStatus AbsoluteAddressMode::get_storage(
     ASSERT(nullptr != output_storage_offset);
 
     /* Retrieve storage at absolute address. */
-    status = program_ctx->memory_manager.get_memory_storage(
+    status = program_ctx->memory_map.get_memory_storage(
         converted_address,
         &data_storage,
         &memory_offset
@@ -82,7 +82,7 @@ enum PeNESStatus AbsoluteXIndexedAddressMode::get_storage(
     hardware_address += register_index;
 
     /* Retrieve storage at absolute indexed address. */
-    status = program_ctx->memory_manager.get_memory_storage(
+    status = program_ctx->memory_map.get_memory_storage(
         hardware_address,
         &data_storage,
         &memory_offset
@@ -126,7 +126,7 @@ enum PeNESStatus AbsoluteYIndexedAddressMode::get_storage(
     converted_address += register_data;
 
     /* Retrieve storage at absolute indexed address. */
-    status = program_ctx->memory_manager.get_memory_storage(
+    status = program_ctx->memory_map.get_memory_storage(
         converted_address,
         &data_storage,
         &memory_offset

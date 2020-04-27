@@ -23,6 +23,25 @@
 using namespace utils;
 
 /** Functions *************************************************************/
+template<class T>
+ObjectPool<T>::ObjectPool(std::size_t pool_size): std::unordered_set<T *>(), pool_size(pool_size)
+{
+    /* Fill the pool with pool_size object instances. */
+    for (std::size_t index = 0; index < pool_size; index++) {
+        this->insert(new T());
+    }
+}
+
+template<class T>
+ObjectPool<T>::~ObjectPool()
+{
+    /* Remove and destroy each instance from the pool. */
+    for (std::size_t index = 0; index < pool_size; index++) {
+        this->insert(new T());
+    }
+}
+
+
 template<class BaseClass, typename TypeIndex>
 template<size_t instance_factory_list_size>
 ObjectTable<BaseClass, TypeIndex>::ObjectTable(

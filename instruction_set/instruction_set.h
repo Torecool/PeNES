@@ -10,8 +10,6 @@
 /** Headers ***************************************************************/
 #include <cstddef>
 #include <initializer_list>
-#include <decoder/decoder.h>
-
 
 #include "penes_status.h"
 
@@ -19,6 +17,7 @@
 
 #include "program_context/program_context.h"
 #include "storage_location/storage_location.h"
+#include "address_mode/address_mode_interface.h"
 #include "instruction_set/opcode_interface.h"
 
 /** Namespaces ************************************************************/
@@ -108,24 +107,30 @@ private:
 class Instruction {
 public:
     explicit Instruction(
-        ProgramContext *program_context = nullptr,
-        IOpcode *instruction_opcode = nullptr,
+        ProgramContext *program_ctx,
+        IOpcode *instruction_opcode,
+        address_mode::IAddressMode *instruction_address_mode = nullptr,
         IStorageLocation *operand_storage = nullptr,
         std::size_t operand_storage_offset = 0
-    ) :
-        program_context(program_context),
+    ):
+        program_ctx(program_ctx),
         instruction_opcode(instruction_opcode),
+        instruction_address_mode(instruction_address_mode),
         operand_storage(operand_storage),
         operand_storage_offset(operand_storage_offset)
-    {};
+    {
+        ASSERT(nullptr != program_ctx);
+        ASSERT(nullptr != instruction_opcode);
+    };
+
+    ~Instruction();
 
     inline virtual enum PeNESStatus exec();
 
-    inline virtual enum PeNESStatus reset();
-
 private:
+    ProgramContext *program_ctx;
     IOpcode *instruction_opcode;
-    ProgramContext *program_context;
+    address_mode::IAddressMode *instruction_address_mode;
     IStorageLocation *operand_storage;
     std::size_t operand_storage_offset;
 };

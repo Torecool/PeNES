@@ -11,7 +11,7 @@
 #include "common.h"
 #include "system.h"
 
-#include "memory_manager/memory_manager.h"
+#include "memory_map/memory_map.h"
 #include "address_mode/address_mode_interface.h"
 
 #include "address_mode/indirect_address_mode.h"
@@ -41,7 +41,7 @@ enum PeNESStatus IndirectAddressMode::get_storage(
     ASSERT(nullptr != output_storage_offset);
 
     /* Retrieve storage location containing the direct address using the indirect address. */
-    status = program_ctx->memory_manager.get_memory_storage(
+    status = program_ctx->memory_map.get_memory_storage(
         converted_indirect_address,
         &direct_address_storage,
         &direct_storage_offset
@@ -53,7 +53,7 @@ enum PeNESStatus IndirectAddressMode::get_storage(
 
     /* Read the direct address from the storage location. */
     status = direct_address_storage->read(
-        &direct_address,
+        reinterpret_cast<native_word_t *>(&direct_address),
         sizeof(direct_address),
         direct_storage_offset
     );
@@ -66,7 +66,7 @@ enum PeNESStatus IndirectAddressMode::get_storage(
     converted_direct_address = system_native_to_big_endianness(direct_address);
 
     /* Retrieve data at absolute direct address. */
-    status = program_ctx->memory_manager.get_memory_storage(
+    status = program_ctx->memory_map.get_memory_storage(
         converted_direct_address,
         &data_storage,
         &data_storage_offset
@@ -118,7 +118,7 @@ enum PeNESStatus XIndexedIndirectAddressMode::get_storage(
     );
 
     /* Retrieve storage location containing the direct address using the indirect address. */
-    status = program_ctx->memory_manager.get_memory_storage(
+    status = program_ctx->memory_map.get_memory_storage(
         indexed_indirect_address,
         &direct_address_storage,
         &direct_storage_offset
@@ -130,7 +130,7 @@ enum PeNESStatus XIndexedIndirectAddressMode::get_storage(
 
     /* Read the direct address from the storage location. */
     status = direct_address_storage->read(
-        &direct_address,
+        reinterpret_cast<native_word_t *>(&direct_address),
         sizeof(direct_address),
         direct_storage_offset
     );
@@ -143,7 +143,7 @@ enum PeNESStatus XIndexedIndirectAddressMode::get_storage(
     converted_direct_address = system_native_to_big_endianness(direct_address);
 
     /* Retrieve data at absolute indexed direct address. */
-    status = program_ctx->memory_manager.get_memory_storage(
+    status = program_ctx->memory_map.get_memory_storage(
         converted_direct_address,
         &data_storage,
         &data_storage_offset
@@ -188,7 +188,7 @@ enum PeNESStatus IndirectYIndexedAddressMode::get_storage(
     register_index = register_y->read();
 
     /* Retrieve storage location containing the direct address using the indirect address. */
-    status = program_ctx->memory_manager.get_memory_storage(
+    status = program_ctx->memory_map.get_memory_storage(
         indirect_address,
         &direct_address_storage,
         &direct_storage_offset
@@ -200,7 +200,7 @@ enum PeNESStatus IndirectYIndexedAddressMode::get_storage(
 
     /* Read the direct address from the storage location. */
     status = direct_address_storage->read(
-        &direct_address,
+        reinterpret_cast<native_word_t *>(&direct_address),
         sizeof(direct_address),
         direct_storage_offset
     );
@@ -217,7 +217,7 @@ enum PeNESStatus IndirectYIndexedAddressMode::get_storage(
     indexed_direct_address = system_native_to_big_endianness(direct_address) + register_index;
 
     /* Retrieve data at absolute indexed direct address. */
-    status = program_ctx->memory_manager.get_memory_storage(
+    status = program_ctx->memory_map.get_memory_storage(
         indexed_direct_address,
         &data_storage,
         &data_storage_offset

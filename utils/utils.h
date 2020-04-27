@@ -24,13 +24,18 @@
 namespace utils {
 
 template<class T>
-class ObjectPool : private std::unordered_set<T> {
+class ObjectPool : private std::unordered_set<T *> {
 public:
     explicit ObjectPool(std::size_t pool_size);
+
+    ~ObjectPool();
 
     inline enum PeNESStatus retrieve(T **output_object);
 
     inline enum PeNESStatus release(T *release_object);
+
+private:
+    std::size_t pool_size;
 };
 
 

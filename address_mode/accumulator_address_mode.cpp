@@ -10,7 +10,7 @@
 #include "penes_status.h"
 #include "common.h"
 
-#include "memory_manager/memory_manager.h"
+#include "memory_map/memory_map.h"
 #include "address_mode/address_mode_interface.h"
 
 #include "address_mode/accumulator_address_mode.h"

@@ -35,7 +35,7 @@ enum PeNESStatus IJumpOpcode::jump(
 
     /* Read the jump address from the storage location. */
     status = jump_address_storage->read(
-        &jump_address,
+        reinterpret_cast<native_word_t *>(&jump_address),
         sizeof(jump_address),
         address_storage_offset
     );
@@ -153,7 +153,7 @@ enum PeNESStatus OpcodeBRK::exec(
     register_status = program_ctx->register_file.get_register_status();
 
     /* Retrieve the IRQ interrupt handler vector from the program context. */
-    interrupt_vector_storage = program_ctx->memory_manager.get_irq_interrupt_vector();
+    interrupt_vector_storage = program_ctx->memory_map.get_irq_interrupt_vector();
 
     /* Read the current program counter address and status. */
     program_counter_address = register_program_counter->read();

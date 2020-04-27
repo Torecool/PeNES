@@ -36,7 +36,7 @@ public:
      *  @return         The resolved address mode that should be used.
      * */
     inline virtual AddressModeType resolve_address_mode(
-        AddressModeType default_address_mode = AddressModeType::ADDRESS_MODE_TYPE_NONE
+        AddressModeType default_address_mode
     )
     {
         return default_address_mode;
@@ -55,7 +55,10 @@ public:
         ProgramContext *program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset
-    ) {};
+    )
+    {
+        return PENES_STATUS_SUCCESS;
+    };
 };
 
 /** @brief General interface for all instruction set opcodes that modify the value of the Status register.
@@ -88,7 +91,7 @@ protected:
     inline enum PeNESStatus update_status(
         RegisterStorage<native_word_t> *register_status,
         native_word_t update_values = 0
-    );
+    ) const;
 
     /** @brief          Utility wrapper for the update_status method that receives the Status register.
      *                  Retrieves the Status register from the program context and calls update_status.
@@ -102,7 +105,7 @@ protected:
     inline enum PeNESStatus update_status(
         ProgramContext *program_ctx,
         native_word_t update_values = 0
-    );
+    ) const;
 
     /** @brief The mask of status flags that are allowed to be modified in the Status register. */
     const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NONE;
