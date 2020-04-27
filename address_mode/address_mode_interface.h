@@ -31,7 +31,7 @@ class IAddressMode {
 public:
     const enum InstructionOperandSize operand_size = INSTRUCTION_OPERAND_SIZE_NO_OPERAND;
 
-    virtual inline enum PeNESStatus get_storage(
+    virtual enum PeNESStatus get_storage(
         ProgramContext *program_ctx,
         native_dword_t operand,
         IStorageLocation **output_storage,

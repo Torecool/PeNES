@@ -33,7 +33,7 @@ protected:
      *
      *  @return         Status indicating the success of the operation.
      * */
-    inline enum PeNESStatus store(
+    static inline enum PeNESStatus store(
         RegisterStorage<native_word_t> *store_register,
         IStorageLocation *store_storage,
         std::size_t storage_offset
@@ -53,7 +53,10 @@ public:
 /** @brief Store Index X in memory. */
 class OpcodeSTX : public IStoreOpcode {
 public:
-    inline AddressModeType resolve_address_mode(AddressModeType default_address_mode) override {
+    inline address_mode::AddressModeType resolve_address_mode(
+        address_mode::AddressModeType default_address_mode
+    ) override
+    {
         /* If the address mode was predicted as zp,X, this should actually be zp,Y.
          * The reason for this is that the opcode's address mode bit pattern fits the otherwise zp,X template.
          * */

@@ -32,7 +32,7 @@ enum PeNESStatus IStoreOpcode::store(
     ASSERT(nullptr != store_storage);
 
     /* Transfer the entire contents of the store register to the operand memory location. */
-    status = store_register->transfer(
+    status = store_register->IStorageLocation::transfer(
         store_storage,
         store_register->get_storage_size(),
         0,

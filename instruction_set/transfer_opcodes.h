@@ -15,6 +15,7 @@
 #include "program_context/program_context.h"
 #include "storage_location/storage_location.h"
 #include "instruction_set/opcode_interface.h"
+#include "instruction_set/operation_types.h"
 
 /** Namespaces ************************************************************/
 namespace instruction_set {
@@ -23,7 +24,7 @@ namespace instruction_set {
 /** @brief Interface of an opcode performing a transfer operation.
  *         Extends the standard implied-data-status-updating opcode interface by adding the transfer method.
  * */
-class ITransferOpcode : public IUpdateDataStatusOpcode, public IImpliedOperandOpcode {
+class ITransferOpcode : public IImpliedOperandOpcode, public IUpdateDataStatusOperation {
 protected:
     /** @brief          Transfer a WORD of data from a source register to a destination register,
      *                  and update the Status register accordingly.

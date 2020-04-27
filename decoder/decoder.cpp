@@ -279,7 +279,7 @@ InstructionDecodeGroup::InstructionDecodeGroup(
 enum PeNESStatus InstructionDecodeGroup::decode_instruction(
     native_word_t instruction_data,
     instruction_set::IOpcode **output_opcode,
-    IAddressMode **output_address_mode
+    address_mode::IAddressMode **output_address_mode
 ) const
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
@@ -288,8 +288,8 @@ enum PeNESStatus InstructionDecodeGroup::decode_instruction(
     instruction_set::OpcodeTable *opcode_table = nullptr;
     instruction_set::IOpcode *opcode = nullptr;
     address_mode::IAddressMode *address_mode = nullptr;
-    enum address_mode::AddressModeType address_mode_type = ADDRESS_MODE_TYPE_NONE;
-    enum address_mode::AddressModeType resolved_address_mode_type = ADDRESS_MODE_TYPE_NONE;
+    enum address_mode::AddressModeType address_mode_type = address_mode::ADDRESS_MODE_TYPE_NONE;
+    enum address_mode::AddressModeType resolved_address_mode_type = address_mode::ADDRESS_MODE_TYPE_NONE;
 
     ASSERT(nullptr != output_opcode);
     ASSERT(nullptr != output_address_mode);
@@ -502,7 +502,7 @@ enum PeNESStatus Decoder::decode_operand(
 ) const
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-    enum address_mode::InstructionOperandSize operand_size = INSTRUCTION_OPERAND_SIZE_NONE;
+    enum address_mode::InstructionOperandSize operand_size = address_mode::INSTRUCTION_OPERAND_SIZE_NONE;
     IStorageLocation *operand_storage = nullptr;
     native_word_t instruction_operand_data = 0;
     std::size_t operand_storage_offset = 0;

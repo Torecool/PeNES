@@ -26,7 +26,10 @@ namespace instruction_set {
  * */
 class IBranchOpcode : public IOpcode {
 public:
-    inline AddressModeType resolve_address_mode(AddressModeType default_address_mode) override {
+    inline address_mode::AddressModeType resolve_address_mode(
+        address_mode::AddressModeType default_address_mode
+    ) override
+    {
         return address_mode::AddressModeType::ADDRESS_MODE_TYPE_RELATIVE;
     }
 
@@ -45,7 +48,7 @@ protected:
      *
      *  @return         Status indicating the success of the operation.
      * */
-    inline enum PeNESStatus branch(
+    static inline enum PeNESStatus branch(
         ProgramContext *program_ctx,
         IStorageLocation *branch_operand_storage,
         std::size_t operand_storage_offset = 0

@@ -15,6 +15,7 @@
 #include "program_context/program_context.h"
 #include "storage_location/storage_location.h"
 #include "instruction_set/opcode_interface.h"
+#include "instruction_set/operation_types.h"
 
 /** Namespaces ************************************************************/
 namespace instruction_set {
@@ -23,7 +24,7 @@ namespace instruction_set {
 /** @brief Interface of an opcode performing an addition operation using the Accumulator.
  *         Extends the standard data-status-updating opcode interface by adding the add method.
  */
-class IAddOpcode : public IUpdateDataStatusOpcode {
+class IAddOpcode : public IOpcode, public IUpdateDataStatusOperation {
 protected:
     /** @brief          Add (with carry) a given WORD of data to the Accumulator and update the Status register accordingly.
      *

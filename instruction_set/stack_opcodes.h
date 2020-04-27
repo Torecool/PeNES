@@ -15,11 +15,15 @@
 #include "program_context/program_context.h"
 #include "storage_location/storage_location.h"
 #include "instruction_set/opcode_interface.h"
+#include "instruction_set/operation_types.h"
 
 /** Namespaces ************************************************************/
 namespace instruction_set {
 
 /** Classes ***************************************************************/
+/** @brief Interface of an opcode performing a stack operation. */
+class IStackOpcode : public IImpliedOperandOpcode, public IStackOperation {};
+
 /** @brief Push Accumulator on Stack. */
 class OpcodePHA : public IStackOpcode {
 public:
@@ -41,7 +45,7 @@ public:
 };
 
 /** @brief Pull Accumulator from Stack. */
-class OpcodePLA : public IStackOpcode, public IUpdateDataStatusOpcode {
+class OpcodePLA : public IStackOpcode, public IUpdateDataStatusOperation {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -51,7 +55,7 @@ public:
 };
 
 /** @brief Pull Status register from Stack. */
-class OpcodePLP : public IStackOpcode, public IUpdateStatusOpcode {
+class OpcodePLP : public IStackOpcode, public IUpdateStatusOperation {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,

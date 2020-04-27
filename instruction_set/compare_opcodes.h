@@ -15,6 +15,7 @@
 #include "program_context/program_context.h"
 #include "storage_location/storage_location.h"
 #include "instruction_set/opcode_interface.h"
+#include "instruction_set/operation_types.h"
 
 /** Namespaces ************************************************************/
 namespace instruction_set {
@@ -23,7 +24,7 @@ namespace instruction_set {
 /** @brief Interface of an opcode performing a comparison operation.
  *         Extends the standard data-status-updating opcode interface by adding the compare method.
  * */
-class ICompareOpcode : public IUpdateDataStatusOpcode {
+class ICompareOpcode : public IOpcode, public IUpdateDataStatusOperation {
 protected:
     /** @brief          Perform a compare operation between a register operand and a generic storage location operand.
      *                  Subtract the second operand from the first and update the Status register's data flags accordingly.

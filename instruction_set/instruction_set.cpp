@@ -99,10 +99,7 @@ Instruction::~Instruction()
         this->program_ctx,
         this->operand_storage
     );
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("release_storage failed. Status: %d", status);
-        throw std::runtime_error("release_storage failed.");
-    }
+    ASSERT(PENES_STATUS_SUCCESS == status);
 }
 
 

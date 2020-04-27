@@ -23,23 +23,30 @@
 /** Functions *************************************************************/
 class IStorageLocation {
 public:
-    inline explicit IStorageLocation(std::size_t num_storage_words);
+    inline explicit IStorageLocation(std::size_t num_storage_words):
+        storage_size(system_words_to_bytes(num_storage_words))
+    {
+        this->storage_buffer = new native_word_t[system_words_to_bytes(num_storage_words)];
+    }
 
-    inline ~IStorageLocation();
+    inline ~IStorageLocation()
+    {
+        delete this->storage_buffer;
+    }
 
-    virtual inline enum PeNESStatus read(
+    virtual enum PeNESStatus read(
         native_word_t *read_buffer,
         std::size_t num_read_words,
         std::size_t read_word_offset
     );
 
-    virtual inline enum PeNESStatus write(
+    virtual enum PeNESStatus write(
         const native_word_t *write_buffer,
         std::size_t num_write_words,
         std::size_t write_word_offset
     );
 
-    virtual inline enum PeNESStatus transfer(
+    virtual enum PeNESStatus transfer(
         IStorageLocation *dest_storage_location,
         std::size_t num_transfer_words,
         std::size_t src_transfer_word_offset,
@@ -67,9 +74,25 @@ public:
         const native_word_t *write_buffer,
         std::size_t num_immediate_words,
         std::size_t immediate_word_offset
-    ) override;
+    ) override
+    {
+        enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
 
-    inline void set(const native_word_t *immediate_data);
+        ASSERT(nullptr != write_buffer);
+
+        status = PENES_STATUS_STORAGE_LOCATION_IMMEDIATE_STORAGE_WRITE_INVALID_OPERATION;
+        DEBUG_PRINT_WITH_ARGS("Cannot write to immediate storage location. Status: %d\n", status);
+
+        return status;
+    }
+
+    inline void set(const native_word_t *immediate_data)
+    {
+        ASSERT(nullptr != immediate_data);
+
+        /* Copy memory from the input data buffer into the immediate storage buffer. */
+        COPY_MEMORY(this->storage_buffer, immediate_data,this->storage_size);
+    }
 };
 
 
@@ -79,11 +102,29 @@ public:
     inline RegisterStorage(): IStorageLocation(system_bytes_to_words(sizeof(SizeType)))
     {};
 
-    inline SizeType read();
+    inline SizeType read()
+    {
+        SizeType read_buffer = 0;
 
-    inline void write(SizeType register_data);
+        /* Copy memory from the register data buffer into the read buffer and return it. */
+        COPY_MEMORY(&read_buffer, this->storage_buffer, this->storage_size);
 
-    inline void transfer(RegisterStorage<SizeType> *dest_register);
+        return read_buffer;
+    }
+
+    inline void write(SizeType register_data)
+    {
+        /* Copy memory from the input data buffer into the register storage buffer. */
+        COPY_MEMORY(this->storage_buffer, &register_data,this->storage_size);
+    }
+
+    inline void transfer(RegisterStorage<SizeType> *dest_register)
+    {
+        ASSERT(nullptr != dest_register);
+
+        /* Write the data from the source register buffer directly into the destination register buffer. */
+        dest_register->write(this->storage_buffer);
+    }
 };
 
 #endif /* __STORAGE_LOCATION_H__ */

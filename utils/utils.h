@@ -61,17 +61,17 @@ public:
 
     ~ObjectTable();
 
-    inline enum PeNESStatus get_type(
+    enum PeNESStatus get_type(
         std::size_t table_index,
         TypeIndex *output_type
     ) const;
 
-    inline enum PeNESStatus get_object(
+    enum PeNESStatus get_object(
         std::size_t table_index,
         BaseClass **output_object
     ) const;
 
-    inline enum PeNESStatus get_object_by_type(
+    enum PeNESStatus get_object_by_type(
         TypeIndex type,
         BaseClass **output_object
     ) const;

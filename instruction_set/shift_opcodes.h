@@ -15,6 +15,7 @@
 #include "program_context/program_context.h"
 #include "storage_location/storage_location.h"
 #include "instruction_set/opcode_interface.h"
+#include "instruction_set/operation_types.h"
 
 /** Namespaces ************************************************************/
 namespace instruction_set {
@@ -24,7 +25,7 @@ namespace instruction_set {
  *         Each subclass implements the operation method for performing various shift/rotate operations,
  *         which is then invoked by the interface's exec method.
  * */
-class IShiftOpcode : public IUpdateDataStatusOpcode {
+class IShiftOpcode : public IOpcode, public IUpdateDataStatusOperation {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,

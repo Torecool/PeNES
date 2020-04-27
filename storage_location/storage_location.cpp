@@ -18,18 +18,6 @@
 /** Typedefs **************************************************************/
 /** Structs ***************************************************************/
 /** Functions *************************************************************/
-IStorageLocation::IStorageLocation(std::size_t num_storage_words): storage_size(system_words_to_bytes(num_storage_words))
-{
-    this->storage_buffer = new native_word_t[system_words_to_bytes(num_storage_words)];
-}
-
-
-IStorageLocation::~IStorageLocation()
-{
-    delete this->storage_buffer;
-}
-
-
 enum PeNESStatus IStorageLocation::read(
     native_word_t *read_buffer,
     std::size_t num_read_words,
@@ -157,46 +145,4 @@ enum PeNESStatus ImmediateStorage<SizeType>::write(
 
 l_cleanup:
     return status;
-}
-
-
-template<typename SizeType>
-void ImmediateStorage<SizeType>::set(const native_word_t *immediate_data)
-{
-    ASSERT(nullptr != immediate_data);
-
-    /* Copy memory from the input data buffer into the immediate storage buffer. */
-    COPY_MEMORY(this->storage_buffer, immediate_data,this->storage_size);
-}
-
-
-template<typename SizeType>
-SizeType RegisterStorage<SizeType>::read()
-{
-    SizeType read_buffer = 0;
-
-    /* Copy memory from the register data buffer into the read buffer and return it. */
-    COPY_MEMORY(&read_buffer, this->storage_buffer, this->storage_size);
-
-    return read_buffer;
-}
-
-
-template<typename SizeType>
-void RegisterStorage<SizeType>::write(SizeType register_data)
-{
-    ASSERT(nullptr != register_data);
-
-    /* Copy memory from the input data buffer into the register storage buffer. */
-    COPY_MEMORY(this->storage_buffer, register_data,this->storage_size);
-}
-
-
-template<typename SizeType>
-void RegisterStorage<SizeType>::transfer(RegisterStorage<SizeType> *dest_register)
-{
-    ASSERT(nullptr != dest_register);
-
-    /* Write the data from the source register buffer directly into the destination register buffer. */
-    dest_register->write(this->storage_buffer);
 }

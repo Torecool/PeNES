@@ -15,13 +15,20 @@
 #include "program_context/program_context.h"
 #include "storage_location/storage_location.h"
 #include "instruction_set/opcode_interface.h"
+#include "instruction_set/operation_types.h"
 
 /** Namespaces ************************************************************/
 namespace instruction_set {
 
 /** Classes ***************************************************************/
+/** @brief Interface of an opcode that performs an increment/decrement operation on memory. */
+class IMemoryIncrementingOpcode : public IOpcode, public IUpdateDataStatusOperation {};
+
+/** @brief Interface of an opcode that performs an increment/decrement operation on a register. */
+class IRegisterIncrementingOpcode : public IImpliedOperandOpcode, public IUpdateDataStatusOperation {};
+
 /** @brief Increment memory by 1. */
-class OpcodeINC : public IUpdateDataStatusOpcode {
+class OpcodeINC : public IMemoryIncrementingOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -31,7 +38,7 @@ public:
 };
 
 /** @brief Decrement memory by 1. */
-class OpcodeDEC : public IUpdateDataStatusOpcode {
+class OpcodeDEC : public IMemoryIncrementingOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -41,7 +48,7 @@ public:
 };
 
 /** @brief Increment register X by 1. */
-class OpcodeINX : public IUpdateDataStatusOpcode, public IImpliedOperandOpcode {
+class OpcodeINX : public IRegisterIncrementingOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -51,7 +58,7 @@ public:
 };
 
 /** @brief Decrement register X by 1. */
-class OpcodeDEX : public IUpdateDataStatusOpcode, public IImpliedOperandOpcode {
+class OpcodeDEX : public IRegisterIncrementingOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -61,7 +68,7 @@ public:
 };
 
 /** @brief Increment register Y by 1. */
-class OpcodeINY : public IUpdateDataStatusOpcode, public IImpliedOperandOpcode {
+class OpcodeINY : public IRegisterIncrementingOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -71,7 +78,7 @@ public:
 };
 
 /** @brief Decrement register Y by 1. */
-class OpcodeDEY : public IUpdateDataStatusOpcode, public IImpliedOperandOpcode {
+class OpcodeDEY : public IRegisterIncrementingOpcode {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,

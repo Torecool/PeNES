@@ -20,42 +20,6 @@
 using namespace instruction_set;
 
 /** Functions *************************************************************/
-enum PeNESStatus IJumpOpcode::jump(
-    RegisterStorage<native_dword_t> *register_program_counter,
-    IStorageLocation *jump_address_storage,
-    std::size_t address_storage_offset
-)
-{
-    enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-    native_address_t jump_address = 0;
-    native_address_t converted_jump_address = 0;
-
-    ASSERT(nullptr != register_program_counter);
-    ASSERT(nullptr != jump_address_storage);
-
-    /* Read the jump address from the storage location. */
-    status = jump_address_storage->read(
-        reinterpret_cast<native_word_t *>(&jump_address),
-        sizeof(jump_address),
-        address_storage_offset
-    );
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Jump address storage read failed. Status: %d", status);
-        goto l_cleanup;
-    }
-
-    /* Convert the jump address to big endian because addresses are kept in little endian in memory. */
-    converted_jump_address = system_native_to_big_endianness(jump_address);
-
-    /* Write the converted jump address to the program counter. */
-    register_program_counter->write(converted_jump_address);
-
-    status = PENES_STATUS_SUCCESS;
-l_cleanup:
-    return status;
-}
-
-
 enum PeNESStatus OpcodeJMP::exec(
     ProgramContext *program_ctx,
     IStorageLocation *jump_address_storage,

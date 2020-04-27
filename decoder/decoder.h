@@ -35,7 +35,7 @@ public:
     inline enum PeNESStatus decode_instruction(
         native_word_t instruction_data,
         instruction_set::IOpcode **output_opcode,
-        IAddressMode **output_address_mode
+        address_mode::IAddressMode **output_address_mode
     ) const;
 
 private:

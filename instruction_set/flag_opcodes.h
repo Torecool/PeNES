@@ -15,13 +15,24 @@
 #include "program_context/program_context.h"
 #include "storage_location/storage_location.h"
 #include "instruction_set/opcode_interface.h"
+#include "instruction_set/operation_types.h"
 
 /** Namespaces ************************************************************/
 namespace instruction_set {
 
 /** Classes ***************************************************************/
+/** @brief Interface of an implied operand flag-modification opcode. */
+class IFlagOpcode : public IImpliedOperandOpcode, public IUpdateStatusOperation {
+public:
+    inline enum PeNESStatus exec(
+        ProgramContext *program_ctx,
+        IStorageLocation *operand_storage,
+        std::size_t operand_storage_offset
+    ) override;
+};
+
 /** @brief Set Carry flag. */
-class OpcodeSEC : public IUpdateStatusOpcode, public IImpliedOperandOpcode {
+class OpcodeSEC : public IFlagOpcode {
 protected:
     const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
     const native_word_t base_values = REGISTER_STATUS_FLAG_MASK_CARRY;
@@ -29,14 +40,14 @@ protected:
 
 
 /** @brief Clear Carry flag. */
-class OpcodeCLC : public IUpdateStatusOpcode, public IImpliedOperandOpcode {
+class OpcodeCLC : public IFlagOpcode {
 protected:
     const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
 };
 
 
 /** @brief Set Decimal flag. */
-class OpcodeSED : public IUpdateStatusOpcode, public IImpliedOperandOpcode {
+class OpcodeSED : public IFlagOpcode {
 protected:
     const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_DECIMAL;
     const native_word_t base_values = REGISTER_STATUS_FLAG_MASK_DECIMAL;
@@ -44,14 +55,14 @@ protected:
 
 
 /** @brief Clear Decimal flag. */
-class OpcodeCLD : public IUpdateStatusOpcode, public IImpliedOperandOpcode {
+class OpcodeCLD : public IFlagOpcode {
 protected:
     const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_DECIMAL;
 };
 
 
 /** @brief Set Interrupt flag. */
-class OpcodeSEI : public IUpdateStatusOpcode, public IImpliedOperandOpcode {
+class OpcodeSEI : public IFlagOpcode {
 protected:
     const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
     const native_word_t base_values = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
@@ -59,14 +70,14 @@ protected:
 
 
 /** @brief Clear Interrupt flag. */
-class OpcodeCLI : public IUpdateStatusOpcode, public IImpliedOperandOpcode {
+class OpcodeCLI : public IFlagOpcode {
 protected:
     const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
 };
 
 
 /** @brief Clear Overflow flag. */
-class OpcodeCLV : public IUpdateStatusOpcode, public IImpliedOperandOpcode {
+class OpcodeCLV : public IFlagOpcode {
 protected:
     const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_OVERFLOW;
 };

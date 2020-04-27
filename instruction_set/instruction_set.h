@@ -125,7 +125,25 @@ public:
 
     ~Instruction();
 
-    inline virtual enum PeNESStatus exec();
+    inline virtual enum PeNESStatus exec()
+    {
+        enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+
+        /* Execute the opcode. */
+        status = this->instruction_opcode->exec(
+            this->program_ctx,
+            this->operand_storage,
+            this->operand_storage_offset
+        );
+        if (PENES_STATUS_SUCCESS != status) {
+            DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Opcode exec failed. Status: %d\n", status);
+            goto l_cleanup;
+        }
+
+        status = PENES_STATUS_SUCCESS;
+    l_cleanup:
+        return status;
+    }
 
 private:
     ProgramContext *program_ctx;

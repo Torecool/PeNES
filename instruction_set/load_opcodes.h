@@ -15,6 +15,7 @@
 #include "program_context/program_context.h"
 #include "storage_location/storage_location.h"
 #include "instruction_set/opcode_interface.h"
+#include "instruction_set/operation_types.h"
 
 /** Namespaces ************************************************************/
 namespace instruction_set {
@@ -23,7 +24,7 @@ namespace instruction_set {
 /** @brief Interface of an opcode performing a load operation.
  *         Extends the standard data-status-updating opcode interface by adding the load method.
  * */
-class ILoadOpcode : public IUpdateDataStatusOpcode {
+class ILoadOpcode : public IOpcode, public IUpdateDataStatusOperation {
 public:
     /** @brief          Load a WORD of data from a storage location into a register and update the Status register accordingly.
      *
@@ -55,7 +56,10 @@ public:
 /** @brief Load register X with Data. */
 class OpcodeLDX : public ILoadOpcode {
 public:
-    inline AddressModeType resolve_address_mode(AddressModeType default_address_mode) override {
+    inline address_mode::AddressModeType resolve_address_mode(
+        address_mode::AddressModeType default_address_mode
+    ) override
+    {
         /* If the address mode was predicted as zp,X, this should actually be zp,Y.
          * Also, if the address mode was predicted as abs,X, this should actually be abs,Y.
          * The reason for this is that the opcode's address mode bit pattern fits the otherwise zp,X/abs,X templates.

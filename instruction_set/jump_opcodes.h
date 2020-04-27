@@ -15,30 +15,14 @@
 #include "program_context/program_context.h"
 #include "storage_location/storage_location.h"
 #include "instruction_set/opcode_interface.h"
+#include "instruction_set/operation_types.h"
 
 /** Namespaces ************************************************************/
 namespace instruction_set {
 
 /** Classes ***************************************************************/
-/** @brief Interface of an opcode performing a jump operation.
- *         Extends the standard opcode interface by adding the jump method.
- * */
-class IJumpOpcode : public IOpcode {
-protected:
-    /** @brief          Perform a jump operation to a location specified by the jump address storage.
-     *
-     *  @param[in,out]  register_program_counter    The program counter register to update.
-     *  @param[in]      jump_address_storage        The storage location containing the address to jump to.
-     *  @param[in]      address_storage_offset      The offset within the storage location to read the address from.
-     *
-     *  @return         Status indicating the success of the operation.
-     * */
-    inline enum PeNESStatus jump(
-        RegisterStorage<native_dword_t> *register_program_counter,
-        IStorageLocation *jump_address_storage,
-        std::size_t address_storage_offset = 0
-    );
-};
+/** @brief Interface of an opcode performing a jump operation. */
+class IJumpOpcode : public IOpcode, public IJumpOperation {};
 
 /** @brief Jump to a new location.
  *
@@ -49,8 +33,11 @@ protected:
  * */
 class OpcodeJMP : public IJumpOpcode {
 public:
-    inline AddressModeType resolve_address_mode(AddressModeType default_address_mode) override {
-        return AddressModeType::ADDRESS_MODE_TYPE_IMMEDIATE_DOUBLE;
+    inline address_mode::AddressModeType resolve_address_mode(
+        address_mode::AddressModeType default_address_mode
+    ) override
+    {
+        return address_mode::AddressModeType::ADDRESS_MODE_TYPE_IMMEDIATE_DOUBLE;
     }
 
     inline enum PeNESStatus exec(
@@ -71,8 +58,11 @@ public:
  * */
 class OpcodeIndirectJMP : public OpcodeJMP {
 public:
-    inline AddressModeType resolve_address_mode(AddressModeType default_address_mode) override {
-        return AddressModeType::ADDRESS_MODE_TYPE_ABSOLUTE;
+    inline address_mode::AddressModeType resolve_address_mode(
+        address_mode::AddressModeType default_address_mode
+    ) override
+    {
+        return address_mode::AddressModeType::ADDRESS_MODE_TYPE_ABSOLUTE;
     }
 };
 
@@ -83,10 +73,13 @@ public:
  *         and not the data pointed to by the absolute address (as opposed to any other absolute-addressed opcode).
  *         This effectively makes the address mode more like an immediate address mode of size double.
  * */
-class OpcodeJSR : public IJumpOpcode, public IStackOpcode {
+class OpcodeJSR : public IJumpOpcode, public IStackOperation {
 public:
-    inline AddressModeType resolve_address_mode(AddressModeType default_address_mode) override {
-        return AddressModeType::ADDRESS_MODE_TYPE_IMMEDIATE_DOUBLE;
+    inline address_mode::AddressModeType resolve_address_mode(
+        address_mode::AddressModeType default_address_mode
+    ) override
+    {
+        return address_mode::AddressModeType::ADDRESS_MODE_TYPE_IMMEDIATE_DOUBLE;
     }
 
     inline enum PeNESStatus exec(
@@ -97,7 +90,11 @@ public:
 };
 
 /** @brief Software interrupt. Save Stack pointer and Status, jump to interrupt handling routine. */
-class OpcodeBRK : public IJumpOpcode, public IStackOpcode, public IUpdateStatusOpcode {
+class OpcodeBRK :
+    public IImpliedOperandOpcode,
+    public IJumpOperation,
+    public IStackOperation,
+    public IUpdateStatusOperation {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -119,7 +116,10 @@ protected:
 };
 
 /** @brief Return from interrupt, restoring Status register and Program counter. */
-class OpcodeRTI : public IStackOpcode, public IUpdateStatusOpcode {
+class OpcodeRTI :
+    public IImpliedOperandOpcode,
+    public IStackOperation,
+    public IUpdateStatusOperation {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -135,7 +135,7 @@ protected:
 };
 
 /** @brief Return from subroutine, restoring Program counter. */
-class OpcodeRTS : public IStackOpcode {
+class OpcodeRTS : public IImpliedOperandOpcode, public IStackOperation {
 public:
     inline enum PeNESStatus exec(
         ProgramContext *program_ctx,
