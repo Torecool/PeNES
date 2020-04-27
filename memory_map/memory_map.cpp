@@ -64,16 +64,6 @@ MemoryMap::MemoryMap()
 }
 
 
-MemoryMap::~MemoryMap()
-{
-    for (MemoryStorage *memory_storage : this->storage_table) {
-        delete memory_storage;
-    }
-
-    this->storage_table.clear();
-}
-
-
 enum PeNESStatus MemoryMap::get_memory_storage(
     native_address_t address,
     MemoryStorage **output_storage,

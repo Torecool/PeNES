@@ -30,7 +30,7 @@ class IRegisterIncrementingOpcode : public IImpliedOperandOpcode, public IUpdate
 /** @brief Increment memory by 1. */
 class OpcodeINC : public IMemoryIncrementingOpcode {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *increment_operand_storage,
         std::size_t operand_storage_offset
@@ -40,7 +40,7 @@ public:
 /** @brief Decrement memory by 1. */
 class OpcodeDEC : public IMemoryIncrementingOpcode {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *decrement_operand_storage,
         std::size_t operand_storage_offset
@@ -50,7 +50,7 @@ public:
 /** @brief Increment register X by 1. */
 class OpcodeINX : public IRegisterIncrementingOpcode {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset
@@ -60,7 +60,7 @@ public:
 /** @brief Decrement register X by 1. */
 class OpcodeDEX : public IRegisterIncrementingOpcode {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset
@@ -70,7 +70,7 @@ public:
 /** @brief Increment register Y by 1. */
 class OpcodeINY : public IRegisterIncrementingOpcode {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset
@@ -80,7 +80,7 @@ public:
 /** @brief Decrement register Y by 1. */
 class OpcodeDEY : public IRegisterIncrementingOpcode {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset

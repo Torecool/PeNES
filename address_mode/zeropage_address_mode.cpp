@@ -55,7 +55,7 @@ l_cleanup:
 }
 
 
-inline enum PeNESStatus ZeropageXIndexedAddressMode::get_storage(
+enum PeNESStatus ZeropageXIndexedAddressMode::get_storage(
     ProgramContext *program_context,
     native_dword_t zeropage_address,
     IStorageLocation **output_storage,

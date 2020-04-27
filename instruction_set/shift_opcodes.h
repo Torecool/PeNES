@@ -27,7 +27,7 @@ namespace instruction_set {
  * */
 class IShiftOpcode : public IOpcode, public IUpdateDataStatusOperation {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *shift_storage,
         std::size_t storage_offset
@@ -46,7 +46,7 @@ protected:
      *                  This is in order to retain data needed for the calculation of the updated status,
      *                  namely the value of the Carry flag.
      * */
-    inline virtual native_dword_t operation(
+    virtual native_dword_t operation(
         native_word_t status_register_data,
         native_word_t storage_data
     ) = 0;

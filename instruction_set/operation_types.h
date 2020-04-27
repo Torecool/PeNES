@@ -40,7 +40,7 @@ protected:
      *
      *  @return         Status indicating the success of the operation.
      * */
-    inline enum PeNESStatus update_status(
+    enum PeNESStatus update_status(
         RegisterStorage<native_word_t> *register_status,
         native_word_t update_values = 0
     ) const;
@@ -57,7 +57,27 @@ protected:
     inline enum PeNESStatus update_status(
         ProgramContext *program_ctx,
         native_word_t update_values = 0
-    ) const;
+    ) const
+    {
+        enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+        RegisterStorage<native_word_t> *register_status = nullptr;
+
+        ASSERT(nullptr != program_ctx);
+
+        /* Retrieve the Status register from the program context. */
+        register_status = program_ctx->register_file.get_register_status();
+
+        /* Call the "real" update_status. */
+        status = this->update_status(register_status, update_values);
+        if (PENES_STATUS_SUCCESS != status) {
+            DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("update_status failed. Status: %d", status);
+            goto l_cleanup;
+        }
+
+        status = PENES_STATUS_SUCCESS;
+    l_cleanup:
+        return status;
+    }
 
     /** @brief The mask of status flags that are allowed to be modified in the Status register. */
     const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NONE;
@@ -92,7 +112,7 @@ protected:
      *                  meaning that it still performs the functionality provided by the superclass method.
      *                  Flags set manually via update_values will not be overridden.
      * */
-    inline enum PeNESStatus update_data_status(
+    enum PeNESStatus update_data_status(
         RegisterStorage<native_word_t> *register_status,
         native_dword_t operation_result,
         native_word_t update_values = 0
@@ -112,7 +132,27 @@ protected:
         ProgramContext *program_ctx,
         native_dword_t operation_result,
         native_word_t update_values = 0
-    );
+    )
+    {
+        enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+        RegisterStorage<native_word_t> *register_status = nullptr;
+
+        ASSERT(nullptr != program_ctx);
+
+        /* Retrieve the Status register from the program context. */
+        register_status = program_ctx->register_file.get_register_status();
+
+        /* Call the "real" update_data_status. */
+        status = this->update_data_status(register_status, operation_result, update_values);
+        if (PENES_STATUS_SUCCESS != status) {
+            DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("update_data_status failed. Status: %d", status);
+            goto l_cleanup;
+        }
+
+        status = PENES_STATUS_SUCCESS;
+    l_cleanup:
+        return status;
+    }
 
     const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE | REGISTER_STATUS_FLAG_MASK_ZERO;
 };
@@ -124,11 +164,27 @@ protected:
      *                  Pushes a single WORD onto the stack.
      *
      *  @param[in]      program_ctx                 The program context containing the stack to push onto.
-     *  @param[in]      push_data                   The data word to push.
+     *  @param[in]      push_word                   The data word to push.
      *
      *  @return         Status indicating the success of the operation.
      * */
-    static inline enum PeNESStatus push(ProgramContext *program_ctx, native_word_t push_data);
+    static inline enum PeNESStatus push(ProgramContext *program_ctx, native_word_t push_word)
+    {
+        enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+
+        ASSERT(nullptr != program_ctx);
+
+        /* Call the "real" push implementation with the data word to push. */
+        status = push(program_ctx, &push_word, sizeof(push_word));
+        if (PENES_STATUS_SUCCESS != status) {
+            DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("push failed. Status: %d", status);
+            goto l_cleanup;
+        }
+
+        status = PENES_STATUS_SUCCESS;
+    l_cleanup:
+        return status;
+    }
 
     /** @brief          Utility wrapper for the push method that receives data via a buffer.
      *                  Pushes a single DWORD address onto the stack.
@@ -141,7 +197,28 @@ protected:
      *  @note           Since the native machine employs little endianness in memory,
      *                  addresses must be converted to little endian before pushing.
      * */
-    static inline enum PeNESStatus push(ProgramContext *program_ctx, native_address_t push_address);
+    static inline enum PeNESStatus push(ProgramContext *program_ctx, native_address_t push_address)
+    {
+        enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+        native_address_t converted_push_address = system_big_to_native_endianness(push_address);
+
+        ASSERT(nullptr != program_ctx);
+
+        /* Call the "real" push implementation with the address to push, after it has been byteswapped. */
+        status = push(
+            program_ctx,
+            reinterpret_cast<native_word_t *>(&converted_push_address),
+            sizeof(converted_push_address)
+        );
+        if (PENES_STATUS_SUCCESS != status) {
+            DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("push failed. Status: %d", status);
+            goto l_cleanup;
+        }
+
+        status = PENES_STATUS_SUCCESS;
+    l_cleanup:
+        return status;
+    }
 
     /** @brief          Utility wrapper for the pull method that receives data via a buffer.
      *                  Pulls a single WORD from the stack.
@@ -151,7 +228,27 @@ protected:
      *
      *  @return         Status indicating the success of the operation.
      * */
-    static inline enum PeNESStatus pull(ProgramContext *program_ctx, native_word_t *output_pull_word);
+    static inline enum PeNESStatus pull(ProgramContext *program_ctx, native_word_t *output_pull_word)
+    {
+        enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+        native_word_t pull_data = 0;
+
+        ASSERT(nullptr != program_ctx);
+        ASSERT(nullptr != output_pull_word);
+
+        /* Call the "real" pull implementation with a buffer to contain the data word being pulled. */
+        status = pull(program_ctx, &pull_data, sizeof(pull_data));
+        if (PENES_STATUS_SUCCESS != status) {
+            DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("pull failed. Status: %d", status);
+            goto l_cleanup;
+        }
+
+        *output_pull_word = pull_data;
+
+        status = PENES_STATUS_SUCCESS;
+    l_cleanup:
+        return status;
+    }
 
     /** @brief          Utility wrapper for the pull method that receives data via a buffer.
      *                  Pulls a single DWORD address from the stack.
@@ -164,7 +261,35 @@ protected:
      *  @note           Since the native machine employs little endianness in memory,
      *                  addresses must be converted to big endian after pulling.
      * */
-    static inline enum PeNESStatus pull(ProgramContext *program_ctx, native_address_t *output_pull_address);
+    static inline enum PeNESStatus pull(ProgramContext *program_ctx, native_address_t *output_pull_address)
+    {
+        enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+        native_address_t pull_address = 0;
+        native_address_t converted_pull_address = 0;
+
+        ASSERT(nullptr != program_ctx);
+        ASSERT(nullptr != output_pull_address);
+
+        /* Call the "real" pull implementation with a buffer to contain the address being pulled. */
+        status = pull(
+            program_ctx,
+            reinterpret_cast<native_word_t *>(&pull_address),
+            sizeof(pull_address)
+        );
+        if (PENES_STATUS_SUCCESS != status) {
+            DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("pull failed. Status: %d", status);
+            goto l_cleanup;
+        }
+
+        /* Convert the address from its storage endianness, little endian, to big endian. */
+        converted_pull_address = system_native_to_big_endianness(pull_address);
+
+        *output_pull_address = converted_pull_address;
+
+        status = PENES_STATUS_SUCCESS;
+    l_cleanup:
+        return status;
+    }
 
 private:
     /** @brief          Push a buffer of data onto the stack as-is (i.e. without endianness conversions).
@@ -178,7 +303,7 @@ private:
      *
      *  @note           The stack grows top-down (meaning a lower address is higher on the stack).
      * */
-    static inline enum PeNESStatus push(
+    static enum PeNESStatus push(
         ProgramContext *program_ctx,
         const native_word_t *push_data,
         std::size_t push_size
@@ -195,7 +320,7 @@ private:
      *
      *  @note           The stack grows top-down (meaning a lower address is higher on the stack).
      * */
-    static inline enum PeNESStatus pull(
+    static enum PeNESStatus pull(
         ProgramContext *program_ctx,
         native_word_t *pull_buffer,
         std::size_t pull_size
@@ -213,7 +338,7 @@ protected:
      *
      *  @return         Status indicating the success of the operation.
      * */
-    static inline enum PeNESStatus jump(
+    static enum PeNESStatus jump(
         RegisterStorage<native_dword_t> *register_program_counter,
         IStorageLocation *jump_address_storage,
         std::size_t address_storage_offset = 0

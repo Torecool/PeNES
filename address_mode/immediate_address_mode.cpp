@@ -50,24 +50,3 @@ enum PeNESStatus ImmediateAddressMode<SizeType>::get_storage(
 l_cleanup:
     return status;
 }
-
-
-template<typename SizeType>
-enum PeNESStatus ImmediateAddressMode<SizeType>::release_storage(
-    ProgramContext *program_ctx,
-    IStorageLocation *storage
-)
-{
-    enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-    ImmediateStorage<SizeType> *immediate_storage = nullptr;
-
-    ASSERT(nullptr != program_ctx);
-    ASSERT(nullptr != storage);
-
-    /* Release the allocated memory of the immediate storage object. */
-    delete storage;
-
-    status = PENES_STATUS_SUCCESS;
-l_cleanup:
-    return status;
-}

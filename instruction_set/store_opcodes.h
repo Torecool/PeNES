@@ -33,7 +33,7 @@ protected:
      *
      *  @return         Status indicating the success of the operation.
      * */
-    static inline enum PeNESStatus store(
+    static enum PeNESStatus store(
         RegisterStorage<native_word_t> *store_register,
         IStorageLocation *store_storage,
         std::size_t storage_offset
@@ -43,7 +43,7 @@ protected:
 /** @brief Store Accumulator in memory. */
 class OpcodeSTA : public IStoreOpcode {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *store_operand_storage,
         std::size_t operand_storage_offset
@@ -67,7 +67,7 @@ public:
         }
     }
 
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *store_operand_storage,
         std::size_t operand_storage_offset
@@ -77,7 +77,7 @@ public:
 /** @brief Store Index Y in memory. */
 class OpcodeSTY : public IStoreOpcode {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *store_operand_storage,
         std::size_t operand_storage_offset

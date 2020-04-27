@@ -34,7 +34,11 @@ enum PeNESStatus ITransferOpcode::transfer(
     ASSERT(nullptr != dest_register);
 
     /* Transfer the entire contents of the source register to the destination register. */
-    src_register->transfer(dest_register);
+    status = src_register->transfer(dest_register);
+    if (PENES_STATUS_SUCCESS != status) {
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("transfer failed. Status: %d", status);
+        goto l_cleanup;
+    }
 
     /* Read the contents of the dest register in order to determine status flags to update. */
     dest_register_data = dest_register->read();
@@ -204,7 +208,11 @@ enum PeNESStatus OpcodeTXS::exec(
      * we will skip calling the superclass transfer function,
      * but keep the class hierarchy for its logical meaning.
      * */
-    register_x->transfer(register_stack_pointer);
+    status = register_x->transfer(register_stack_pointer);
+    if (PENES_STATUS_SUCCESS != status) {
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("transfer failed. Status: %d", status);
+        goto l_cleanup;
+    }
 
     status = PENES_STATUS_SUCCESS;
 l_cleanup:

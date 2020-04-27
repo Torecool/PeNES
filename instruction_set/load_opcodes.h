@@ -35,7 +35,7 @@ public:
      *
      *  @return         Status indicating the success of the operation.
      * */
-    inline enum PeNESStatus load(
+    enum PeNESStatus load(
         ProgramContext *program_ctx,
         RegisterStorage<native_word_t> *load_register,
         IStorageLocation *load_storage,
@@ -46,7 +46,7 @@ public:
 /** @brief Load Accumulator with Data. */
 class OpcodeLDA : public ILoadOpcode {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *data_operand_storage,
         std::size_t operand_storage_offset
@@ -73,7 +73,7 @@ public:
         }
     }
 
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *data_operand_storage,
         std::size_t operand_storage_offset
@@ -83,7 +83,7 @@ public:
 /** @brief Load register Y with Data. */
 class OpcodeLDY : public ILoadOpcode {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *data_operand_storage,
         std::size_t operand_storage_offset

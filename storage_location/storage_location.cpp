@@ -126,23 +126,3 @@ l_cleanup:
     delete transfer_buffer;
     return status;
 }
-
-
-template<typename SizeType>
-enum PeNESStatus ImmediateStorage<SizeType>::write(
-    const native_word_t *write_buffer,
-    std::size_t num_immediate_words,
-    std::size_t immediate_word_offset
-)
-{
-    enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-
-    ASSERT(nullptr != write_buffer);
-
-    status = PENES_STATUS_STORAGE_LOCATION_IMMEDIATE_STORAGE_WRITE_INVALID_OPERATION;
-    DEBUG_PRINT_WITH_ARGS("Cannot write to immediate storage location. Status: %d\n", status);
-    goto l_cleanup;
-
-l_cleanup:
-    return status;
-}

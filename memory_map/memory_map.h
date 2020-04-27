@@ -39,15 +39,22 @@ class MemoryMap {
 public:
     MemoryMap();
 
-     ~MemoryMap();
+     inline ~MemoryMap()
+     {
+         for (MemoryStorage *memory_storage : this->storage_table) {
+             delete memory_storage;
+         }
 
-    inline enum PeNESStatus get_memory_storage(
+         this->storage_table.clear();
+     }
+
+    enum PeNESStatus get_memory_storage(
         native_address_t address,
         MemoryStorage **output_storage,
         std::size_t *output_storage_offset
     ) const;
 
-    inline MemoryStorage *get_stack_storage() const;
+    MemoryStorage *get_stack_storage() const;
 
     inline MemoryStorage *get_nmi_interrupt_vector() const;
 

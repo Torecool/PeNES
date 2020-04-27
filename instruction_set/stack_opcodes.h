@@ -27,7 +27,7 @@ class IStackOpcode : public IImpliedOperandOpcode, public IStackOperation {};
 /** @brief Push Accumulator on Stack. */
 class OpcodePHA : public IStackOpcode {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset
@@ -37,7 +37,7 @@ public:
 /** @brief Push Status register on Stack. */
 class OpcodePHP : public IStackOpcode {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset
@@ -47,7 +47,7 @@ public:
 /** @brief Pull Accumulator from Stack. */
 class OpcodePLA : public IStackOpcode, public IUpdateDataStatusOperation {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset
@@ -57,7 +57,7 @@ public:
 /** @brief Pull Status register from Stack. */
 class OpcodePLP : public IStackOpcode, public IUpdateStatusOperation {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset

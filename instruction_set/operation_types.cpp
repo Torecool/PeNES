@@ -48,32 +48,6 @@ l_cleanup:
 }
 
 
-enum PeNESStatus IUpdateStatusOperation::update_status(
-    ProgramContext *program_ctx,
-    native_word_t update_values
-) const
-{
-    enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-    RegisterStorage<native_word_t> *register_status = nullptr;
-
-    ASSERT(nullptr != program_ctx);
-
-    /* Retrieve the Status register from the program context. */
-    register_status = program_ctx->register_file.get_register_status();
-
-    /* Call the "real" update_status. */
-    status = this->update_status(register_status, update_values);
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("update_data_status failed. Status: %d", status);
-        goto l_cleanup;
-    }
-
-    status = PENES_STATUS_SUCCESS;
-l_cleanup:
-    return status;
-}
-
-
 enum PeNESStatus IUpdateDataStatusOperation::update_data_status(
     RegisterStorage<native_word_t> *register_status,
     native_dword_t operation_result,
@@ -96,33 +70,6 @@ enum PeNESStatus IUpdateDataStatusOperation::update_data_status(
     status = IUpdateStatusOperation::update_status(register_status, update_values);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_data_status failed. Status: %d", status);
-        goto l_cleanup;
-    }
-
-    status = PENES_STATUS_SUCCESS;
-l_cleanup:
-    return status;
-}
-
-
-enum PeNESStatus IUpdateDataStatusOperation::update_data_status(
-    ProgramContext *program_ctx,
-    native_dword_t operation_result,
-    native_word_t update_values
-)
-{
-    enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-    RegisterStorage<native_word_t> *register_status = nullptr;
-
-    ASSERT(nullptr != program_ctx);
-
-    /* Retrieve the Status register from the program context. */
-    register_status = program_ctx->register_file.get_register_status();
-
-    /* Call the "real" update_data_status. */
-    status = this->update_data_status(register_status, operation_result, update_values);
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("update_data_status failed. Status: %d", status);
         goto l_cleanup;
     }
 
@@ -221,103 +168,6 @@ enum PeNESStatus IStackOperation::pull(
 
     /* Write the updated Stack address back to the register. */
     register_stack_pointer->write(stack_pointer_address);
-
-    status = PENES_STATUS_SUCCESS;
-l_cleanup:
-    return status;
-}
-
-
-enum PeNESStatus IStackOperation::push(ProgramContext *program_ctx, native_word_t push_word)
-{
-    enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-
-    ASSERT(nullptr != program_ctx);
-
-    /* Call the "real" push implementation with the data word to push. */
-    status = push(program_ctx, &push_word, sizeof(push_word));
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("push failed. Status: %d", status);
-        goto l_cleanup;
-    }
-
-    status = PENES_STATUS_SUCCESS;
-l_cleanup:
-    return status;
-}
-
-
-enum PeNESStatus IStackOperation::push(ProgramContext *program_ctx, native_address_t push_address)
-{
-    enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-    native_address_t converted_push_address = system_big_to_native_endianness(push_address);
-
-    ASSERT(nullptr != program_ctx);
-
-    /* Call the "real" push implementation with the address to push, after it has been byteswapped. */
-    status = push(
-        program_ctx,
-        reinterpret_cast<native_word_t *>(&converted_push_address),
-        sizeof(converted_push_address)
-    );
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("push failed. Status: %d", status);
-        goto l_cleanup;
-    }
-
-    status = PENES_STATUS_SUCCESS;
-l_cleanup:
-    return status;
-}
-
-
-enum PeNESStatus IStackOperation::pull(ProgramContext *program_ctx, native_word_t *output_pull_word)
-{
-    enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-    native_word_t pull_data = 0;
-
-    ASSERT(nullptr != program_ctx);
-    ASSERT(nullptr != output_pull_word);
-
-    /* Call the "real" pull implementation with a buffer to contain the data word being pulled. */
-    status = pull(program_ctx, &pull_data, sizeof(pull_data));
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("pull failed. Status: %d", status);
-        goto l_cleanup;
-    }
-
-    *output_pull_word = pull_data;
-
-    status = PENES_STATUS_SUCCESS;
-l_cleanup:
-    return status;
-}
-
-
-enum PeNESStatus IStackOperation::pull(ProgramContext *program_ctx, native_address_t *output_pull_address)
-{
-    enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-    native_address_t pull_address = 0;
-    native_address_t converted_pull_address = 0;
-
-    ASSERT(nullptr != program_ctx);
-    ASSERT(nullptr != output_pull_address);
-
-    /* Call the "real" pull implementation with a buffer to contain the address being pulled. */
-    status = pull(
-        program_ctx,
-        reinterpret_cast<native_word_t *>(&pull_address),
-        sizeof(pull_address)
-    );
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("pull failed. Status: %d", status);
-        goto l_cleanup;
-    }
-
-    /* Convert the address from its storage endianness, little endian, to big endian. */
-    converted_pull_address = system_native_to_big_endianness(pull_address);
-
-    *output_pull_address = converted_pull_address;
 
     status = PENES_STATUS_SUCCESS;
 l_cleanup:

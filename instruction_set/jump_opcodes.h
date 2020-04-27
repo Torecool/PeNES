@@ -40,7 +40,7 @@ public:
         return address_mode::AddressModeType::ADDRESS_MODE_TYPE_IMMEDIATE_DOUBLE;
     }
 
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *jump_address_storage,
         std::size_t address_storage_offset
@@ -82,7 +82,7 @@ public:
         return address_mode::AddressModeType::ADDRESS_MODE_TYPE_IMMEDIATE_DOUBLE;
     }
 
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *jump_address_storage,
         std::size_t address_storage_offset
@@ -96,7 +96,7 @@ class OpcodeBRK :
     public IStackOperation,
     public IUpdateStatusOperation {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset
@@ -121,7 +121,7 @@ class OpcodeRTI :
     public IStackOperation,
     public IUpdateStatusOperation {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset
@@ -137,7 +137,7 @@ protected:
 /** @brief Return from subroutine, restoring Program counter. */
 class OpcodeRTS : public IImpliedOperandOpcode, public IStackOperation {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset

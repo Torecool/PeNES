@@ -28,7 +28,26 @@ public:
         ProgramContext *program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset
-    ) override;
+    ) override
+    {
+        enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+
+        ASSERT(nullptr != program_ctx);
+
+        UNREFERENCED_PARAMETER(operand_storage);
+        UNREFERENCED_PARAMETER(operand_storage_offset);
+
+        /* Call the method to update the status. */
+        status = this->update_status(program_ctx);
+        if (PENES_STATUS_SUCCESS != status) {
+            DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("update_data_status failed. Status: %d", status);
+            goto l_cleanup;
+        }
+
+        status = PENES_STATUS_SUCCESS;
+    l_cleanup:
+        return status;
+    }
 };
 
 /** @brief Set Carry flag. */

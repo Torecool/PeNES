@@ -118,12 +118,26 @@ public:
         COPY_MEMORY(this->storage_buffer, &register_data,this->storage_size);
     }
 
-    inline void transfer(RegisterStorage<SizeType> *dest_register)
+    inline enum PeNESStatus transfer(RegisterStorage<SizeType> *dest_register)
     {
+        enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+
         ASSERT(nullptr != dest_register);
 
         /* Write the data from the source register buffer directly into the destination register buffer. */
-        dest_register->write(this->storage_buffer);
+        status = dest_register->IStorageLocation::write(
+            this->storage_buffer,
+            system_bytes_to_words(sizeof(SizeType)),
+            0
+        );
+        if (PENES_STATUS_SUCCESS != status) {
+            DEBUG_PRINT_WITH_ARGS("write failed. Status: %d\n", status);
+            goto l_cleanup;
+        }
+
+        status = PENES_STATUS_SUCCESS;
+    l_cleanup:
+        return status;
     }
 };
 

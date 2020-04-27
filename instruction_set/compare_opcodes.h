@@ -36,7 +36,7 @@ protected:
      *
      *  @return         Status indicating the success of the operation.
      * */
-    inline enum PeNESStatus compare(
+    enum PeNESStatus compare(
         ProgramContext *program_ctx,
         RegisterStorage<native_word_t> *compare_register,
         IStorageLocation *compare_storage,
@@ -51,7 +51,7 @@ protected:
 /** @brief Compare Accumulator with data (A - M). */
 class OpcodeCMP : public ICompareOpcode {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *data_operand_storage,
         std::size_t operand_storage_offset
@@ -61,7 +61,7 @@ public:
 /** @brief Compare register X with data (X - M). */
 class OpcodeCPX : public ICompareOpcode {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *data_operand_storage,
         std::size_t operand_storage_offset
@@ -71,7 +71,7 @@ public:
 /** @brief Compare register Y with data (Y - M). */
 class OpcodeCPY : public ICompareOpcode {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *data_operand_storage,
         std::size_t operand_storage_offset

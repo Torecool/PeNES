@@ -6,7 +6,6 @@
 
 /** Headers ***************************************************************/
 #include <array>
-#include <stdexcept>
 
 #include "utils/utils.h"
 
@@ -88,37 +87,3 @@ const std::array<opcode_instance_factory_t, OPCODE_TYPE_NUM_OPCODES> OpcodeTable
     utils::SubClassFactory<IOpcode>::create_instance<OpcodeTXS>,
     utils::SubClassFactory<IOpcode>::create_instance<OpcodeTYA>
 };
-
-/** Functions *************************************************************/
-Instruction::~Instruction()
-{
-    enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-
-    /* Release the storage resource in use. */
-    status = this->instruction_address_mode->release_storage(
-        this->program_ctx,
-        this->operand_storage
-    );
-    ASSERT(PENES_STATUS_SUCCESS == status);
-}
-
-
-enum PeNESStatus Instruction::exec()
-{
-    enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-
-    /* Execute the opcode. */
-    status = this->instruction_opcode->exec(
-        this->program_ctx,
-        this->operand_storage,
-        this->operand_storage_offset
-    );
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Opcode exec failed. Status: %d\n", status);
-        goto l_cleanup;
-    }
-
-    status = PENES_STATUS_SUCCESS;
-l_cleanup:
-    return status;
-}

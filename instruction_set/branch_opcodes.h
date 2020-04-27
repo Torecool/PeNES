@@ -33,7 +33,7 @@ public:
         return address_mode::AddressModeType::ADDRESS_MODE_TYPE_RELATIVE;
     }
 
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *branch_operand_storage,
         std::size_t operand_storage_offset
@@ -48,7 +48,7 @@ protected:
      *
      *  @return         Status indicating the success of the operation.
      * */
-    static inline enum PeNESStatus branch(
+    static enum PeNESStatus branch(
         ProgramContext *program_ctx,
         IStorageLocation *branch_operand_storage,
         std::size_t operand_storage_offset = 0

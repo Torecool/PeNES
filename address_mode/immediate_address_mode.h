@@ -20,7 +20,7 @@ namespace address_mode {
 template<typename SizeType>
 class ImmediateAddressMode : public IAddressMode {
 public:
-    inline enum PeNESStatus get_storage(
+    enum PeNESStatus get_storage(
         ProgramContext *program_ctx,
         native_dword_t immediate_value,
         IStorageLocation **output_storage,
@@ -29,8 +29,17 @@ public:
 
     inline enum PeNESStatus release_storage(
         ProgramContext *program_ctx,
-        IStorageLocation *storage
-    ) override;
+        IStorageLocation *immediate_storage
+    ) override
+    {
+        ASSERT(nullptr != program_ctx);
+        ASSERT(nullptr != immediate_storage);
+
+        /* Release the allocated memory of the immediate storage object. */
+        delete immediate_storage;
+
+        return PENES_STATUS_SUCCESS;
+    }
 };
 
 

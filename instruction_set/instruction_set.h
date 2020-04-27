@@ -92,7 +92,7 @@ typedef IOpcode *(*opcode_instance_factory_t)();
 /** Classes ***************************************************************/
 class OpcodeTable : public utils::ObjectTable<IOpcode, enum OpcodeType> {
 public:
-    explicit OpcodeTable(std::initializer_list<enum OpcodeType> opcode_types):
+    OpcodeTable(std::initializer_list<enum OpcodeType> opcode_types):
         ObjectTable<IOpcode, enum OpcodeType>(
             &opcode_instance_factory_table,
             opcode_types
@@ -123,7 +123,17 @@ public:
         ASSERT(nullptr != instruction_opcode);
     };
 
-    ~Instruction();
+    inline ~Instruction()
+    {
+        enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+
+        /* Release the storage resource in use. */
+        status = this->instruction_address_mode->release_storage(
+            this->program_ctx,
+            this->operand_storage
+        );
+        ASSERT(PENES_STATUS_SUCCESS == status);
+    }
 
     inline virtual enum PeNESStatus exec()
     {

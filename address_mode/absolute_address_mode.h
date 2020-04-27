@@ -22,7 +22,7 @@ class AbsoluteAddressMode : public IAddressMode {
 public:
     const enum InstructionOperandSize operand_size = INSTRUCTION_OPERAND_SIZE_DWORD;
 
-    inline enum PeNESStatus get_storage(
+    enum PeNESStatus get_storage(
         ProgramContext *program_ctx,
         native_dword_t absolute_address,
         IStorageLocation **output_storage,
@@ -35,7 +35,7 @@ class AbsoluteXIndexedAddressMode : public IAddressMode {
 public:
     const enum InstructionOperandSize operand_size = INSTRUCTION_OPERAND_SIZE_DWORD;
 
-    inline enum PeNESStatus get_storage(
+    enum PeNESStatus get_storage(
         ProgramContext *program_ctx,
         native_dword_t absolute_address,
         IStorageLocation **output_storage,
@@ -48,7 +48,7 @@ class AbsoluteYIndexedAddressMode : public IAddressMode {
 public:
     const enum InstructionOperandSize operand_size = INSTRUCTION_OPERAND_SIZE_DWORD;
 
-    inline enum PeNESStatus get_storage(
+    enum PeNESStatus get_storage(
         ProgramContext *program_ctx,
         native_dword_t absolute_address,
         IStorageLocation **output_storage,

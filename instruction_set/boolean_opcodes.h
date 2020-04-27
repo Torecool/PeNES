@@ -27,7 +27,7 @@ namespace instruction_set {
  * */
 class IBooleanOpcode : public IOpcode, public IUpdateDataStatusOperation {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *data_operand_storage,
         std::size_t storage_offset
@@ -42,7 +42,7 @@ protected:
      *
      *  @return         The result of the boolean operation, to be written back to register A.
      * */
-    inline virtual native_word_t operation(
+    virtual native_word_t operation(
         native_word_t register_a_data,
         native_word_t storage_data
     ) = 0;
@@ -91,7 +91,7 @@ protected:
  * */
 class OpcodeBIT : public OpcodeAND {
 public:
-    inline enum PeNESStatus exec(
+    enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *data_operand_storage,
         std::size_t storage_offset

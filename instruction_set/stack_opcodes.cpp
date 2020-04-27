@@ -42,7 +42,7 @@ enum PeNESStatus OpcodePHA::exec(
     register_a_data = register_a->read();
 
     /* Push the data from the register onto the stack. */
-    status = this->push(program_ctx, register_a_data);
+    status = IStackOperation::push(program_ctx, register_a_data);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass push failed. Status: %d", status);
         goto l_cleanup;
@@ -82,7 +82,7 @@ enum PeNESStatus OpcodePHP::exec(
     program_status |= REGISTER_STATUS_FLAG_MASK_BREAK;
 
     /* Push the data from the register onto the stack. */
-    status = this->push(program_ctx, program_status);
+    status = IStackOperation::push(program_ctx, program_status);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass push failed. Status: %d", status);
         goto l_cleanup;
@@ -113,7 +113,7 @@ enum PeNESStatus OpcodePLA::exec(
     register_a = program_ctx->register_file.get_register_status();
 
     /* Pull a data word from the stack. */
-    status = this->pull(program_ctx, &pull_data);
+    status = IStackOperation::pull(program_ctx, &pull_data);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass pull failed. Status: %d", status);
         goto l_cleanup;
@@ -150,7 +150,7 @@ enum PeNESStatus OpcodePLP::exec(
     UNREFERENCED_PARAMETER(operand_storage_offset);
 
     /* Pull a data word from the stack. */
-    status = this->pull(program_ctx, &pull_status);
+    status = IStackOperation::pull(program_ctx, &pull_status);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass push failed. Status: %d", status);
         goto l_cleanup;
