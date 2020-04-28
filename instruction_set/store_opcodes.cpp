@@ -34,7 +34,7 @@ enum PeNESStatus IStoreOpcode::store(
     /* Transfer the entire contents of the store register to the operand memory location. */
     status = store_register->IStorageLocation::transfer(
         store_storage,
-        store_register->get_storage_size(),
+        store_register->get_num_storage_words(),
         0,
         storage_offset
     );

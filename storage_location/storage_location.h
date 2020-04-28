@@ -23,15 +23,19 @@
 /** Functions *************************************************************/
 class IStorageLocation {
 public:
-    inline explicit IStorageLocation(std::size_t num_storage_words):
+    inline explicit IStorageLocation(std::size_t num_storage_words = 0):
         storage_size(system_words_to_bytes(num_storage_words))
     {
-        this->storage_buffer = new native_word_t[system_words_to_bytes(num_storage_words)];
+        if (0 < this->storage_size) {
+            this->storage_buffer = new native_word_t[this->storage_size];
+        }
     }
 
     inline ~IStorageLocation()
     {
-        delete this->storage_buffer;
+        if (0 < this->storage_size) {
+            delete this->storage_buffer;
+        }
     }
 
     virtual enum PeNESStatus read(
@@ -58,8 +62,13 @@ public:
         return this->storage_size;
     }
 
+    constexpr inline std::size_t get_num_storage_words() const
+    {
+        return system_words_to_bytes(this->storage_size);
+    }
+
 protected:
-    const std::size_t storage_size = 0;
+    std::size_t storage_size = 0;
     native_word_t *storage_buffer = nullptr;
 };
 
@@ -86,12 +95,10 @@ public:
         return status;
     }
 
-    inline void set(const native_word_t *immediate_data)
+    inline void set(SizeType immediate_data)
     {
-        ASSERT(nullptr != immediate_data);
-
         /* Copy memory from the input data buffer into the immediate storage buffer. */
-        COPY_MEMORY(this->storage_buffer, immediate_data,this->storage_size);
+        COPY_MEMORY(this->storage_buffer, &immediate_data,this->storage_size);
     }
 };
 

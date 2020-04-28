@@ -7,6 +7,8 @@
 
 /** Headers ***************************************************************/
 #include "decoder/decoder.h"
+#include "utils/utils.h"
+#include "address_mode/address_mode.h"
 
 /** Constants *************************************************************/
 #define DECODER_INSTRUCTION_GROUP_ENCODING_OFFSET (0)
@@ -31,8 +33,6 @@
     ((instruction_data) & DECODER_OPCODE_ENCODING_BIT_MASK) >> DECODER_OPCODE_ENCODING_OFFSET                         \
 )
 
-/** Enums *****************************************************************/
-/** Typedefs **************************************************************/
 /** Static Variables ******************************************************/
 const std::initializer_list<enum instruction_set::OpcodeType> Decoder::default_opcode_table_group_1 = {
     instruction_set::OPCODE_TYPE_ORA,
@@ -345,21 +345,9 @@ l_cleanup:
 }
 
 
-Decoder::Decoder(
-    ProgramContext *program_ctx,
-    const native_word_t *src_binary,
-    std::size_t src_binary_size
-): program_ctx(program_ctx), src_binary(src_binary), src_binary_size(src_binary_size)
-{
-    ASSERT(nullptr != program_ctx);
-    ASSERT(nullptr != src_binary);
-    ASSERT(0 < src_binary_size);
-}
-
-
 enum PeNESStatus Decoder::next_instruction(
     instruction_set::Instruction **output_instruction
-) const
+)
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     instruction_set::Instruction *instruction = nullptr;
@@ -425,7 +413,7 @@ enum PeNESStatus Decoder::decode_opcode(
     native_address_t *decode_address,
     instruction_set::IOpcode **output_opcode,
     address_mode::IAddressMode **output_address_mode
-) const
+)
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     const InstructionDecodeGroup *instruction_group = nullptr;
@@ -438,19 +426,20 @@ enum PeNESStatus Decoder::decode_opcode(
     ASSERT(nullptr != output_opcode);
     ASSERT(nullptr != output_address_mode);
 
-    /* Verify that the opcode read address is within the bounds of the source binary. */
-    if (this->src_binary_size < *decode_address + sizeof(instruction_opcode_data)) {
-        status = PENES_STATUS_DECODER_DECODE_OPCODE_ADDRESS_OUT_OF_BOUNDS;
+    /* Read the instruction opcode at the decode address. */
+    status = read_instruction_data(
+        *decode_address,
+        &instruction_opcode_data,
+        sizeof(instruction_opcode_data)
+    );
+    if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS(
-            "Decode opcode address out of bounds. Status: %d. Decode address: %x\n",
+            "read_instruction_data failed. Status: %d. Address: 0x%x\n",
             status,
             *decode_address
         );
         goto l_cleanup;
     }
-
-    /* Read the instruction opcode at the decode address. */
-    instruction_opcode_data = this->src_binary[*decode_address];
 
     /* Extract the encoded instruction group index and verify it's within range of the table. */
     instruction_group_index = DECODER_GET_INSTRUCTION_GROUP_ENCODING(instruction_opcode_data);
@@ -499,34 +488,42 @@ enum PeNESStatus Decoder::decode_operand(
     address_mode::IAddressMode *address_mode,
     IStorageLocation **output_storage_location,
     std::size_t *output_storage_offset
-) const
+)
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-    enum address_mode::InstructionOperandSize operand_size = address_mode::INSTRUCTION_OPERAND_SIZE_NONE;
     IStorageLocation *operand_storage = nullptr;
-    native_word_t instruction_operand_data = 0;
+    native_dword_t instruction_operand_data = 0;
+    native_word_t *operand_data_read_write_address = nullptr;
     std::size_t operand_storage_offset = 0;
+    std::size_t operand_size = 0;
 
     ASSERT(nullptr != decode_address);
     ASSERT(nullptr != address_mode);
     ASSERT(nullptr != output_storage_location);
     ASSERT(nullptr != output_storage_offset);
 
+    /* Since their can be multiple different operand sizes, we need a buffer to contain the largest operand size.
+     * Now, we need to adjust the buffer pointer that is passed to the method read_instruction_data,
+     * in order to account for shorter operands.
+     * */
     operand_size = address_mode->operand_size;
+    operand_data_read_write_address = reinterpret_cast<native_word_t *>(&instruction_operand_data);
+    operand_data_read_write_address += address_mode::INSTRUCTION_OPERAND_SIZE_DWORD - operand_size;
 
-    /* Verify that operand decode address is within the bounds of the source binary. */
-    if (this->src_binary_size < *decode_address + operand_size) {
-        status = PENES_STATUS_DECODER_DECODE_OPERAND_ADDRESS_OUT_OF_BOUNDS;
+    /* Read the instruction operand at the decode address. */
+    status = read_instruction_data(
+        *decode_address,
+        operand_data_read_write_address,
+        operand_size
+    );
+    if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS(
-            "Decode operand address out of bounds. Status: %d. Decode address: %x\n",
+            "read_instruction_data failed. Status: %d. Address: 0x%x\n",
             status,
             *decode_address
         );
         goto l_cleanup;
     }
-
-    /* Read the instruction operand at the decode address. */
-    COPY_MEMORY(&instruction_operand_data, this->src_binary, operand_size);
 
     /* Resolve the operand data into the instruction's storage location, using the address mode. */
     status = address_mode->get_storage(
@@ -537,7 +534,7 @@ enum PeNESStatus Decoder::decode_operand(
     );
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS(
-            "get_storage failed. Status: %d. Instruction operand data: %x\n",
+            "get_storage failed. Status: %d. Instruction operand data: 0x%x\n",
             status,
             instruction_operand_data
         );
@@ -549,6 +546,59 @@ enum PeNESStatus Decoder::decode_operand(
 
     /* Advance the decode address to reflect the new program counter value. */
     *decode_address += operand_size;
+
+    status = PENES_STATUS_SUCCESS;
+l_cleanup:
+    return status;
+}
+
+
+enum PeNESStatus Decoder::read_instruction_data(
+    native_address_t read_address,
+    native_word_t *read_buffer,
+    std::size_t num_read_words
+)
+{
+    enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+    std::size_t new_storage_bank_offset = 0;
+
+    ASSERT(nullptr != read_buffer);
+
+    /* Try to read data from the PRG-ROM storage.
+     * If we fail, try to switch to the next bank.
+     * If that still fails, return an error.
+     * */
+    if (nullptr != this->prg_rom_storage) {
+        status = this->prg_rom_storage->read(
+            read_buffer,
+            num_read_words,
+            read_address - this->prg_rom_storage_start_address
+        );
+    }
+
+    if (PENES_STATUS_SUCCESS != status) {
+        status = this->program_ctx->memory_map.get_memory_storage(
+            read_address,
+            &this->prg_rom_storage,
+            &new_storage_bank_offset
+        );
+        if (PENES_STATUS_SUCCESS != status) {
+            DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("get_memory_storage failed. Status: %d.\n", status);
+            goto l_cleanup;
+        }
+
+        status = this->prg_rom_storage->read(
+            read_buffer,
+            num_read_words,
+            new_storage_bank_offset
+        );
+        if (PENES_STATUS_SUCCESS != status) {
+            DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("read failed. Status: %d.\n", status);
+            goto l_cleanup;
+        }
+
+        this->prg_rom_storage_start_address = read_address - new_storage_bank_offset;
+    }
 
     status = PENES_STATUS_SUCCESS;
 l_cleanup:

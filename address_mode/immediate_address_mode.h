@@ -25,7 +25,28 @@ public:
         native_dword_t immediate_value,
         IStorageLocation **output_storage,
         std::size_t *output_storage_offset
-    ) override;
+    ) override
+    {
+        ImmediateStorage<SizeType> *immediate_storage = nullptr;
+
+        ASSERT(nullptr != program_ctx);
+        ASSERT(nullptr != output_storage);
+
+        /* Create a new immediate storage object. */
+        immediate_storage = new ImmediateStorage<SizeType>();
+
+        /* Set the immediate value of the storage object.
+         * This will be the return value when calling read.
+         * */
+        immediate_storage->set(immediate_value);
+
+        *output_storage = immediate_storage;
+        if (nullptr != output_storage_offset) {
+            *output_storage_offset = 0;
+        }
+
+        return PENES_STATUS_SUCCESS;
+    }
 
     inline enum PeNESStatus release_storage(
         ProgramContext *program_ctx,

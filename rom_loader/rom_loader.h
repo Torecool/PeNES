@@ -1,39 +1,43 @@
 /**
  * @brief  
  * @author TBK
- * @date   26/04/2020
+ * @date   27/04/2020
  * */
 
-#ifndef __CPU_H__
-#define __CPU_H__
+#ifndef __ROM_LOADER_H__
+#define __ROM_LOADER_H__
 
 /** Headers ***************************************************************/
-#include "penes_status.h"
-#include "system.h"
+#include <string>
+#include <fstream>
+#include <iostream>
 
-#include "program_context/program_context.h"
-#include "decoder/decoder.h"
+#include "penes_status.h"
 
 /** Constants *************************************************************/
+
+
 /** Macros ****************************************************************/
 /** Enums *****************************************************************/
 /** Typedefs **************************************************************/
 /** Structs ***************************************************************/
 /** Functions *************************************************************/
-class CPU {
+class ROMLoader {
 public:
-    inline explicit CPU(ProgramContext *program_ctx):
-        instruction_decoder(program_ctx)
+    enum PeNESStatus open(const std::string& input_file);
+
+    enum PeNESStatus get_prg_rom_bank(std::size_t bank_index, char *bank_buffer);
+
+    inline std::size_t get_num_prg_rom_banks() const
     {
-        ASSERT(nullptr != program_ctx);
+        return this->num_prg_rom_banks;
     }
 
-    enum PeNESStatus run();
-
 private:
-    ProgramContext *program_ctx;
-    Decoder instruction_decoder;
+    std::size_t num_prg_rom_banks = 0;
+    std::size_t num_chr_rom_banks = 0;
+    std::ifstream input_file_stream;
 };
 
 
-#endif /* __CPU_H__ */
+#endif /* __ROM_LOADER_H__ */

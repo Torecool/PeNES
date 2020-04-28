@@ -16,6 +16,7 @@
 #include "system.h"
 
 #include "storage_location/storage_location.h"
+#include "rom_loader/rom_loader.h"
 
 /** Enums *****************************************************************/
 enum MemoryMapAddress {
@@ -40,14 +41,49 @@ enum MemoryMapAddress {
 /** Classes ***************************************************************/
 class MemoryStorage : public IStorageLocation {
 public:
-    explicit MemoryStorage(std::size_t num_storage_words): IStorageLocation(num_storage_words)
+    inline explicit MemoryStorage(std::size_t num_storage_words = 0):
+        IStorageLocation(num_storage_words),
+        is_mirror(false)
     {};
+
+    /* Constructor for creating a mirror memory storage object.
+     * Both this instance's storage buffer as well as the original storage buffer point to the same memory.
+     * */
+    inline MemoryStorage(
+        MemoryStorage *original_storage,
+        std::size_t num_storage_words,
+        std::size_t original_storage_offset = 0
+    ): IStorageLocation(), is_mirror(true)
+    {
+        ASSERT(nullptr != original_storage);
+        ASSERT(original_storage->get_num_storage_words() >= original_storage_offset + num_storage_words);
+
+        this->storage_buffer = original_storage->storage_buffer + original_storage_offset;
+        this->storage_size = system_words_to_bytes(num_storage_words);
+    }
+
+    inline ~MemoryStorage()
+    {
+        /* Only call the destructor on the original copy. */
+        if (false == is_mirror) {
+            this->IStorageLocation::~IStorageLocation();
+        }
+    }
+
+private:
+    /* TODO replace with shared_ptr? */
+    const bool is_mirror;
+
+    /* The memory map needs to be able to directly manage the internal storage buffer and so it is a friend. */
+    friend class MemoryMap;
 };
 
 
 class MemoryMap {
 public:
-    MemoryMap();
+     MemoryMap();
+
+     explicit MemoryMap(ROMLoader *rom_loader);
 
      inline ~MemoryMap()
      {
@@ -93,8 +129,11 @@ public:
     }
 
 private:
+    enum PeNESStatus setup_storage_shortcuts();
+
     static const std::vector<enum MemoryMapAddress> address_keys;
     std::vector<MemoryStorage *> storage_table;
+
     MemoryStorage *stack_storage = nullptr;
     MemoryStorage *nmi_jump_vector_storage = nullptr;
     MemoryStorage *reset_jump_vector_storage = nullptr;

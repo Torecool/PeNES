@@ -16,13 +16,14 @@
 #include "storage_location/storage_location.h"
 #include "memory_map/memory_map.h"
 #include "utils/utils.h"
+#include "rom_loader/rom_loader.h"
 
 /** Constants *************************************************************/
 #define PROGRAM_CONTEXT_REGISTER_A_INITIAL_VALUE (0)
 #define PROGRAM_CONTEXT_REGISTER_X_INITIAL_VALUE (0)
 #define PROGRAM_CONTEXT_REGISTER_Y_INITIAL_VALUE (0)
 #define PROGRAM_CONTEXT_REGISTER_STATUS_INITIAL_VALUE (0)
-#define PROGRAM_CONTEXT_REGISTER_STACK_POINTER_INITIAL_VALUE (0)
+#define PROGRAM_CONTEXT_REGISTER_STACK_POINTER_INITIAL_VALUE (0xFF)
 #define PROGRAM_CONTEXT_REGISTER_PROGRAM_COUNTER_INITIAL_VALUE (0)
 
 /** Enums *****************************************************************/
@@ -94,7 +95,13 @@ private:
 };
 
 /** Structs ***************************************************************/
-struct ProgramContext {
+class ProgramContext {
+public:
+    inline explicit ProgramContext(ROMLoader *file_loader): memory_map(file_loader)
+    {
+        ASSERT(nullptr != file_loader);
+    }
+
     RegisterFile register_file;
     MemoryMap memory_map;
 };

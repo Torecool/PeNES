@@ -18,7 +18,7 @@
 
 #include "program_context/program_context.h"
 #include "address_mode/address_mode_interface.h"
-
+#include "utils/utils.h"
 
 /** Namespaces ************************************************************/
 namespace address_mode {

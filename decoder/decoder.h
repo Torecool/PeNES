@@ -42,34 +42,38 @@ private:
 
 class Decoder {
 public:
-    Decoder(
-        ProgramContext *program_ctx,
-        const native_word_t *src_binary,
-        std::size_t src_binary_size
-    );
+    inline explicit Decoder(ProgramContext *program_ctx): program_ctx(program_ctx)
+    {
+        ASSERT(nullptr != program_ctx);
+    }
 
     enum PeNESStatus next_instruction(
         instruction_set::Instruction **output_instruction
-    ) const;
+    );
 
 private:
     enum PeNESStatus decode_opcode(
         native_address_t *decode_address,
         instruction_set::IOpcode **output_opcode,
         address_mode::IAddressMode **output_address_mode
-    ) const;
+    );
 
     enum PeNESStatus decode_operand(
         native_address_t *decode_address,
         address_mode::IAddressMode *address_mode,
         IStorageLocation **output_storage_location,
         std::size_t *output_storage_offset
-    ) const;
+    );
+
+    enum PeNESStatus read_instruction_data(
+        native_address_t read_address,
+        native_word_t *read_buffer,
+        std::size_t num_read_words
+    );
 
     ProgramContext *program_ctx;
-
-    const native_word_t *src_binary;
-    const std::size_t src_binary_size;
+    MemoryStorage *prg_rom_storage = nullptr;
+    native_address_t prg_rom_storage_start_address = 0;
 
     static const std::initializer_list<instruction_set::OpcodeType> default_opcode_table_group_1;
     static const std::initializer_list<instruction_set::OpcodeType> default_opcode_table_group_2;
