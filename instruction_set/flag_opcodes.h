@@ -53,52 +53,101 @@ public:
 /** @brief Set Carry flag. */
 class OpcodeSEC : public IFlagOpcode {
 protected:
-    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
-    const native_word_t base_values = REGISTER_STATUS_FLAG_MASK_CARRY;
+    /** @brief Retrieve the mask of status flags that are allowed to be modified in the Status register. */
+    inline native_word_t get_update_mask() const override
+    {
+        return REGISTER_STATUS_FLAG_MASK_CARRY;
+    }
+
+    /** @brief Retrieve the base flag values to set in the modifiable flags of the Status register.
+     *         The actual updated flag values will be equal to base_values | update_values.
+     * */
+    inline native_word_t get_base_update_values() const override
+    {
+        return REGISTER_STATUS_FLAG_MASK_CARRY;
+    }
 };
 
 
 /** @brief Clear Carry flag. */
 class OpcodeCLC : public IFlagOpcode {
 protected:
-    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
+    /** @brief Retrieve the mask of status flags that are allowed to be modified in the Status register. */
+    inline native_word_t get_update_mask() const override
+    {
+        return REGISTER_STATUS_FLAG_MASK_CARRY;
+    }
 };
 
 
 /** @brief Set Decimal flag. */
 class OpcodeSED : public IFlagOpcode {
 protected:
-    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_DECIMAL;
-    const native_word_t base_values = REGISTER_STATUS_FLAG_MASK_DECIMAL;
+    /** @brief Retrieve the mask of status flags that are allowed to be modified in the Status register. */
+    inline native_word_t get_update_mask() const override
+    {
+        return REGISTER_STATUS_FLAG_MASK_DECIMAL;
+    }
+
+    /** @brief Retrieve the base flag values to set in the modifiable flags of the Status register.
+     *         The actual updated flag values will be equal to base_values | update_values.
+     * */
+    inline native_word_t get_base_update_values() const override
+    {
+        return REGISTER_STATUS_FLAG_MASK_DECIMAL;
+    }
 };
 
 
 /** @brief Clear Decimal flag. */
 class OpcodeCLD : public IFlagOpcode {
 protected:
-    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_DECIMAL;
+    /** @brief Retrieve the mask of status flags that are allowed to be modified in the Status register. */
+    inline native_word_t get_update_mask() const override
+    {
+        return REGISTER_STATUS_FLAG_MASK_DECIMAL;
+    }
 };
 
 
 /** @brief Set Interrupt flag. */
 class OpcodeSEI : public IFlagOpcode {
 protected:
-    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
-    const native_word_t base_values = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
+    /** @brief Retrieve the mask of status flags that are allowed to be modified in the Status register. */
+    inline native_word_t get_update_mask() const override
+    {
+        return REGISTER_STATUS_FLAG_MASK_INTERRUPT;
+    }
+
+    /** @brief Retrieve the base flag values to set in the modifiable flags of the Status register.
+     *         The actual updated flag values will be equal to base_values | update_values.
+     * */
+    inline native_word_t get_base_update_values() const override
+    {
+        return REGISTER_STATUS_FLAG_MASK_INTERRUPT;
+    }
 };
 
 
 /** @brief Clear Interrupt flag. */
 class OpcodeCLI : public IFlagOpcode {
 protected:
-    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
+    /** @brief Retrieve the mask of status flags that are allowed to be modified in the Status register. */
+    inline native_word_t get_update_mask() const override
+    {
+        return REGISTER_STATUS_FLAG_MASK_INTERRUPT;
+    }
 };
 
 
 /** @brief Clear Overflow flag. */
 class OpcodeCLV : public IFlagOpcode {
 protected:
-    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_OVERFLOW;
+    /** @brief Retrieve the mask of status flags that are allowed to be modified in the Status register. */
+    inline native_word_t get_update_mask() const override
+    {
+        return REGISTER_STATUS_FLAG_MASK_OVERFLOW;
+    }
 };
 
 } /* namespace instruction_set */

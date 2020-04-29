@@ -32,6 +32,7 @@ using namespace instruction_set;
 const std::array<opcode_instance_factory_t, OPCODE_TYPE_NUM_OPCODES> OpcodeTable::opcode_instance_factory_table = {
     utils::SubClassFactory<IOpcode>::create_instance<OpcodeADC>,
     utils::SubClassFactory<IOpcode>::create_instance<OpcodeAND>,
+    utils::SubClassFactory<IOpcode>::create_instance<OpcodeASL>,
     utils::SubClassFactory<IOpcode>::create_instance<OpcodeBCC>,
     utils::SubClassFactory<IOpcode>::create_instance<OpcodeBCS>,
     utils::SubClassFactory<IOpcode>::create_instance<OpcodeBEQ>,

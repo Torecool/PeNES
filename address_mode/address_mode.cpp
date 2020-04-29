@@ -26,7 +26,7 @@ using namespace address_mode;
 
 /** Static Variables ******************************************************/
 const std::array<address_mode_instance_factory_t, ADDRESS_MODE_TYPE_NUM_ADDRESS_MODES> AddressModeTable::address_mode_instance_factory_table = {
-    nullptr,
+    utils::SubClassFactory<IAddressMode>::create_instance<ImpliedAddressMode>,
     utils::SubClassFactory<IAddressMode>::create_instance<AccumulatorAddressMode>,
     utils::SubClassFactory<IAddressMode>::create_instance<AbsoluteAddressMode>,
     utils::SubClassFactory<IAddressMode>::create_instance<AbsoluteXIndexedAddressMode>,

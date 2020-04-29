@@ -21,11 +21,8 @@
 namespace instruction_set {
 
 /** Classes ***************************************************************/
-/** @brief Interface of an opcode performing a stack operation. */
-class IStackOpcode : public IImpliedOperandOpcode, public IStackOperation {};
-
 /** @brief Push Accumulator on Stack. */
-class OpcodePHA : public IStackOpcode {
+class OpcodePHA : public IImpliedOperandOpcode, public IStackOperation {
 public:
     enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -35,7 +32,7 @@ public:
 };
 
 /** @brief Push Status register on Stack. */
-class OpcodePHP : public IStackOpcode {
+class OpcodePHP : public IImpliedOperandOpcode, public IStackOperation {
 public:
     enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -45,7 +42,10 @@ public:
 };
 
 /** @brief Pull Accumulator from Stack. */
-class OpcodePLA : public IStackOpcode, public IUpdateDataStatusOperation {
+class OpcodePLA :
+    public IImpliedOperandOpcode,
+    public IStackOperation,
+    public IUpdateDataStatusOperation {
 public:
     enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -55,7 +55,10 @@ public:
 };
 
 /** @brief Pull Status register from Stack. */
-class OpcodePLP : public IStackOpcode, public IUpdateStatusOperation {
+class OpcodePLP :
+    public IImpliedOperandOpcode,
+    public IStackOperation,
+    public IUpdateStatusOperation {
 public:
     enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -64,10 +67,14 @@ public:
     ) override;
 
 protected:
-    /* We will never set the Break flag in the status written to the register,
-     * because it is only relevant to the status that is pushed onto the stack.
+    /** @brief Retrieve the mask of status flags that are allowed to be modified in the Status register.
+     *  @note  We will never set the Break flag in the status written to the register,
+     *         because it is only relevant to the status that is pushed onto the stack.
      * */
-    const native_word_t update_mask = ~REGISTER_STATUS_FLAG_MASK_BREAK;
+    inline native_word_t get_update_mask() const override
+    {
+        return ~REGISTER_STATUS_FLAG_MASK_BREAK;
+    }
 
 };
 

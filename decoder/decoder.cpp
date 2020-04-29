@@ -322,6 +322,7 @@ enum PeNESStatus InstructionDecodeGroup::decode_instruction(
     /* Using the matched opcode object, call the address mode resolve function to override the default type. */
     resolved_address_mode_type = opcode->resolve_address_mode(address_mode_type);
 
+    /* TODO Address mode may be resolved outside of table. */
     /* Retrieve the address mode class from the address mode table, using the overridden address mode type. */
     status = this->address_mode_table.get_object_by_type(
         resolved_address_mode_type,
@@ -493,7 +494,6 @@ enum PeNESStatus Decoder::decode_operand(
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     IStorageLocation *operand_storage = nullptr;
     native_dword_t instruction_operand_data = 0;
-    native_word_t *operand_data_read_write_address = nullptr;
     std::size_t operand_storage_offset = 0;
     std::size_t operand_size = 0;
 
@@ -502,18 +502,12 @@ enum PeNESStatus Decoder::decode_operand(
     ASSERT(nullptr != output_storage_location);
     ASSERT(nullptr != output_storage_offset);
 
-    /* Since their can be multiple different operand sizes, we need a buffer to contain the largest operand size.
-     * Now, we need to adjust the buffer pointer that is passed to the method read_instruction_data,
-     * in order to account for shorter operands.
-     * */
-    operand_size = address_mode->operand_size;
-    operand_data_read_write_address = reinterpret_cast<native_word_t *>(&instruction_operand_data);
-    operand_data_read_write_address += address_mode::INSTRUCTION_OPERAND_SIZE_DWORD - operand_size;
+    operand_size = address_mode->get_operand_size();
 
     /* Read the instruction operand at the decode address. */
     status = read_instruction_data(
         *decode_address,
-        operand_data_read_write_address,
+        reinterpret_cast<native_word_t *>(&instruction_operand_data),
         operand_size
     );
     if (PENES_STATUS_SUCCESS != status) {
@@ -523,6 +517,14 @@ enum PeNESStatus Decoder::decode_operand(
             *decode_address
         );
         goto l_cleanup;
+    }
+
+    /* Since their can be multiple different operand sizes, we need a buffer to contain the largest operand size.
+     * Now, we need to "fix" the data that is read into the buffer,
+     * to account for a different endianness between the host and the native machine.
+     * */
+    if (operand_size == address_mode::INSTRUCTION_OPERAND_SIZE_WORD) {
+        instruction_operand_data = system_host_to_native_endianness(instruction_operand_data);
     }
 
     /* Resolve the operand data into the instruction's storage location, using the address mode. */

@@ -46,8 +46,8 @@ enum PeNESStatus {
     PENES_STATUS_LOADER_GET_PRG_ROM_BANK_SEEKG_FAILED,
     PENES_STATUS_LOADER_GET_PRG_ROM_BANK_READ_FAILED,
 
-    /* Error statuses for the module address_mode. */
-    PENES_STATUS_ADDRESS_MODE_TABLE_GET_ADDRESS_MODE_NO_MODE,
+    /* Error statuses for the module address_mode_interface. */
+    PENES_STATUS_IMPLIED_ADDRESS_MODE_GET_STORAGE_INVALID_OPERATION,
 
     /* Error statuses for the module instruction_set. */
     PENES_STATUS_INSTRUCTION_SET_OPCODE_TABLE_GET_OPCODE_OUT_OF_BOUNDS

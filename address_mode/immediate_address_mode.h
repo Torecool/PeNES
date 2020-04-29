@@ -66,19 +66,28 @@ public:
 
 class ImmediateSingleAddressMode : public ImmediateAddressMode<native_word_t> {
 public:
-    const enum InstructionOperandSize operand_size = INSTRUCTION_OPERAND_SIZE_WORD;
+    inline enum InstructionOperandSize get_operand_size() const override
+    {
+        return INSTRUCTION_OPERAND_SIZE_WORD;
+    }
 };
 
 
 class RelativeAddressMode : public ImmediateAddressMode<native_word_t> {
 public:
-    const enum InstructionOperandSize operand_size = INSTRUCTION_OPERAND_SIZE_WORD;
+    inline enum InstructionOperandSize get_operand_size() const override
+    {
+        return INSTRUCTION_OPERAND_SIZE_WORD;
+    }
 };
 
 
 class ImmediateDoubleAddressMode : public ImmediateAddressMode<native_dword_t> {
 public:
-    const enum InstructionOperandSize operand_size = INSTRUCTION_OPERAND_SIZE_DWORD;
+    inline enum InstructionOperandSize get_operand_size() const override
+    {
+        return INSTRUCTION_OPERAND_SIZE_DWORD;
+    }
 };
 
 } /* namespace address_modes */

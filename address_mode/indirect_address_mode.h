@@ -21,7 +21,10 @@ namespace address_mode {
 /** Classes ***************************************************************/
 class IndirectAddressMode : public IAddressMode {
 public:
-    const enum InstructionOperandSize operand_size = INSTRUCTION_OPERAND_SIZE_DWORD;
+    inline enum InstructionOperandSize get_operand_size() const override
+    {
+        return INSTRUCTION_OPERAND_SIZE_DWORD;
+    }
 
     enum PeNESStatus get_storage(
         ProgramContext *program_ctx,
@@ -34,7 +37,10 @@ public:
 
 class XIndexedIndirectAddressMode : public IAddressMode {
 public:
-    const enum InstructionOperandSize operand_size = INSTRUCTION_OPERAND_SIZE_WORD;
+    inline enum InstructionOperandSize get_operand_size() const override
+    {
+        return INSTRUCTION_OPERAND_SIZE_WORD;
+    }
 
     enum PeNESStatus get_storage(
         ProgramContext *program_ctx,
@@ -47,7 +53,10 @@ public:
 
 class IndirectYIndexedAddressMode : public IAddressMode {
 public:
-    const enum InstructionOperandSize operand_size = INSTRUCTION_OPERAND_SIZE_WORD;
+    inline enum InstructionOperandSize get_operand_size() const override
+    {
+        return INSTRUCTION_OPERAND_SIZE_WORD;
+    }
 
     enum PeNESStatus get_storage(
         ProgramContext *program_ctx,

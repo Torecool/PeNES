@@ -9,6 +9,7 @@
 
 /** Headers ***************************************************************/
 #include <cstdint>
+#include <climits>
 #include <type_traits>
 #include <byteswap.h>
 
@@ -17,28 +18,45 @@
 /** Constants *************************************************************/
 #define SYSTEM_NATIVE_WORD_SIZE_BITS (8)
 #define SYSTEM_NATIVE_WORD_SIGN_BIT_MASK (1 << (SYSTEM_NATIVE_WORD_SIZE_BITS - 1))
+#define SYSTEM_IS_NATIVE_LITTLE_ENDIAN (true)
 
 /** Typedefs **************************************************************/
+static_assert(CHAR_BIT == SYSTEM_NATIVE_WORD_SIZE_BITS, "Host char size must match native char size.");
+
 /* Note: This typedef should be unsigned char and not std::uint8_t because of the strict aliasing rule.
  * The standard defines that the a cast between pointers of unrelated types is only legal if the destination type is a pointer to a variant of char.
  * This is necessary in the read/write functions of the StorageLocation class,
  * where an address buffer (native_address_t) must be reinterpreted as a word buffer (native_word_t *).
  * */
 typedef unsigned char native_word_t;
+typedef signed char native_signed_word_t;
 typedef std::uint16_t native_dword_t;
+typedef std::int16_t native_signed_dword_t;
 typedef native_dword_t native_address_t;
 
 
 /** Functions *************************************************************/
-static inline native_address_t system_big_to_native_endianness(native_address_t address)
+static bool system_is_host_little_endian()
 {
-    return bswap_16(address);
+    std::uint16_t magic = 0x1;
+    char *magic_ptr = reinterpret_cast<char *>(&magic);
+
+    /* Check if reinterpreting the data has changed the order of bytes within it. */
+    return (magic_ptr[0] == 1);
 }
 
 
-static inline native_address_t system_native_to_big_endianness(native_address_t address)
+static inline native_dword_t system_native_to_host_endianness(native_dword_t dword_data)
 {
-    return bswap_16(address);
+    static bool is_little_endian = system_is_host_little_endian();
+
+    return (SYSTEM_IS_NATIVE_LITTLE_ENDIAN == is_little_endian) ? dword_data : bswap_16(dword_data);
+}
+
+
+static inline native_dword_t system_host_to_native_endianness(native_dword_t dword_data)
+{
+    return system_native_to_host_endianness(dword_data);
 }
 
 

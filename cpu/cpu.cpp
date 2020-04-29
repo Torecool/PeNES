@@ -18,6 +18,13 @@ enum PeNESStatus CPU::run()
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     instruction_set::Instruction *current_instruction = nullptr;
 
+    /* Since the program is starting up, reset the machine by jumping to the address at the reset interrupt vector. */
+    status = this->reset();
+    if (PENES_STATUS_SUCCESS != status) {
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("reset failed. Status: %d.\n", status);
+        goto l_cleanup;
+    }
+
     while (true) {
         /* Retrieve next instruction. */
         status = this->instruction_decoder.next_instruction(&current_instruction);
@@ -39,9 +46,7 @@ enum PeNESStatus CPU::run()
         delete current_instruction;
     }
 
-
     status = PENES_STATUS_SUCCESS;
 l_cleanup:
     return status;
 }
-

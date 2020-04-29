@@ -40,6 +40,18 @@ public:
     ) override;
 
 protected:
+    /** @brief Retrieve the status flag to check for a branch condition. */
+    inline virtual native_word_t get_branch_condition_mask() const
+    {
+        return REGISTER_STATUS_FLAG_MASK_NONE;
+    }
+
+    /** @brief Retrieve the required value (set/clear) of the branch flag for the branch to occur. */
+    inline virtual bool get_branch_on_set() const
+    {
+        return true;
+    }
+
     /** @brief          Perform a branch operation to a relative offset specified by the storage operand.
      *
      *  @param[in]      program_ctx                 The program context containing the Program counter to modify.
@@ -53,75 +65,118 @@ protected:
         IStorageLocation *branch_operand_storage,
         std::size_t operand_storage_offset = 0
     );
-
-    /* The status flag to check for a branch condition. */
-    const native_word_t branch_condition_mask = REGISTER_STATUS_FLAG_MASK_NONE;
-    /* The required value (set/clear) of the branch flag for the branch to occur. */
-    const bool branch_on_set = false;
 };
 
 /** Classes ***************************************************************/
 /** @brief Branch on Carry flag set. */
 class OpcodeBCS: public IBranchOpcode {
 protected:
-    const native_word_t branch_condition_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
-    const bool branch_on_set = true;
+    /** @brief Retrieve the status flag to check for a branch condition. */
+    inline native_word_t get_branch_condition_mask() const override
+    {
+        return REGISTER_STATUS_FLAG_MASK_CARRY;
+    }
 };
 
 
 /** @brief Branch on Carry flag clear. */
 class OpcodeBCC: public IBranchOpcode {
 protected:
-    const native_word_t branch_condition_mask = REGISTER_STATUS_FLAG_MASK_CARRY;
-    const bool branch_on_set = false;
+    /** @brief Retrieve the status flag to check for a branch condition. */
+    inline native_word_t get_branch_condition_mask() const override
+    {
+        return REGISTER_STATUS_FLAG_MASK_CARRY;
+    }
+
+    /** @brief Retrieve the required value (set/clear) of the branch flag for the branch to occur. */
+    inline bool get_branch_on_set() const override
+    {
+        return false;
+    }
 };
 
 
 /** @brief Branch on Zero flag set (ALU operation result is zero/equal). */
 class OpcodeBEQ: public IBranchOpcode {
 protected:
-    const native_word_t branch_condition_mask = REGISTER_STATUS_FLAG_MASK_ZERO;
-    const bool branch_on_set = true;
+    /** @brief Retrieve the status flag to check for a branch condition. */
+    inline native_word_t get_branch_condition_mask() const override
+    {
+        return REGISTER_STATUS_FLAG_MASK_ZERO;
+    }
 };
 
 
 /** @brief Branch on Zero flag clear (ALU operation result is nonzero/unequal). */
 class OpcodeBNE: public IBranchOpcode {
 protected:
-    const native_word_t branch_condition_mask = REGISTER_STATUS_FLAG_MASK_ZERO;
-    const bool branch_on_set = false;
+    /** @brief Retrieve the status flag to check for a branch condition. */
+    inline native_word_t get_branch_condition_mask() const override
+    {
+        return REGISTER_STATUS_FLAG_MASK_ZERO;
+    }
+
+    /** @brief Retrieve the required value (set/clear) of the branch flag for the branch to occur. */
+    inline bool get_branch_on_set() const override
+    {
+        return false;
+    }
 };
 
 
 /** @brief Branch on Negative flag set (ALU operation result is negative). */
 class OpcodeBMI: public IBranchOpcode {
 protected:
-    const native_word_t branch_condition_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE;
-    const bool branch_on_set = true;
+    /** @brief Retrieve the status flag to check for a branch condition. */
+    inline native_word_t get_branch_condition_mask() const override
+    {
+        return REGISTER_STATUS_FLAG_MASK_NEGATIVE;
+    }
 };
 
 
 /** @brief Branch on Negative flag clear (ALU operation result is nonnegative). */
 class OpcodeBPL: public IBranchOpcode {
 protected:
-    const native_word_t branch_condition_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE;
-    const bool branch_on_set = false;
+    /** @brief Retrieve the status flag to check for a branch condition. */
+    inline native_word_t get_branch_condition_mask() const override
+    {
+        return REGISTER_STATUS_FLAG_MASK_NEGATIVE;
+    }
+
+    /** @brief Retrieve the required value (set/clear) of the branch flag for the branch to occur. */
+    inline bool get_branch_on_set() const override
+    {
+        return false;
+    }
 };
 
 
 /** @brief Branch on Overflow flag set. */
 class OpcodeBVS: public IBranchOpcode {
 protected:
-    const native_word_t branch_condition_mask = REGISTER_STATUS_FLAG_MASK_OVERFLOW;
-    const bool branch_on_set = true;
+    /** @brief Retrieve the status flag to check for a branch condition. */
+    inline native_word_t get_branch_condition_mask() const override
+    {
+        return REGISTER_STATUS_FLAG_MASK_OVERFLOW;
+    }
 };
 
 
 /** @brief Branch on Overflow flag clear. */
 class OpcodeBVC: public IBranchOpcode {
 protected:
-    const native_word_t branch_condition_mask = REGISTER_STATUS_FLAG_MASK_OVERFLOW;
-    const bool branch_on_set = false;
+    /** @brief Retrieve the status flag to check for a branch condition. */
+    inline native_word_t get_branch_condition_mask() const override
+    {
+        return REGISTER_STATUS_FLAG_MASK_OVERFLOW;
+    }
+
+    /** @brief Retrieve the required value (set/clear) of the branch flag for the branch to occur. */
+    inline bool get_branch_on_set() const override
+    {
+        return false;
+    }
 };
 
 } /* namespace instruction_set */

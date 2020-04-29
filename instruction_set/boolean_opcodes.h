@@ -89,18 +89,21 @@ protected:
  *         The Zero flag is set based on the result of the AND operation,
  *         while bit 6 and 7 of the data operand are copied to the Status register's Overflow and Negative flags respectively.
  * */
-class OpcodeBIT : public OpcodeAND {
+class OpcodeBIT : public IOpcode, public IUpdateStatusOperation {
 public:
+    /** @brief Retrieve the mask of status flags that are allowed to be modified in the Status register. */
+    inline native_word_t get_update_mask() const override
+    {
+        return REGISTER_STATUS_FLAG_MASK_NEGATIVE |
+               REGISTER_STATUS_FLAG_MASK_ZERO |
+               REGISTER_STATUS_FLAG_MASK_OVERFLOW;
+    }
+
     enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *data_operand_storage,
         std::size_t storage_offset
     ) override;
-
-protected:
-    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE |
-                                      REGISTER_STATUS_FLAG_MASK_ZERO |
-                                      REGISTER_STATUS_FLAG_MASK_OVERFLOW;
 };
 
 } /* namespace instruction_set */

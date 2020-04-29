@@ -29,7 +29,10 @@ enum InstructionOperandSize {
 /** Classes ***************************************************************/
 class IAddressMode {
 public:
-    const enum InstructionOperandSize operand_size = INSTRUCTION_OPERAND_SIZE_NO_OPERAND;
+    inline virtual enum InstructionOperandSize get_operand_size() const
+    {
+        return INSTRUCTION_OPERAND_SIZE_NO_OPERAND;
+    }
 
     virtual enum PeNESStatus get_storage(
         ProgramContext *program_ctx,
@@ -46,11 +49,27 @@ public:
         enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
 
         ASSERT(nullptr != program_ctx);
-        ASSERT(nullptr != storage);
 
         status = PENES_STATUS_SUCCESS;
     l_cleanup:
         return status;
+    }
+};
+
+
+class ImpliedAddressMode : public IAddressMode {
+    inline enum PeNESStatus get_storage(
+        ProgramContext *program_ctx,
+        native_dword_t operand,
+        IStorageLocation **output_storage,
+        std::size_t *output_storage_offset
+    ) override
+    {
+        ASSERT(nullptr != program_ctx);
+        ASSERT(nullptr != output_storage);
+        ASSERT(nullptr != output_storage_offset);
+
+        return PENES_STATUS_SUCCESS;
     }
 };
 

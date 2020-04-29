@@ -31,7 +31,7 @@ enum PeNESStatus AbsoluteAddressMode::get_storage(
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     MemoryStorage *data_storage = nullptr;
     std::size_t memory_offset = 0;
-    native_address_t converted_address = system_native_to_big_endianness(absolute_address);
+    native_address_t converted_address = system_native_to_host_endianness(absolute_address);
 
     ASSERT(nullptr != program_ctx);
     ASSERT(nullptr != output_storage);
@@ -69,7 +69,7 @@ enum PeNESStatus AbsoluteXIndexedAddressMode::get_storage(
     RegisterStorage<native_word_t> *register_x = nullptr;
     std::size_t memory_offset = 0;
     native_word_t register_index = 0;
-    native_address_t hardware_address = system_native_to_big_endianness(absolute_address);
+    native_address_t hardware_address = system_native_to_host_endianness(absolute_address);
 
     ASSERT(nullptr != program_ctx);
     ASSERT(nullptr != output_storage);
@@ -113,7 +113,7 @@ enum PeNESStatus AbsoluteYIndexedAddressMode::get_storage(
     RegisterStorage<native_word_t> *register_y = nullptr;
     native_word_t register_data = 0;
     std::size_t memory_offset = 0;
-    native_address_t converted_address = system_native_to_big_endianness(absolute_address);
+    native_address_t converted_address = system_native_to_host_endianness(absolute_address);
 
     ASSERT(nullptr != program_ctx);
     ASSERT(nullptr != output_storage);

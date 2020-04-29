@@ -75,13 +75,13 @@ public:
          * */
         for (TypeIndex type_index : type_list) {
 
-            ASSERT(instance_factory_list_size > type_index);
-
-            instance_factory = object_instance_factory_list->at(type_index);
-
             new_object = nullptr;
-            if (nullptr != instance_factory) {
-                new_object = instance_factory();
+            if (0 <= type_index && instance_factory_list_size > type_index) {
+                instance_factory = object_instance_factory_list->at(type_index);
+
+                if (nullptr != instance_factory) {
+                    new_object = instance_factory();
+                }
             }
 
             this->instance_table.push_back(new_object);
@@ -160,7 +160,7 @@ public:
         /* Check if the type exists in the map. */
         if (this->type_instance_map.end() == instance_iter) {
             status = PENES_STATUS_UTILS_OBJECT_TABLE_GET_OBJECT_BY_TYPE_NOT_FOUND;
-            DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Object type not found. Status: %d", status);
+            DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Object type not found. Status: %d\n", status);
             goto l_cleanup;
         }
 

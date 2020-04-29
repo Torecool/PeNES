@@ -15,7 +15,7 @@
 #include "rom_loader/rom_loader.h"
 
 /** Constants *************************************************************/
-#define ROM_LOADER_NES_FILE_MAGIC ("NES\0x1A")
+#define ROM_LOADER_NES_FILE_MAGIC ("NES\x1A")
 #define ROM_LOADER_NES_FILE_MAGIC_SIZE (4)
 #define ROM_LOADER_NES_FILE_ROM_SIZE_MSB_OFFSET (9)
 #define ROM_LOADER_NES_FILE_PRG_ROM_OFFSET (16)

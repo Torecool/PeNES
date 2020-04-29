@@ -82,7 +82,13 @@ public:
     ) override;
 
 protected:
-    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NONE;
+    /** @brief Retrieve the mask of status flags that are allowed to be modified in the Status register.
+     *  @note  The destination is the Stack pointer and so we do not update data-based flags.
+     * */
+    inline native_word_t get_update_mask() const override
+    {
+        return REGISTER_STATUS_FLAG_MASK_NONE;
+    }
 };
 
 /** @brief Transfer Stack pointer to register X. */

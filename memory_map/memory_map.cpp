@@ -130,7 +130,9 @@ enum PeNESStatus MemoryMap::get_memory_storage(
     ASSERT(nullptr != output_storage);
 
     /* Find the memory storage key that "contains" the address,
-     * meaning the closest key that is a lower bound.
+     * meaning the largest key that is smaller or equal.
+     * Note that lower_bound will return the first key not smaller than the address,
+     * and so we need to rewind the iterator in case the key is not equal to the address.
      * */
     address_key_iter = std::lower_bound(
         MemoryMap::address_keys.begin(),
@@ -147,9 +149,13 @@ enum PeNESStatus MemoryMap::get_memory_storage(
         goto l_cleanup;
     }
 
+    if (*address_key_iter != address) {
+        address_key_iter--;
+    }
+
     /* Calculate the index of the found address key within the vector,
-     * so that we can extract the storage object from the memory map.
-     * */
+    * so that we can extract the storage object from the memory map.
+    * */
     memory_storage_index = address_key_iter - MemoryMap::address_keys.begin();
 
     /* Verify the index is within the bounds of the memory map and retrieve the memory storage object. */
@@ -218,19 +224,19 @@ enum PeNESStatus MemoryMap::setup_storage_shortcuts()
     this->nmi_jump_vector_storage = new MemoryStorage(
         upper_prg_rom_storage,
         sizeof(native_address_t),
-        MEMORY_MAP_ADDRESS_START_NMI_JUMP_VECTOR
+        MEMORY_MAP_ADDRESS_START_NMI_JUMP_VECTOR - MEMORY_MAP_ADDRESS_START_PRG_ROM_UPPER
     );
 
     this->reset_jump_vector_storage = new MemoryStorage(
         upper_prg_rom_storage,
         sizeof(native_address_t),
-        MEMORY_MAP_ADDRESS_START_RESET_JUMP_VECTOR
+        MEMORY_MAP_ADDRESS_START_RESET_JUMP_VECTOR - MEMORY_MAP_ADDRESS_START_PRG_ROM_UPPER
     );
 
     this->irq_jump_vector_storage = new MemoryStorage(
         upper_prg_rom_storage,
         sizeof(native_address_t),
-        MEMORY_MAP_ADDRESS_START_IRQ_JUMP_VECTOR
+        MEMORY_MAP_ADDRESS_START_IRQ_JUMP_VECTOR - MEMORY_MAP_ADDRESS_START_PRG_ROM_UPPER
     );
 
     status = PENES_STATUS_SUCCESS;

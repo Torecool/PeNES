@@ -21,14 +21,8 @@
 namespace instruction_set {
 
 /** Classes ***************************************************************/
-/** @brief Interface of an opcode that performs an increment/decrement operation on memory. */
-class IMemoryIncrementingOpcode : public IOpcode, public IUpdateDataStatusOperation {};
-
-/** @brief Interface of an opcode that performs an increment/decrement operation on a register. */
-class IRegisterIncrementingOpcode : public IImpliedOperandOpcode, public IUpdateDataStatusOperation {};
-
 /** @brief Increment memory by 1. */
-class OpcodeINC : public IMemoryIncrementingOpcode {
+class OpcodeINC : public IOpcode, public IUpdateDataStatusOperation {
 public:
     enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -38,7 +32,7 @@ public:
 };
 
 /** @brief Decrement memory by 1. */
-class OpcodeDEC : public IMemoryIncrementingOpcode {
+class OpcodeDEC : public IOpcode, public IUpdateDataStatusOperation {
 public:
     enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -48,7 +42,7 @@ public:
 };
 
 /** @brief Increment register X by 1. */
-class OpcodeINX : public IRegisterIncrementingOpcode {
+class OpcodeINX : public IImpliedOperandOpcode, public IUpdateDataStatusOperation {
 public:
     enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -58,7 +52,7 @@ public:
 };
 
 /** @brief Decrement register X by 1. */
-class OpcodeDEX : public IRegisterIncrementingOpcode {
+class OpcodeDEX : public IImpliedOperandOpcode, public IUpdateDataStatusOperation {
 public:
     enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -68,7 +62,7 @@ public:
 };
 
 /** @brief Increment register Y by 1. */
-class OpcodeINY : public IRegisterIncrementingOpcode {
+class OpcodeINY : public IImpliedOperandOpcode, public IUpdateDataStatusOperation {
 public:
     enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -78,7 +72,7 @@ public:
 };
 
 /** @brief Decrement register Y by 1. */
-class OpcodeDEY : public IRegisterIncrementingOpcode {
+class OpcodeDEY : public IImpliedOperandOpcode, public IUpdateDataStatusOperation {
 public:
     enum PeNESStatus exec(
         ProgramContext *program_ctx,

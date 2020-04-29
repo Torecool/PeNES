@@ -110,22 +110,21 @@ enum PeNESStatus OpcodeBIT::exec(
         goto l_cleanup;
     }
 
-    /* Perform the AND operation between the register and the data. */
-    and_result = this->operation(register_a_data, storage_data);
-
     /* Set the Status register's Overflow flag and Negative flag,
-     * based on the 6th and 7th bit of the storage data respectively.
+     * based on the 6th and 7th bit of the storage data respectively,
+     * and the Zero flag based on the outcome of the AND operation between the data operand and the Accumulator.
      * */
     is_bit6_set = (storage_data & BOOLEAN_OPCODES_BIT_OPCODE_BIT_6_MASK);
     is_bit7_set = (storage_data & BOOLEAN_OPCODES_BIT_OPCODE_BIT_7_MASK);
 
     update_values |= (true == is_bit6_set)? REGISTER_STATUS_FLAG_MASK_OVERFLOW: 0;
     update_values |= (true == is_bit7_set)? REGISTER_STATUS_FLAG_MASK_NEGATIVE: 0;
+    update_values |= (0 == (register_a_data & storage_data))? REGISTER_STATUS_FLAG_MASK_ZERO: 0;
 
     /* Call the parent function to update the status flags. */
-    status = this->update_data_status(program_ctx, and_result, update_values);
+    status = this->update_status(program_ctx, update_values);
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_data_status failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
         goto l_cleanup;
     }
 

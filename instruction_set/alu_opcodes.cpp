@@ -20,7 +20,11 @@
 using namespace instruction_set;
 
 /** Functions *************************************************************/
-enum PeNESStatus IAddOpcode::add(ProgramContext *program_ctx, native_word_t add_operand)
+enum PeNESStatus IAddOpcode::add(
+    ProgramContext *program_ctx,
+    native_word_t add_operand,
+    bool is_borrow
+)
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     RegisterStorage<native_word_t> *register_a = nullptr;
@@ -63,9 +67,14 @@ enum PeNESStatus IAddOpcode::add(ProgramContext *program_ctx, native_word_t add_
     register_a->write(operation_result);
 
     /* Call the parent function to update the status flags. */
-    status = this->update_data_status(register_status, operation_result, update_values);
+    status = this->update_arithmetic_status(
+        register_status,
+        operation_result,
+        update_values,
+        is_borrow
+    );
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_data_status failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_arithmetic_status failed. Status: %d", status);
         goto l_cleanup;
     }
 
@@ -99,7 +108,7 @@ enum PeNESStatus OpcodeADC::exec(
     }
 
     /* Call the parent function to perform the addition operation and update the status flags. */
-    status = this->add(program_ctx, storage_data);
+    status = this->add(program_ctx, storage_data, false);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass add failed. Status: %d", status);
         goto l_cleanup;
@@ -140,7 +149,7 @@ enum PeNESStatus OpcodeSBC::exec(
      * A - M - B == A + ~M + 1 - B == A + ~M + (1-B) == A + ~M + ~B == A + ~M + C
      * Note that we treat the "Borrow flag" as the complement of the Carry flag.
      * */
-    status = this->add(program_ctx, ~storage_data);
+    status = this->add(program_ctx, ~storage_data, true);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass add failed. Status: %d", status);
         goto l_cleanup;

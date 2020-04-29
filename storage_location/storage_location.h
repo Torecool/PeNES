@@ -27,7 +27,7 @@ public:
         storage_size(system_words_to_bytes(num_storage_words))
     {
         if (0 < this->storage_size) {
-            this->storage_buffer = new native_word_t[this->storage_size];
+            this->storage_buffer = new native_word_t[this->storage_size]();
         }
     }
 

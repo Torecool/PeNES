@@ -21,9 +21,6 @@
 namespace instruction_set {
 
 /** Classes ***************************************************************/
-/** @brief Interface of an opcode performing a jump operation. */
-class IJumpOpcode : public IOpcode, public IJumpOperation {};
-
 /** @brief Jump to a new location.
  *
  *  @note  Although the address mode of this opcode is "Absolute",
@@ -31,7 +28,7 @@ class IJumpOpcode : public IOpcode, public IJumpOperation {};
  *         and not the data pointed to by the absolute address (as opposed to any other absolute-addressed opcode).
  *         This effectively makes the address mode more like an immediate address mode of size double.
  * */
-class OpcodeJMP : public IJumpOpcode {
+class OpcodeJMP : public IOpcode, public IJumpOperation {
 public:
     inline address_mode::AddressModeType resolve_address_mode(
         address_mode::AddressModeType default_address_mode
@@ -73,7 +70,7 @@ public:
  *         and not the data pointed to by the absolute address (as opposed to any other absolute-addressed opcode).
  *         This effectively makes the address mode more like an immediate address mode of size double.
  * */
-class OpcodeJSR : public IJumpOpcode, public IStackOperation {
+class OpcodeJSR : public IOpcode, public IJumpOperation, public IStackOperation {
 public:
     inline address_mode::AddressModeType resolve_address_mode(
         address_mode::AddressModeType default_address_mode
@@ -103,16 +100,26 @@ public:
     ) override;
 
 protected:
-    /* We will never set the Break flag in the status written to the register,
-     * because it is only relevant to the status that is pushed onto the stack.
+    /** @brief Retrieve the mask of status flags that are allowed to be modified in the Status register.
+     *  @note  We will never set the Break flag in the status written to the register,
+     *         because it is only relevant to the status that is pushed onto the stack.
      * */
-    const native_word_t update_mask = ~REGISTER_STATUS_FLAG_MASK_BREAK;
-    /* Set the Interrupt flag on the status written back to the register,
-     * to disable all maskable interrupt handling during the handling of the current interrupt.
-     * Since this flag is not written to the status pushed on the stack,
-     * after RTI/PLP, the flag will be cleared.
+    inline native_word_t get_update_mask() const override
+    {
+        return ~REGISTER_STATUS_FLAG_MASK_BREAK;
+    }
+
+    /** @brief Retrieve the base flag values to set in the modifiable flags of the Status register.
+     *         The actual updated flag values will be equal to base_values | update_values.
+     *  @note  We set the Interrupt flag on the status written back to the register,
+     *         to disable all maskable interrupt handling during the handling of the current interrupt.
+     *         Since this flag is not written to the status that is pushed onto the stack,
+     *         after RTI/PLP, the flag will be cleared.
      * */
-    const native_word_t base_values = REGISTER_STATUS_FLAG_MASK_INTERRUPT;
+    inline native_word_t get_base_update_values() const override
+    {
+        return REGISTER_STATUS_FLAG_MASK_INTERRUPT;
+    }
 };
 
 /** @brief Return from interrupt, restoring Status register and Program counter. */
@@ -128,10 +135,14 @@ public:
     ) override;
 
 protected:
-    /* We will never set the Break flag in the status written to the register,
-     * because it is only relevant to the status that is pushed onto the stack.
+    /** @brief Retrieve the mask of status flags that are allowed to be modified in the Status register.
+     *  @note  We will never set the Break flag in the status written to the register,
+     *         because it is only relevant to the status that is pushed onto the stack.
      * */
-    const native_word_t update_mask = ~REGISTER_STATUS_FLAG_MASK_BREAK;
+    inline native_word_t get_update_mask() const override
+    {
+        return ~REGISTER_STATUS_FLAG_MASK_BREAK;
+    }
 };
 
 /** @brief Return from subroutine, restoring Program counter. */

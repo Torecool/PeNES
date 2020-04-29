@@ -25,7 +25,7 @@ namespace instruction_set {
  *         Each subclass implements the operation method for performing various shift/rotate operations,
  *         which is then invoked by the interface's exec method.
  * */
-class IShiftOpcode : public IOpcode, public IUpdateDataStatusOperation {
+class IShiftOpcode : public IOpcode, public IUpdateArithmeticStatusOperation {
 public:
     enum PeNESStatus exec(
         ProgramContext *program_ctx,
@@ -50,10 +50,6 @@ protected:
         native_word_t status_register_data,
         native_word_t storage_data
     ) = 0;
-
-    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE |
-                                      REGISTER_STATUS_FLAG_MASK_CARRY |
-                                      REGISTER_STATUS_FLAG_MASK_ZERO;
 };
 
 /** @brief Shift left one bit. */

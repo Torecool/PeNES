@@ -71,7 +71,7 @@ enum PeNESStatus IShiftOpcode::exec(
     }
 
     /* Call the parent function with the extended return value to update the status flags. */
-    status = this->update_data_status(register_status, shift_result);
+    status = this->update_arithmetic_status(register_status, shift_result);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_data_status failed. Status: %d", status);
         goto l_cleanup;

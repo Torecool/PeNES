@@ -24,24 +24,30 @@ namespace instruction_set {
 /** @brief Interface of an opcode performing an addition operation using the Accumulator.
  *         Extends the standard data-status-updating opcode interface by adding the add method.
  */
-class IAddOpcode : public IOpcode, public IUpdateDataStatusOperation {
+class IAddOpcode : public IOpcode, public IUpdateArithmeticStatusOperation {
 protected:
+    /** @brief Retrieve the mask of status flags that are allowed to be modified in the Status register. */
+    inline native_word_t get_update_mask() const override
+    {
+        return REGISTER_STATUS_FLAG_MASK_NEGATIVE |
+               REGISTER_STATUS_FLAG_MASK_ZERO |
+               REGISTER_STATUS_FLAG_MASK_CARRY |
+               REGISTER_STATUS_FLAG_MASK_OVERFLOW;
+    }
+
     /** @brief          Add (with carry) a given WORD of data to the Accumulator and update the Status register accordingly.
      *
      *  @param[in]      program_ctx                 The program context containing the Accumulator to add to.
      *  @param[in]      add_operand                 The WORD of data to add.
+     *  @param[in]      is_borrow                   Are we adding with carry (i.e addition) or borrow (i.e subtraction)?
      *
      *  @return         Status indicating the success of the operation.
      * */
     enum PeNESStatus add(
         ProgramContext *program_ctx,
-        native_word_t add_operand
+        native_word_t add_operand,
+        bool is_borrow = false
     );
-
-    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE |
-                                      REGISTER_STATUS_FLAG_MASK_ZERO |
-                                      REGISTER_STATUS_FLAG_MASK_CARRY |
-                                      REGISTER_STATUS_FLAG_MASK_OVERFLOW;
 };
 
 /** @brief Add data to Accumulator with Carry. */

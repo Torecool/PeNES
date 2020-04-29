@@ -28,6 +28,8 @@ enum PeNESStatus IUpdateStatusOperation::update_status(
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     native_word_t status_flags = 0;
     native_word_t updated_status_flags = 0;
+    native_word_t update_mask = this->get_update_mask();
+    native_word_t base_update_values = this->get_base_update_values();
 
     ASSERT(nullptr != register_status);
 
@@ -37,41 +39,10 @@ enum PeNESStatus IUpdateStatusOperation::update_status(
     /* Update the status register flags with the values from base_values together with update_values.
      * A flag will only be updated if it is set in update_mask.
      * */
-    updated_status_flags = (status_flags & ~this->update_mask) | this->base_values | update_values;
+    updated_status_flags = (status_flags & ~update_mask) | base_update_values | update_values;
 
     /* Write the status register back. */
     register_status->write(updated_status_flags);
-
-    status = PENES_STATUS_SUCCESS;
-l_cleanup:
-    return status;
-}
-
-
-enum PeNESStatus IUpdateDataStatusOperation::update_data_status(
-    RegisterStorage<native_word_t> *register_status,
-    native_dword_t operation_result,
-    native_word_t update_values
-)
-
-{
-    enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-    bool is_negative = (operation_result & SYSTEM_NATIVE_WORD_SIGN_BIT_MASK);
-    bool is_zero = ((operation_result << SYSTEM_NATIVE_WORD_SIZE_BITS) == 0);
-    bool did_carry = ((operation_result >> SYSTEM_NATIVE_WORD_SIZE_BITS) != 0);
-
-    ASSERT(nullptr != register_status);
-
-    update_values |= (true == is_negative)? REGISTER_STATUS_FLAG_MASK_NEGATIVE: 0;
-    update_values |= (true == is_zero)? REGISTER_STATUS_FLAG_MASK_ZERO: 0;
-    update_values |= (true == did_carry)? REGISTER_STATUS_FLAG_MASK_CARRY: 0;
-
-    /* Call the parent function to update the status flags. */
-    status = IUpdateStatusOperation::update_status(register_status, update_values);
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_data_status failed. Status: %d", status);
-        goto l_cleanup;
-    }
 
     status = PENES_STATUS_SUCCESS;
 l_cleanup:
@@ -100,7 +71,7 @@ enum PeNESStatus IStackOperation::push(
     stack_pointer_address = register_stack_pointer->read();
 
     /* Retrieve the memory storage containing the stack from the program context's memory manager. */
-    stack_storage = program_ctx->memory_map.get_stack_storage();
+    stack_storage = program_ctx->memory_map.get_stack();
 
     /* Write the data to the location in the stack just above the data on top.
      * Note that the stack grows top-down.
@@ -148,7 +119,7 @@ enum PeNESStatus IStackOperation::pull(
     stack_pointer_address = register_stack_pointer->read();
 
     /* Retrieve the memory storage containing the stack from the program context's memory manager. */
-    stack_storage = program_ctx->memory_map.get_stack_storage();
+    stack_storage = program_ctx->memory_map.get_stack();
 
     /* Increment the Stack pointer to point to the data at the top of the stack. */
     stack_pointer_address += system_bytes_to_words(pull_size);
@@ -200,7 +171,7 @@ enum PeNESStatus IJumpOperation::jump(
     }
 
     /* Convert the jump address to big endian because addresses are kept in little endian in memory. */
-    converted_jump_address = system_native_to_big_endianness(jump_address);
+    converted_jump_address = system_native_to_host_endianness(jump_address);
 
     /* Write the converted jump address to the program counter. */
     register_program_counter->write(converted_jump_address);

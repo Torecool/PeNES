@@ -36,7 +36,7 @@ enum PeNESStatus OpcodeJMP::exec(
     register_program_counter = program_ctx->register_file.get_register_program_counter();
 
     /* Perform the jump operation to the new location. */
-    status = this->jump(register_program_counter, jump_address_storage, address_storage_offset);
+    status = IJumpOperation::jump(register_program_counter, jump_address_storage, address_storage_offset);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass jump failed. Status: %d", status);
         goto l_cleanup;
@@ -75,14 +75,14 @@ enum PeNESStatus OpcodeJSR::exec(
     program_counter_address += 2;
 
     /* Save the updated program counter on the stack. */
-    status = this->push(program_ctx, program_counter_address);
+    status = IStackOperation::push(program_ctx, program_counter_address);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass push failed. Status: %d", status);
         goto l_cleanup;
     }
 
     /* Perform the jump operation to the new location. */
-    status = this->jump(register_program_counter, jump_address_storage, address_storage_offset);
+    status = IJumpOperation::jump(register_program_counter, jump_address_storage, address_storage_offset);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass jump failed. Status: %d", status);
         goto l_cleanup;
@@ -136,21 +136,21 @@ enum PeNESStatus OpcodeBRK::exec(
     program_counter_address += 2;
 
     /* Save the updated program counter on the stack. */
-    status = this->push(program_ctx, program_counter_address);
+    status = IStackOperation::push(program_ctx, program_counter_address);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass program counter push failed. Status: %d", status);
         goto l_cleanup;
     }
 
     /* Save the stack version of the status on the stack. */
-    status = this->push(program_ctx, program_status);
+    status = IStackOperation::push(program_ctx, program_status);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass status push failed. Status: %d", status);
         goto l_cleanup;
     }
 
     /* Perform the jump operation to the address stored within the vector table */
-    status = this->jump(register_program_counter, interrupt_vector_storage);
+    status = IJumpOperation::jump(register_program_counter, interrupt_vector_storage);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass jump failed. Status: %d", status);
         goto l_cleanup;
@@ -191,14 +191,14 @@ enum PeNESStatus OpcodeRTI::exec(
     register_status = program_ctx->register_file.get_register_status();
 
     /* Pull the saved Status register from the stack. */
-    status = this->pull(program_ctx, &saved_status);
+    status = IStackOperation::pull(program_ctx, &saved_status);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass pull status failed. Status: %d", status);
         goto l_cleanup;
     }
 
     /* Pull the saved Stack pointer from the stack. */
-    status = this->pull(program_ctx, &saved_program_counter);
+    status = IStackOperation::pull(program_ctx, &saved_program_counter);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass pull stack pointer failed. Status: %d", status);
         goto l_cleanup;
@@ -239,7 +239,7 @@ enum PeNESStatus OpcodeRTS::exec(
     register_program_counter = program_ctx->register_file.get_register_program_counter();
 
     /* Pull the saved Stack pointer from the stack. */
-    status = this->pull(program_ctx, &saved_program_counter);
+    status = IStackOperation::pull(program_ctx, &saved_program_counter);
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass pull stack pointer failed. Status: %d", status);
         goto l_cleanup;

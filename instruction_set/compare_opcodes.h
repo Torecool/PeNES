@@ -24,7 +24,7 @@ namespace instruction_set {
 /** @brief Interface of an opcode performing a comparison operation.
  *         Extends the standard data-status-updating opcode interface by adding the compare method.
  * */
-class ICompareOpcode : public IOpcode, public IUpdateDataStatusOperation {
+class ICompareOpcode : public IOpcode, public IUpdateArithmeticStatusOperation {
 protected:
     /** @brief          Perform a compare operation between a register operand and a generic storage location operand.
      *                  Subtract the second operand from the first and update the Status register's data flags accordingly.
@@ -42,10 +42,6 @@ protected:
         IStorageLocation *compare_storage,
         std::size_t storage_offset = 0
     );
-
-    const native_word_t update_mask = REGISTER_STATUS_FLAG_MASK_NEGATIVE |
-                                      REGISTER_STATUS_FLAG_MASK_CARRY |
-                                      REGISTER_STATUS_FLAG_MASK_ZERO;
 };
 
 /** @brief Compare Accumulator with data (A - M). */

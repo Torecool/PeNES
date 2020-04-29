@@ -54,9 +54,14 @@ enum PeNESStatus ICompareOpcode::compare(
     comparison_result = compare_register_data - compare_storage_data;
 
     /* Call the parent function to update the status flags. */
-    status = this->update_data_status(program_ctx, comparison_result);
+    status = this->update_arithmetic_status(
+        program_ctx,
+        comparison_result,
+        0,
+        true
+    );
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_data_status failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_arithmetic_status failed. Status: %d", status);
         goto l_cleanup;
     }
 

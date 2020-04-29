@@ -28,8 +28,9 @@ enum PeNESStatus IBranchOpcode::branch(
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     RegisterStorage<native_address_t> *register_program_counter = nullptr;
-    native_word_t register_program_counter_data = 0;
-    native_address_t relative_branch_address = 0;
+    native_dword_t register_program_counter_data = 0;
+    native_word_t relative_branch_address = 0;
+    native_address_t absolute_branch_address = 0;
 
     ASSERT(nullptr != program_ctx);
     ASSERT(nullptr != branch_operand_storage);
@@ -49,8 +50,15 @@ enum PeNESStatus IBranchOpcode::branch(
         goto l_cleanup;
     }
 
+    /* The branch operation is relative with a signed offset,
+     * meaning that if the offset has the sign bit set, we would like the Program counter to decrease.
+     * Note that the addition operation between a signed word and an unsigned dword will achieve the desired result,
+     * due to the fact that size extension occurs before sign interpretation.
+     * */
+    absolute_branch_address = register_program_counter_data + static_cast<native_signed_word_t>(relative_branch_address);
+
     /* Add the relative offset to the program counter. */
-    register_program_counter->write(register_program_counter_data + relative_branch_address);
+    register_program_counter->write(absolute_branch_address);
 
     status = PENES_STATUS_SUCCESS;
 l_cleanup:
@@ -67,6 +75,8 @@ enum PeNESStatus IBranchOpcode::exec(
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     RegisterStorage<native_word_t> *register_status = nullptr;
     native_word_t register_status_data = 0;
+    native_word_t branch_condition_mask = this->get_branch_condition_mask();
+    bool branch_on_set = this->get_branch_on_set();
 
     ASSERT(nullptr != program_ctx);
     ASSERT(nullptr != branch_operand_storage);

@@ -7,6 +7,8 @@ add_executable(PeNES main.cpp utils/utils.h decoder/decoder.cpp decoder/decoder.
 
 include_directories(.)
 
+configure_file("test/Super Mario Bros. (World).nes" "test/Super Mario Bros. (World).nes" COPYONLY)
+
 if (CMAKE_BUILD_TYPE STREQUAL Debug)
     add_compile_definitions(_DEBUG)
 endif (CMAKE_BUILD_TYPE STREQUAL Debug)

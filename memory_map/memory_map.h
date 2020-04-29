@@ -64,6 +64,7 @@ public:
 
     inline ~MemoryStorage()
     {
+        /* TODO double free error. */
         /* Only call the destructor on the original copy. */
         if (false == is_mirror) {
             this->IStorageLocation::~IStorageLocation();
@@ -100,7 +101,7 @@ public:
         std::size_t *output_storage_offset = nullptr
     ) const;
 
-    inline MemoryStorage *get_stack_storage() const
+    inline MemoryStorage *get_stack() const
     {
         ASSERT(nullptr != this->stack_storage);
 
