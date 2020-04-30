@@ -53,13 +53,13 @@ l_cleanup:
 enum PeNESStatus IStackOperation::push(
     ProgramContext *program_ctx,
     const native_word_t *push_data,
-    std::size_t push_size
+    std::size_t num_push_words
 )
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     RegisterStorage<native_word_t> *register_stack_pointer = nullptr;
     MemoryStorage *stack_storage = nullptr;
-    native_address_t stack_pointer_address = 0;
+    native_word_t stack_pointer_address = 0;
 
     ASSERT(nullptr != program_ctx);
     ASSERT(nullptr != push_data);
@@ -73,12 +73,17 @@ enum PeNESStatus IStackOperation::push(
     /* Retrieve the memory storage containing the stack from the program context's memory manager. */
     stack_storage = program_ctx->memory_map.get_stack();
 
+    /* Decrement the Stack pointer to point to the location we will be writing to,
+     * considering the current stack pointer is just above the last data.
+     * */
+    stack_pointer_address -= (num_push_words - 1);
+
     /* Write the data to the location in the stack just above the data on top.
      * Note that the stack grows top-down.
      * */
     status = stack_storage->write(
         push_data,
-        system_bytes_to_words(push_size),
+        num_push_words,
         stack_pointer_address
     );
     if (PENES_STATUS_SUCCESS != status) {
@@ -86,8 +91,8 @@ enum PeNESStatus IStackOperation::push(
         goto l_cleanup;
     }
 
-    /* Decrement the Stack pointer to point to the new top of the stack. */
-    stack_pointer_address -= system_bytes_to_words(push_size);
+    /* Decrement the Stack pointer to point to the new top the stack, just above the data we just wrote. */
+    stack_pointer_address--;
 
     /* Write the updated Stack address back to the register. */
     register_stack_pointer->write(stack_pointer_address);
@@ -101,7 +106,7 @@ l_cleanup:
 enum PeNESStatus IStackOperation::pull(
     ProgramContext *program_ctx,
     native_word_t *pull_buffer,
-    std::size_t pull_size
+    std::size_t num_pull_words
 )
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
@@ -121,21 +126,28 @@ enum PeNESStatus IStackOperation::pull(
     /* Retrieve the memory storage containing the stack from the program context's memory manager. */
     stack_storage = program_ctx->memory_map.get_stack();
 
-    /* Increment the Stack pointer to point to the data at the top of the stack. */
-    stack_pointer_address += system_bytes_to_words(pull_size);
+    /* Increment the Stack pointer to point to the location we will be reading from,
+     * considering the current stack pointer is just above the last data.
+     * */
+    stack_pointer_address++;
 
     /* Read the data from the storage location representing the top of the stack.
      * Note that the stack grows top-down.
      * */
     status = stack_storage->read(
         pull_buffer,
-        system_bytes_to_words(pull_size),
+        num_pull_words,
         stack_pointer_address
     );
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("read stack storage failed. Status: %d", status);
         goto l_cleanup;
     }
+
+    /* Increment the Stack pointer to point to the new top of the stack,
+     * meaning just above the data that was below the pulled data.
+     * */
+    stack_pointer_address += (num_pull_words - 1);
 
     /* Write the updated Stack address back to the register. */
     register_stack_pointer->write(stack_pointer_address);

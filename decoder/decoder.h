@@ -32,17 +32,23 @@ public:
         native_word_t instruction_data,
         instruction_set::IOpcode **output_opcode,
         address_mode::IAddressMode **output_address_mode
-    ) const;
+    );
 
 private:
-    const address_mode::AddressModeTable address_mode_table;
+    address_mode::AddressModeTable address_mode_table;
     std::vector<instruction_set::OpcodeTable *> opcode_tables;
 };
 
 
 class Decoder {
 public:
-    inline explicit Decoder(ProgramContext *program_ctx): program_ctx(program_ctx)
+    inline explicit Decoder(ProgramContext *program_ctx):
+        program_ctx(program_ctx),
+        instruction_group_table {
+            InstructionDecodeGroup(address_mode_table_group_0, opcode_tables_group_0),
+            InstructionDecodeGroup(address_mode_table_group_1, opcode_tables_group_1),
+            InstructionDecodeGroup(address_mode_table_group_2, opcode_tables_group_2)
+        }
     {
         ASSERT(nullptr != program_ctx);
     }
@@ -75,14 +81,18 @@ private:
     MemoryStorage *prg_rom_storage = nullptr;
     native_address_t prg_rom_storage_start_address = 0;
 
+    static const std::initializer_list<address_mode::AddressModeType> address_mode_table_group_0;
+    static const std::initializer_list<address_mode::AddressModeType> address_mode_table_group_1;
+    static const std::initializer_list<address_mode::AddressModeType> address_mode_table_group_2;
+
     static const std::initializer_list<instruction_set::OpcodeType> default_opcode_table_group_1;
     static const std::initializer_list<instruction_set::OpcodeType> default_opcode_table_group_2;
 
-    static const InstructionDecodeGroup instruction_group_0;
-    static const InstructionDecodeGroup instruction_group_1;
-    static const InstructionDecodeGroup instruction_group_2;
+    static const std::initializer_list<std::initializer_list<instruction_set::OpcodeType>> opcode_tables_group_0;
+    static const std::initializer_list<std::initializer_list<instruction_set::OpcodeType>> opcode_tables_group_1;
+    static const std::initializer_list<std::initializer_list<instruction_set::OpcodeType>> opcode_tables_group_2;
 
-    static const std::array<const InstructionDecodeGroup *, DECODER_NUM_INSTRUCTION_DECODE_GROUPS> instruction_group_table;
+    std::array<InstructionDecodeGroup, DECODER_NUM_INSTRUCTION_DECODE_GROUPS> instruction_group_table;
 };
 
 #endif /* __DECODER_H__ */

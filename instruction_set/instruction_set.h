@@ -25,8 +25,8 @@ namespace instruction_set {
 
 /** Enums *****************************************************************/
 enum OpcodeType {
-    OPCODE_TYPE_NONE = -1,
-    OPCODE_TYPE_ADC = 0,
+    OPCODE_TYPE_NONE = 0,
+    OPCODE_TYPE_ADC,
     OPCODE_TYPE_AND,
     OPCODE_TYPE_ASL,
     OPCODE_TYPE_BCC,
@@ -86,21 +86,15 @@ enum OpcodeType {
     OPCODE_TYPE_NUM_OPCODES
 };
 
-/** Typedefs **************************************************************/
-typedef IOpcode *(*opcode_instance_factory_t)();
-
 /** Classes ***************************************************************/
-class OpcodeTable : public utils::ObjectTable<IOpcode, enum OpcodeType> {
+class OpcodeTable : public utils::ObjectTable<enum OpcodeType, IOpcode> {
 public:
     OpcodeTable(std::initializer_list<enum OpcodeType> opcode_types):
-        ObjectTable<IOpcode, enum OpcodeType>(
-            &opcode_instance_factory_table,
-            opcode_types
-        )
+        ObjectTable(&opcode_instance_factory_list, opcode_types)
     {};
 
 private:
-    static const std::array<opcode_instance_factory_t, OPCODE_TYPE_NUM_OPCODES> opcode_instance_factory_table;
+    static const utils::InstanceFactoryList<enum OpcodeType, IOpcode> opcode_instance_factory_list;
 };
 
 

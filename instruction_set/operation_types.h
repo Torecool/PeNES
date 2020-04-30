@@ -311,7 +311,11 @@ protected:
         ASSERT(nullptr != program_ctx);
 
         /* Call the "real" push implementation with the data word to push. */
-        status = push(program_ctx, &push_word, sizeof(push_word));
+        status = push(
+            program_ctx,
+            &push_word,
+            SYSTEM_NATIVE_WORD_NUM_WORDS
+            );
         if (PENES_STATUS_SUCCESS != status) {
             DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("push failed. Status: %d", status);
             goto l_cleanup;
@@ -344,7 +348,7 @@ protected:
         status = push(
             program_ctx,
             reinterpret_cast<native_word_t *>(&converted_push_address),
-            sizeof(converted_push_address)
+            SYSTEM_NATIVE_ADDRESS_NUM_WORDS
         );
         if (PENES_STATUS_SUCCESS != status) {
             DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("push failed. Status: %d", status);
@@ -373,7 +377,11 @@ protected:
         ASSERT(nullptr != output_pull_word);
 
         /* Call the "real" pull implementation with a buffer to contain the data word being pulled. */
-        status = pull(program_ctx, &pull_data, sizeof(pull_data));
+        status = pull(
+            program_ctx,
+            &pull_data,
+            SYSTEM_NATIVE_WORD_NUM_WORDS
+        );
         if (PENES_STATUS_SUCCESS != status) {
             DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("pull failed. Status: %d", status);
             goto l_cleanup;
@@ -410,7 +418,7 @@ protected:
         status = pull(
             program_ctx,
             reinterpret_cast<native_word_t *>(&pull_address),
-            sizeof(pull_address)
+            SYSTEM_NATIVE_ADDRESS_NUM_WORDS
         );
         if (PENES_STATUS_SUCCESS != status) {
             DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("pull failed. Status: %d", status);
@@ -433,7 +441,7 @@ private:
      *
      *  @param[in]      program_ctx                 The program context containing the stack to push onto.
      *  @param[in]      push_data                   A buffer containing the data to push.
-     *  @param[in]      push_size                   The size of the data to push.
+     *  @param[in]      num_push_words              The size of the data to push in native words.
      *
      *  @return         Status indicating the success of the operation.
      *
@@ -442,7 +450,7 @@ private:
     static enum PeNESStatus push(
         ProgramContext *program_ctx,
         const native_word_t *push_data,
-        std::size_t push_size
+        std::size_t num_push_words
     );
 
     /** @brief          Pull data from the stack into a buffer as-is (i.e. without endianness conversions).
@@ -450,7 +458,7 @@ private:
      *
      *  @param[in]      program_ctx                 The program context containing the stack to pull from.
      *  @param[in,out]  pull_buffer                 A buffer to write the pulled data to.
-     *  @param[in]      pull_size                   The size of the data to pull.
+     *  @param[in]      num_pull_words              The size of the data to pull in native words.
      *
      *  @return         Status indicating the success of the operation.
      *
@@ -459,7 +467,7 @@ private:
     static enum PeNESStatus pull(
         ProgramContext *program_ctx,
         native_word_t *pull_buffer,
-        std::size_t pull_size
+        std::size_t num_pull_words
     );
 };
 

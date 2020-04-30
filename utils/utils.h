@@ -54,46 +54,85 @@ public:
 };
 
 
-template<class BaseClass, typename TypeIndex>
+template<typename TypeIndex, class BaseClass>
+class InstanceFactoryList {
+public:
+    InstanceFactoryList(std::initializer_list<BaseClass *(*)()> instance_function_list):
+        instance_functions(instance_function_list)
+    {};
+
+    inline enum PeNESStatus create_instance(
+        TypeIndex instance_type_index,
+        BaseClass **output_instance
+    ) const
+    {
+        enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+        BaseClass *(*instance_function)() = nullptr;
+        BaseClass *new_instance = nullptr;
+
+        ASSERT(nullptr != output_instance);
+
+        /* Check if the parameter type index is within the bounds of the vector. */
+        if ((this->instance_functions.size() <= instance_type_index) ||
+            (0 > instance_type_index)) {
+            status = PENES_STATUS_UTILS_INSTANCE_FACTORY_LIST_CREATE_INSTANCE_OUT_OF_BOUNDS;
+            DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Type index out of bounds. Status: %d", status);
+            goto l_cleanup;
+        }
+
+        /* Retrieve the object instance function and initialize it.
+         * If the instance function is null, return null.
+         * */
+        instance_function = this->instance_functions.at(instance_type_index);
+        if (nullptr != instance_function) {
+            new_instance = instance_function();
+        }
+
+        *output_instance = new_instance;
+
+        status = PENES_STATUS_SUCCESS;
+    l_cleanup:
+        return status;
+    }
+
+private:
+    const std::vector<BaseClass *(*)()> instance_functions;
+};
+
+
+template<typename TypeIndex, class BaseClass>
 class ObjectTable {
 public:
-    template<size_t instance_factory_list_size>
     ObjectTable(
-        const std::array<BaseClass *(*)(), instance_factory_list_size> *object_instance_factory_list,
+        const InstanceFactoryList<TypeIndex, BaseClass> *instance_factory_list,
         std::initializer_list<TypeIndex> type_list
-    ): type_table(type_list)
+    ): instance_factory_list(instance_factory_list)
     {
+        enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
         BaseClass *new_object = nullptr;
-        BaseClass *(*instance_factory)() = nullptr;
 
-        ASSERT(nullptr != object_instance_factory_list);
+        ASSERT(nullptr != instance_factory_list);
 
         /* Iterate through the argument type list.
          * For each type, find the corresponding instance factory method and create an instance.
-         * Insert the new instance into a vector.
+         * Insert the new instance into a table.
          * Additionally, insert the instance and corresponding type into a map for lookup by type.
          * */
         for (TypeIndex type_index : type_list) {
 
-            new_object = nullptr;
-            if (0 <= type_index && instance_factory_list_size > type_index) {
-                instance_factory = object_instance_factory_list->at(type_index);
+            status = this->instance_factory_list->create_instance(type_index, &new_object);
+            ASSERT(PENES_STATUS_SUCCESS == status);
 
-                if (nullptr != instance_factory) {
-                    new_object = instance_factory();
-                }
-            }
-
-            this->instance_table.push_back(new_object);
-            this->type_instance_map.insert({type_index, new_object});
+            this->instance_table.push_back(std::make_pair(type_index, new_object));
+            this->type_lookup_map.insert({type_index, new_object});
         }
     }
 
     ~ObjectTable()
     {
-        /* Iterate through the object vector and delete each instance. */
-        for (BaseClass *object_instance : this->instance_table) {
-            delete object_instance;
+        /* Iterate through the object vector table and delete each instance. */
+        for (std::pair<TypeIndex, BaseClass *> object_pair : this->instance_table) {
+            delete object_pair.second;
         }
 
         this->instance_table.clear();
@@ -108,15 +147,15 @@ public:
 
         ASSERT(nullptr != output_type);
 
-        /* Check if the parameter index is within the bounds of the type vector. */
-        if (this->type_table.size() <= table_index) {
+        /* Check if the parameter index is within the bounds of the table. */
+        if (this->instance_table.size() <= table_index) {
             status = PENES_STATUS_UTILS_OBJECT_TABLE_GET_TYPE_OUT_OF_BOUNDS;
             DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Table index out of bounds. Status: %d", status);
             goto l_cleanup;
         }
 
         /* Retrieve the object type from the vector table. */
-        *output_type = this->type_table.at(table_index);
+        *output_type = this->instance_table.at(table_index).first;
 
         status = PENES_STATUS_SUCCESS;
     l_cleanup:
@@ -132,7 +171,7 @@ public:
 
         ASSERT(nullptr != output_object);
 
-        /* Check if the parameter index is within the bounds of the object vector. */
+        /* Check if the parameter index is within the bounds of the table. */
         if (this->instance_table.size() <= table_index) {
             status = PENES_STATUS_UTILS_OBJECT_TABLE_GET_OBJECT_OUT_OF_BOUNDS;
             DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Table index out of bounds. Status: %d", status);
@@ -140,7 +179,7 @@ public:
         }
 
         /* Retrieve the object instance from the vector table. */
-        *output_object = this->instance_table.at(table_index);
+        *output_object = this->instance_table.at(table_index).second;
 
         status = PENES_STATUS_SUCCESS;
     l_cleanup:
@@ -148,24 +187,34 @@ public:
     }
 
     enum PeNESStatus get_object_by_type(
-        TypeIndex type,
+        TypeIndex type_index,
         BaseClass **output_object
-    ) const
+    )
     {
         enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-        typename std::unordered_map<TypeIndex, BaseClass *>::const_iterator instance_iter = this->type_instance_map.find(type);
+        typename std::unordered_map<TypeIndex, BaseClass *>::const_iterator instance_iter;
+        BaseClass *found_object = nullptr;
 
         ASSERT(nullptr != output_object);
 
-        /* Check if the type exists in the map. */
-        if (this->type_instance_map.end() == instance_iter) {
-            status = PENES_STATUS_UTILS_OBJECT_TABLE_GET_OBJECT_BY_TYPE_NOT_FOUND;
-            DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Object type not found. Status: %d\n", status);
-            goto l_cleanup;
+        /* Check if the type exists in the map.
+         * If it doesn't, create a new instance of said type and insert it into the map.
+         * */
+        instance_iter = this->type_lookup_map.find(type_index);
+        if (this->type_lookup_map.end() == instance_iter) {
+            status = this->instance_factory_list->create_instance(type_index, &found_object);
+            if (PENES_STATUS_SUCCESS != status) {
+                DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("create_instance failed. Status: %d\n", status);
+                goto l_cleanup;
+            }
+
+            this->type_lookup_map.insert({type_index, found_object});
+        } else {
+            /* Retrieve the object instance from the map. */
+            found_object = instance_iter->second;
         }
 
-        /* Retrieve the object instance from the map. */
-        *output_object = instance_iter->second;
+        *output_object = found_object;
 
         status = PENES_STATUS_SUCCESS;
     l_cleanup:
@@ -178,10 +227,9 @@ public:
     };
 
 private:
-    /*TODO can probably be improved. */
-    const std::vector<TypeIndex> type_table;
-    std::vector<BaseClass *> instance_table;
-    std::unordered_map<TypeIndex, BaseClass *> type_instance_map;
+    const InstanceFactoryList<TypeIndex, BaseClass> *instance_factory_list;
+    std::vector<std::pair<TypeIndex, BaseClass *>> instance_table;
+    std::unordered_map<TypeIndex, BaseClass *> type_lookup_map;
 };
 
 }

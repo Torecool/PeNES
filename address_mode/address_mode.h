@@ -24,13 +24,13 @@
 namespace address_mode {
 
 enum AddressModeType {
-    ADDRESS_MODE_TYPE_NONE = -1,
-    ADDRESS_MODE_TYPE_IMPLIED = 0,
+    ADDRESS_MODE_TYPE_NONE = 0,
+    ADDRESS_MODE_TYPE_IMPLIED,
     ADDRESS_MODE_TYPE_ACCUMULATOR,
     ADDRESS_MODE_TYPE_ABSOLUTE,
     ADDRESS_MODE_TYPE_ABSOLUTE_X_INDEXED,
     ADDRESS_MODE_TYPE_ABSOLUTE_Y_INDEXED,
-    ADDRESS_MODE_TYPE_IMMEDIATE,
+    ADDRESS_MODE_TYPE_IMMEDIATE_SINGLE,
     ADDRESS_MODE_TYPE_IMMEDIATE_DOUBLE,
     ADDRESS_MODE_TYPE_RELATIVE,
     ADDRESS_MODE_TYPE_INDIRECT,
@@ -42,21 +42,15 @@ enum AddressModeType {
     ADDRESS_MODE_TYPE_NUM_ADDRESS_MODES
 };
 
-/** Typedefs **************************************************************/
-typedef IAddressMode *(*address_mode_instance_factory_t)();
-
 /** Classes ***************************************************************/
-class AddressModeTable : public utils::ObjectTable<IAddressMode, enum AddressModeType> {
+class AddressModeTable : public utils::ObjectTable<enum AddressModeType, IAddressMode> {
 public:
     AddressModeTable(std::initializer_list<enum AddressModeType> address_mode_types):
-        ObjectTable<IAddressMode, enum AddressModeType>(
-            &address_mode_instance_factory_table,
-            address_mode_types
-        )
+        ObjectTable(&address_mode_instance_factory_list, address_mode_types)
     {};
 
 private:
-    static const std::array<address_mode_instance_factory_t, ADDRESS_MODE_TYPE_NUM_ADDRESS_MODES> address_mode_instance_factory_table;
+    static const utils::InstanceFactoryList<enum AddressModeType, IAddressMode> address_mode_instance_factory_list;
 };
 
 } /* namespace address_modes */

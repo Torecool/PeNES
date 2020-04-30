@@ -29,7 +29,8 @@
 using namespace instruction_set;
 
 /** Static Variables ******************************************************/
-const std::array<opcode_instance_factory_t, OPCODE_TYPE_NUM_OPCODES> OpcodeTable::opcode_instance_factory_table = {
+const utils::InstanceFactoryList<enum OpcodeType, IOpcode> OpcodeTable::opcode_instance_factory_list = {
+    nullptr,
     utils::SubClassFactory<IOpcode>::create_instance<OpcodeADC>,
     utils::SubClassFactory<IOpcode>::create_instance<OpcodeAND>,
     utils::SubClassFactory<IOpcode>::create_instance<OpcodeASL>,

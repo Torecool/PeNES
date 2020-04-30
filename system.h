@@ -19,7 +19,9 @@
 #define SYSTEM_NATIVE_WORD_SIZE_BITS (8)
 #define SYSTEM_NATIVE_WORD_SIGN_BIT_MASK (1 << (SYSTEM_NATIVE_WORD_SIZE_BITS - 1))
 #define SYSTEM_IS_NATIVE_LITTLE_ENDIAN (true)
-
+#define SYSTEM_NATIVE_WORD_NUM_WORDS (1)
+#define SYSTEM_NATIVE_DWORD_NUM_WORDS (2)
+#define SYSTEM_NATIVE_ADDRESS_NUM_WORDS (SYSTEM_NATIVE_DWORD_NUM_WORDS)
 /** Typedefs **************************************************************/
 static_assert(CHAR_BIT == SYSTEM_NATIVE_WORD_SIZE_BITS, "Host char size must match native char size.");
 

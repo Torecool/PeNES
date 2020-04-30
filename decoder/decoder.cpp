@@ -34,6 +34,39 @@
 )
 
 /** Static Variables ******************************************************/
+const std::initializer_list<address_mode::AddressModeType> Decoder::address_mode_table_group_0 = {
+    address_mode::ADDRESS_MODE_TYPE_IMMEDIATE_SINGLE,
+    address_mode::ADDRESS_MODE_TYPE_ZEROPAGE,
+    address_mode::ADDRESS_MODE_TYPE_IMPLIED,
+    address_mode::ADDRESS_MODE_TYPE_ABSOLUTE,
+    address_mode::ADDRESS_MODE_TYPE_RELATIVE,
+    address_mode::ADDRESS_MODE_TYPE_ZEROPAGE_X_INDEXED,
+    address_mode::ADDRESS_MODE_TYPE_IMPLIED,
+    address_mode::ADDRESS_MODE_TYPE_ABSOLUTE_X_INDEXED
+};
+
+const std::initializer_list<address_mode::AddressModeType> Decoder::address_mode_table_group_1 = {
+    address_mode::ADDRESS_MODE_TYPE_X_INDEXED_INDIRECT,
+    address_mode::ADDRESS_MODE_TYPE_ZEROPAGE,
+    address_mode::ADDRESS_MODE_TYPE_IMMEDIATE_SINGLE,
+    address_mode::ADDRESS_MODE_TYPE_ABSOLUTE,
+    address_mode::ADDRESS_MODE_TYPE_INDIRECT_Y_INDEXED,
+    address_mode::ADDRESS_MODE_TYPE_ZEROPAGE_X_INDEXED,
+    address_mode::ADDRESS_MODE_TYPE_ABSOLUTE_Y_INDEXED,
+    address_mode::ADDRESS_MODE_TYPE_ABSOLUTE_X_INDEXED
+};
+
+const std::initializer_list<address_mode::AddressModeType> Decoder::address_mode_table_group_2 = {
+    address_mode::ADDRESS_MODE_TYPE_IMMEDIATE_SINGLE,
+    address_mode::ADDRESS_MODE_TYPE_ZEROPAGE,
+    address_mode::ADDRESS_MODE_TYPE_ACCUMULATOR,
+    address_mode::ADDRESS_MODE_TYPE_ABSOLUTE,
+    address_mode::ADDRESS_MODE_TYPE_NONE,
+    address_mode::ADDRESS_MODE_TYPE_ZEROPAGE_X_INDEXED,
+    address_mode::ADDRESS_MODE_TYPE_IMPLIED,
+    address_mode::ADDRESS_MODE_TYPE_ABSOLUTE_X_INDEXED
+};
+
 const std::initializer_list<enum instruction_set::OpcodeType> Decoder::default_opcode_table_group_1 = {
     instruction_set::OPCODE_TYPE_ORA,
     instruction_set::OPCODE_TYPE_AND,
@@ -44,7 +77,6 @@ const std::initializer_list<enum instruction_set::OpcodeType> Decoder::default_o
     instruction_set::OPCODE_TYPE_CMP,
     instruction_set::OPCODE_TYPE_SBC
 };
-
 
 const std::initializer_list<enum instruction_set::OpcodeType> Decoder::default_opcode_table_group_2 = {
     instruction_set::OPCODE_TYPE_ASL,
@@ -57,208 +89,163 @@ const std::initializer_list<enum instruction_set::OpcodeType> Decoder::default_o
     instruction_set::OPCODE_TYPE_INC
 };
 
-
-const InstructionDecodeGroup Decoder::instruction_group_0 = {
+const std::initializer_list<std::initializer_list<instruction_set::OpcodeType>> Decoder::opcode_tables_group_0 = {
     {
-        address_mode::ADDRESS_MODE_TYPE_IMMEDIATE,
-        address_mode::ADDRESS_MODE_TYPE_ZEROPAGE,
-        address_mode::ADDRESS_MODE_TYPE_IMPLIED,
-        address_mode::ADDRESS_MODE_TYPE_ABSOLUTE,
-        address_mode::ADDRESS_MODE_TYPE_RELATIVE,
-        address_mode::ADDRESS_MODE_TYPE_ZEROPAGE_X_INDEXED,
-        address_mode::ADDRESS_MODE_TYPE_IMPLIED,
-        address_mode::ADDRESS_MODE_TYPE_ABSOLUTE_X_INDEXED
+        instruction_set::OPCODE_TYPE_BRK,
+        instruction_set::OPCODE_TYPE_JSR,
+        instruction_set::OPCODE_TYPE_RTI,
+        instruction_set::OPCODE_TYPE_RTS,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_LDY,
+        instruction_set::OPCODE_TYPE_CPY,
+        instruction_set::OPCODE_TYPE_CPX
     },
     {
-        {
-            instruction_set::OPCODE_TYPE_BRK,
-            instruction_set::OPCODE_TYPE_JSR,
-            instruction_set::OPCODE_TYPE_RTI,
-            instruction_set::OPCODE_TYPE_RTS,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_LDY,
-            instruction_set::OPCODE_TYPE_CPY,
-            instruction_set::OPCODE_TYPE_CPX
-        },
-        {
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_BIT,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_STY,
-            instruction_set::OPCODE_TYPE_LDY,
-            instruction_set::OPCODE_TYPE_CPY,
-            instruction_set::OPCODE_TYPE_CPX
-        },
-        {
-            instruction_set::OPCODE_TYPE_PHP,
-            instruction_set::OPCODE_TYPE_PLP,
-            instruction_set::OPCODE_TYPE_PHA,
-            instruction_set::OPCODE_TYPE_PLA,
-            instruction_set::OPCODE_TYPE_DEY,
-            instruction_set::OPCODE_TYPE_TAY,
-            instruction_set::OPCODE_TYPE_INY,
-            instruction_set::OPCODE_TYPE_INX
-        },
-        {
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_BIT,
-            instruction_set::OPCODE_TYPE_JMP,
-            instruction_set::OPCODE_TYPE_INDIRECT_JMP,
-            instruction_set::OPCODE_TYPE_STY,
-            instruction_set::OPCODE_TYPE_LDY,
-            instruction_set::OPCODE_TYPE_CPY,
-            instruction_set::OPCODE_TYPE_CPX
-        },
-        {
-            instruction_set::OPCODE_TYPE_BPL,
-            instruction_set::OPCODE_TYPE_BMI,
-            instruction_set::OPCODE_TYPE_BVC,
-            instruction_set::OPCODE_TYPE_BVS,
-            instruction_set::OPCODE_TYPE_BCC,
-            instruction_set::OPCODE_TYPE_BCS,
-            instruction_set::OPCODE_TYPE_BNE,
-            instruction_set::OPCODE_TYPE_BEQ
-        },
-        {
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_STY,
-            instruction_set::OPCODE_TYPE_LDY,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE
-        },
-        {
-            instruction_set::OPCODE_TYPE_CLC,
-            instruction_set::OPCODE_TYPE_SEC,
-            instruction_set::OPCODE_TYPE_CLI,
-            instruction_set::OPCODE_TYPE_SEI,
-            instruction_set::OPCODE_TYPE_TYA,
-            instruction_set::OPCODE_TYPE_CLV,
-            instruction_set::OPCODE_TYPE_CLD,
-            instruction_set::OPCODE_TYPE_SED
-        },
-        {
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_LDY,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE
-        }
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_BIT,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_STY,
+        instruction_set::OPCODE_TYPE_LDY,
+        instruction_set::OPCODE_TYPE_CPY,
+        instruction_set::OPCODE_TYPE_CPX
+    },
+    {
+        instruction_set::OPCODE_TYPE_PHP,
+        instruction_set::OPCODE_TYPE_PLP,
+        instruction_set::OPCODE_TYPE_PHA,
+        instruction_set::OPCODE_TYPE_PLA,
+        instruction_set::OPCODE_TYPE_DEY,
+        instruction_set::OPCODE_TYPE_TAY,
+        instruction_set::OPCODE_TYPE_INY,
+        instruction_set::OPCODE_TYPE_INX
+    },
+    {
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_BIT,
+        instruction_set::OPCODE_TYPE_JMP,
+        instruction_set::OPCODE_TYPE_INDIRECT_JMP,
+        instruction_set::OPCODE_TYPE_STY,
+        instruction_set::OPCODE_TYPE_LDY,
+        instruction_set::OPCODE_TYPE_CPY,
+        instruction_set::OPCODE_TYPE_CPX
+    },
+    {
+        instruction_set::OPCODE_TYPE_BPL,
+        instruction_set::OPCODE_TYPE_BMI,
+        instruction_set::OPCODE_TYPE_BVC,
+        instruction_set::OPCODE_TYPE_BVS,
+        instruction_set::OPCODE_TYPE_BCC,
+        instruction_set::OPCODE_TYPE_BCS,
+        instruction_set::OPCODE_TYPE_BNE,
+        instruction_set::OPCODE_TYPE_BEQ
+    },
+    {
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_STY,
+        instruction_set::OPCODE_TYPE_LDY,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE
+    },
+    {
+        instruction_set::OPCODE_TYPE_CLC,
+        instruction_set::OPCODE_TYPE_SEC,
+        instruction_set::OPCODE_TYPE_CLI,
+        instruction_set::OPCODE_TYPE_SEI,
+        instruction_set::OPCODE_TYPE_TYA,
+        instruction_set::OPCODE_TYPE_CLV,
+        instruction_set::OPCODE_TYPE_CLD,
+        instruction_set::OPCODE_TYPE_SED
+    },
+    {
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_LDY,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE
     }
 };
 
-
-const InstructionDecodeGroup Decoder::instruction_group_1 = {
+const std::initializer_list<std::initializer_list<instruction_set::OpcodeType>> Decoder::opcode_tables_group_1 = {
+    Decoder::default_opcode_table_group_1,
+    Decoder::default_opcode_table_group_1,
     {
-        address_mode::ADDRESS_MODE_TYPE_X_INDEXED_INDIRECT,
-        address_mode::ADDRESS_MODE_TYPE_ZEROPAGE,
-        address_mode::ADDRESS_MODE_TYPE_IMMEDIATE,
-        address_mode::ADDRESS_MODE_TYPE_ABSOLUTE,
-        address_mode::ADDRESS_MODE_TYPE_INDIRECT_Y_INDEXED,
-        address_mode::ADDRESS_MODE_TYPE_ZEROPAGE_X_INDEXED,
-        address_mode::ADDRESS_MODE_TYPE_ABSOLUTE_Y_INDEXED,
-        address_mode::ADDRESS_MODE_TYPE_ABSOLUTE_X_INDEXED
+        instruction_set::OPCODE_TYPE_ORA,
+        instruction_set::OPCODE_TYPE_AND,
+        instruction_set::OPCODE_TYPE_EOR,
+        instruction_set::OPCODE_TYPE_ADC,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_LDA,
+        instruction_set::OPCODE_TYPE_CMP,
+        instruction_set::OPCODE_TYPE_SBC
     },
-    {
-        Decoder::default_opcode_table_group_1,
-        Decoder::default_opcode_table_group_1,
-        {
-            instruction_set::OPCODE_TYPE_ORA,
-            instruction_set::OPCODE_TYPE_AND,
-            instruction_set::OPCODE_TYPE_EOR,
-            instruction_set::OPCODE_TYPE_ADC,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_LDA,
-            instruction_set::OPCODE_TYPE_CMP,
-            instruction_set::OPCODE_TYPE_SBC
-        },
-        Decoder::default_opcode_table_group_1,
-        Decoder::default_opcode_table_group_1,
-        Decoder::default_opcode_table_group_1,
-        Decoder::default_opcode_table_group_1,
-        Decoder::default_opcode_table_group_1
-    }
+    Decoder::default_opcode_table_group_1,
+    Decoder::default_opcode_table_group_1,
+    Decoder::default_opcode_table_group_1,
+    Decoder::default_opcode_table_group_1,
+    Decoder::default_opcode_table_group_1
 };
 
-
-const InstructionDecodeGroup Decoder::instruction_group_2 = {
+const std::initializer_list<std::initializer_list<instruction_set::OpcodeType>> Decoder::opcode_tables_group_2 = {
     {
-        address_mode::ADDRESS_MODE_TYPE_IMMEDIATE,
-        address_mode::ADDRESS_MODE_TYPE_ZEROPAGE,
-        address_mode::ADDRESS_MODE_TYPE_ACCUMULATOR,
-        address_mode::ADDRESS_MODE_TYPE_ABSOLUTE,
-        address_mode::ADDRESS_MODE_TYPE_NONE,
-        address_mode::ADDRESS_MODE_TYPE_ZEROPAGE_X_INDEXED,
-        address_mode::ADDRESS_MODE_TYPE_IMPLIED,
-        address_mode::ADDRESS_MODE_TYPE_ABSOLUTE_X_INDEXED
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_LDX,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE
+    },
+    Decoder::default_opcode_table_group_2,
+    {
+        instruction_set::OPCODE_TYPE_ASL,
+        instruction_set::OPCODE_TYPE_ROL,
+        instruction_set::OPCODE_TYPE_LSR,
+        instruction_set::OPCODE_TYPE_ROR,
+        instruction_set::OPCODE_TYPE_TXA,
+        instruction_set::OPCODE_TYPE_TAX,
+        instruction_set::OPCODE_TYPE_DEX,
+        instruction_set::OPCODE_TYPE_NOP
+    },
+    Decoder::default_opcode_table_group_2,
+    {
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE
+    },
+    Decoder::default_opcode_table_group_2,
+    {
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_TXS,
+        instruction_set::OPCODE_TYPE_TSX,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_NONE
     },
     {
-        {
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_LDX,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE
-        },
-        Decoder::default_opcode_table_group_2,
-        {
-            instruction_set::OPCODE_TYPE_ASL,
-            instruction_set::OPCODE_TYPE_ROL,
-            instruction_set::OPCODE_TYPE_LSR,
-            instruction_set::OPCODE_TYPE_ROR,
-            instruction_set::OPCODE_TYPE_TXA,
-            instruction_set::OPCODE_TYPE_TAX,
-            instruction_set::OPCODE_TYPE_DEX,
-            instruction_set::OPCODE_TYPE_NOP
-        },
-        Decoder::default_opcode_table_group_2,
-        {
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE
-        },
-        Decoder::default_opcode_table_group_2,
-        {
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_TXS,
-            instruction_set::OPCODE_TYPE_TSX,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_NONE
-        },
-        {
-            instruction_set::OPCODE_TYPE_ASL,
-            instruction_set::OPCODE_TYPE_ROL,
-            instruction_set::OPCODE_TYPE_LSR,
-            instruction_set::OPCODE_TYPE_ROR,
-            instruction_set::OPCODE_TYPE_NONE,
-            instruction_set::OPCODE_TYPE_LDX,
-            instruction_set::OPCODE_TYPE_DEC,
-            instruction_set::OPCODE_TYPE_INC
-        }
+        instruction_set::OPCODE_TYPE_ASL,
+        instruction_set::OPCODE_TYPE_ROL,
+        instruction_set::OPCODE_TYPE_LSR,
+        instruction_set::OPCODE_TYPE_ROR,
+        instruction_set::OPCODE_TYPE_NONE,
+        instruction_set::OPCODE_TYPE_LDX,
+        instruction_set::OPCODE_TYPE_DEC,
+        instruction_set::OPCODE_TYPE_INC
     }
-};
-
-const std::array<const InstructionDecodeGroup *, DECODER_NUM_INSTRUCTION_DECODE_GROUPS> Decoder::instruction_group_table = {
-    &Decoder::instruction_group_0,
-    &Decoder::instruction_group_1,
-    &Decoder::instruction_group_2
 };
 
 /** Functions *************************************************************/
@@ -280,7 +267,7 @@ enum PeNESStatus InstructionDecodeGroup::decode_instruction(
     native_word_t instruction_data,
     instruction_set::IOpcode **output_opcode,
     address_mode::IAddressMode **output_address_mode
-) const
+)
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
     std::size_t address_mode_encoding = DECODER_GET_ADDRESS_MODE_ENCODING(instruction_data);
@@ -417,7 +404,7 @@ enum PeNESStatus Decoder::decode_opcode(
 )
 {
     enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
-    const InstructionDecodeGroup *instruction_group = nullptr;
+    InstructionDecodeGroup *instruction_group = nullptr;
     instruction_set::IOpcode *instruction_opcode = nullptr;
     address_mode::IAddressMode *instruction_address_mode = nullptr;
     native_word_t instruction_opcode_data = 0;
@@ -455,8 +442,9 @@ enum PeNESStatus Decoder::decode_opcode(
         goto l_cleanup;
     }
 
+    /* TODO convert to reference? */
     /* Decode the rest of the opcode according to the parsed group. */
-    instruction_group = Decoder::instruction_group_table.at(instruction_group_index);
+    instruction_group = &this->instruction_group_table.at(instruction_group_index);
 
     status = instruction_group->decode_instruction(
         instruction_opcode_data,
