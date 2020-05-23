@@ -25,6 +25,11 @@ public:
 
     inline ~InstructionDecodeGroup()
     {
+        /* Delete all opcode table objects saved within the vector. */
+        for (instruction_set::OpcodeTable *opcode_table : this->opcode_tables) {
+            delete opcode_table;
+        }
+
         this->opcode_tables.clear();
     };
 

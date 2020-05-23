@@ -67,7 +67,7 @@ public:
         /* If this is not the original memory storage, but rather a mirror,
          * set the buffer to nullptr in order to avoid a double free error.
          * */
-        if (false == is_mirror) {
+        if (true == is_mirror) {
             this->storage_buffer = nullptr;
             this->storage_size = 0;
         }
@@ -90,6 +90,12 @@ public:
 
      inline ~MemoryMap()
      {
+         /* Delete all memory mirror "shortcuts". */
+         delete this->irq_jump_vector_storage;
+         delete this->nmi_jump_vector_storage;
+         delete this->reset_jump_vector_storage;
+
+         /* Delete all memory storage objects saved within the memory map. */
          for (MemoryStorage *memory_storage : this->storage_table) {
              delete memory_storage;
          }
@@ -110,6 +116,13 @@ public:
         return this->stack_storage;
     }
 
+    inline MemoryStorage *get_irq_jump_vector() const
+    {
+        ASSERT(nullptr != this->irq_jump_vector_storage);
+
+        return this->irq_jump_vector_storage;
+    }
+
     inline MemoryStorage *get_nmi_jump_vector() const
     {
         ASSERT(nullptr != this->nmi_jump_vector_storage);
@@ -124,13 +137,6 @@ public:
         return this->reset_jump_vector_storage;
     }
 
-    inline MemoryStorage *get_irq_jump_vector() const
-    {
-        ASSERT(nullptr != this->irq_jump_vector_storage);
-
-        return this->irq_jump_vector_storage;
-    }
-
 private:
     enum PeNESStatus setup_storage_shortcuts();
 
@@ -138,9 +144,9 @@ private:
     std::vector<MemoryStorage *> storage_table;
 
     MemoryStorage *stack_storage = nullptr;
+    MemoryStorage *irq_jump_vector_storage = nullptr;
     MemoryStorage *nmi_jump_vector_storage = nullptr;
     MemoryStorage *reset_jump_vector_storage = nullptr;
-    MemoryStorage *irq_jump_vector_storage = nullptr;
 };
 
 

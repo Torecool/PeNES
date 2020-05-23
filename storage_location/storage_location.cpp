@@ -123,6 +123,6 @@ enum PeNESStatus IStorageLocation::transfer(
 
     status = PENES_STATUS_SUCCESS;
 l_cleanup:
-    delete transfer_buffer;
+    delete[] transfer_buffer;
     return status;
 }

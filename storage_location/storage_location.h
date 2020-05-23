@@ -34,7 +34,7 @@ public:
     inline ~IStorageLocation()
     {
         if (0 < this->storage_size) {
-            delete this->storage_buffer;
+            delete[] this->storage_buffer;
         }
     }
 
