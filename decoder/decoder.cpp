@@ -309,7 +309,6 @@ enum PeNESStatus InstructionDecodeGroup::decode_instruction(
     /* Using the matched opcode object, call the address mode resolve function to override the default type. */
     resolved_address_mode_type = opcode->resolve_address_mode(address_mode_type);
 
-    /* TODO Address mode may be resolved outside of table. */
     /* Retrieve the address mode class from the address mode table, using the overridden address mode type. */
     status = this->address_mode_table.get_object_by_type(
         resolved_address_mode_type,

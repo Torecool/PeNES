@@ -89,37 +89,13 @@ public:
 /** @brief Software interrupt. Save Stack pointer and Status, jump to interrupt handling routine. */
 class OpcodeBRK :
     public IImpliedOperandOpcode,
-    public IJumpOperation,
-    public IStackOperation,
-    public IUpdateStatusOperation {
+    public IInterruptOperation {
 public:
     enum PeNESStatus exec(
         ProgramContext *program_ctx,
         IStorageLocation *operand_storage,
         std::size_t operand_storage_offset
     ) override;
-
-protected:
-    /** @brief Retrieve the mask of status flags that are allowed to be modified in the Status register.
-     *  @note  We will never set the Break flag in the status written to the register,
-     *         because it is only relevant to the status that is pushed onto the stack.
-     * */
-    inline native_word_t get_update_mask() const override
-    {
-        return ~REGISTER_STATUS_FLAG_MASK_BREAK;
-    }
-
-    /** @brief Retrieve the base flag values to set in the modifiable flags of the Status register.
-     *         The actual updated flag values will be equal to base_values | update_values.
-     *  @note  We set the Interrupt flag on the status written back to the register,
-     *         to disable all maskable interrupt handling during the handling of the current interrupt.
-     *         Since this flag is not written to the status that is pushed onto the stack,
-     *         after RTI/PLP, the flag will be cleared.
-     * */
-    inline native_word_t get_base_update_values() const override
-    {
-        return REGISTER_STATUS_FLAG_MASK_INTERRUPT;
-    }
 };
 
 /** @brief Return from interrupt, restoring Status register and Program counter. */

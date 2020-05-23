@@ -5,11 +5,6 @@
  * */
 
 /** Headers ***************************************************************/
-#include <array>
-
-#include "penes_status.h"
-#include "common.h"
-
 #include "utils/utils.h"
 
 #include "address_mode/address_mode_interface.h"
@@ -42,6 +37,3 @@ const utils::InstanceFactoryList<enum AddressModeType, IAddressMode> AddressMode
     utils::SubClassFactory<IAddressMode>::create_instance<ZeropageXIndexedAddressMode>,
     utils::SubClassFactory<IAddressMode>::create_instance<ZeropageYIndexedAddressMode>
 };
-
-/** Functions *************************************************************/
-

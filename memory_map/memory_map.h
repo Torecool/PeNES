@@ -64,10 +64,12 @@ public:
 
     inline ~MemoryStorage()
     {
-        /* TODO double free error. */
-        /* Only call the destructor on the original copy. */
+        /* If this is not the original memory storage, but rather a mirror,
+         * set the buffer to nullptr in order to avoid a double free error.
+         * */
         if (false == is_mirror) {
-            this->IStorageLocation::~IStorageLocation();
+            this->storage_buffer = nullptr;
+            this->storage_size = 0;
         }
     }
 

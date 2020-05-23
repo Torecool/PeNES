@@ -44,7 +44,7 @@ static bool system_is_host_little_endian()
     char *magic_ptr = reinterpret_cast<char *>(&magic);
 
     /* Check if reinterpreting the data has changed the order of bytes within it. */
-    return (magic_ptr[0] == 1);
+    return (magic_ptr[0] == magic);
 }
 
 

@@ -44,11 +44,11 @@ class Decoder {
 public:
     inline explicit Decoder(ProgramContext *program_ctx):
         program_ctx(program_ctx),
-        instruction_group_table {
+        instruction_group_table({
             InstructionDecodeGroup(address_mode_table_group_0, opcode_tables_group_0),
             InstructionDecodeGroup(address_mode_table_group_1, opcode_tables_group_1),
             InstructionDecodeGroup(address_mode_table_group_2, opcode_tables_group_2)
-        }
+        })
     {
         ASSERT(nullptr != program_ctx);
     }

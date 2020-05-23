@@ -193,3 +193,86 @@ l_cleanup:
     return status;
 }
 
+
+enum PeNESStatus IInterruptOperation::execute_interrupt_handler(
+    ProgramContext *program_ctx,
+    IStorageLocation *interrupt_jump_vector,
+    native_dword_t saved_program_counter,
+    native_word_t saved_program_status
+)
+{
+    enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+
+    ASSERT(nullptr != program_ctx);
+    ASSERT(nullptr != interrupt_jump_vector);
+
+    /* Save the program counter on the stack. */
+    status = IStackOperation::push(program_ctx, saved_program_counter);
+    if (PENES_STATUS_SUCCESS != status) {
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass program counter push failed. Status: %d", status);
+        goto l_cleanup;
+    }
+
+    /* Save the stack version of the program status on the stack. */
+    status = IStackOperation::push(program_ctx, saved_program_status);
+    if (PENES_STATUS_SUCCESS != status) {
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass status push failed. Status: %d", status);
+        goto l_cleanup;
+    }
+
+    /* Perform the jump operation to the address stored within the vector table */
+    status = IJumpOperation::jump(program_ctx, interrupt_jump_vector);
+    if (PENES_STATUS_SUCCESS != status) {
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass jump failed. Status: %d", status);
+        goto l_cleanup;
+    }
+
+    /* Call the parent function to set the Interrupt Disable status flag. */
+    status = this->update_status(program_ctx);
+    if (PENES_STATUS_SUCCESS != status) {
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_status failed. Status: %d", status);
+        goto l_cleanup;
+    }
+
+    status = PENES_STATUS_SUCCESS;
+l_cleanup:
+    return status;
+}
+
+
+enum PeNESStatus IInterruptOperation::execute_interrupt_handler(
+    ProgramContext *program_ctx,
+    IStorageLocation *interrupt_jump_vector
+)
+{
+    enum PeNESStatus status = PENES_STATUS_UNINITIALIZED;
+    RegisterStorage<native_dword_t> *register_program_counter = nullptr;
+    RegisterStorage<native_word_t> *register_status = nullptr;
+    native_dword_t program_counter = 0;
+    native_word_t program_status = 0;
+
+    ASSERT(nullptr != program_ctx);
+    ASSERT(nullptr != interrupt_jump_vector);
+
+    /* Read the program counter and status from the program context. */
+    register_program_counter = program_ctx->register_file.get_register_program_counter();
+    register_status = program_ctx->register_file.get_register_status();
+    program_counter = register_program_counter->read();
+    program_status = register_status->read();
+
+    /* Call the "real" interrupt servicing routine. */
+    status = this->execute_interrupt_handler(
+        program_ctx,
+        interrupt_jump_vector,
+        program_counter,
+        program_status
+    );
+    if (PENES_STATUS_SUCCESS != status) {
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("execute_interrupt_handler failed. Status: %d", status);
+        goto l_cleanup;
+    }
+
+    status = PENES_STATUS_SUCCESS;
+l_cleanup:
+    return status;
+}

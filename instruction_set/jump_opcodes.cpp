@@ -69,11 +69,11 @@ enum PeNESStatus OpcodeJSR::exec(
     /* Read the current program counter address. */
     program_counter_address = register_program_counter->read();
 
-    /* TODO probably wrong because it is already incremented. */
-    /* Increment the program counter we push onto the stack by 2,
+    /* Decrement the program counter we push onto the stack by 1,
      * so that when we return from the subroutine, the value we pull from the stack + 1 will be the next instruction.
+     * This assumes the program counter always points to the start of the next instruction before executing the current instruction.
      * */
-    program_counter_address += 2;
+    program_counter_address--;
 
     /* Save the updated program counter on the stack. */
     status = IStackOperation::push(program_ctx, program_counter_address);
@@ -83,7 +83,11 @@ enum PeNESStatus OpcodeJSR::exec(
     }
 
     /* Perform the jump operation to the new location. */
-    status = IJumpOperation::jump(register_program_counter, jump_address_storage, address_storage_offset);
+    status = IJumpOperation::jump(
+        register_program_counter,
+        jump_address_storage,
+        address_storage_offset
+    );
     if (PENES_STATUS_SUCCESS != status) {
         DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass jump failed. Status: %d", status);
         goto l_cleanup;
@@ -133,34 +137,19 @@ enum PeNESStatus OpcodeBRK::exec(
     /* Increment the program counter we push onto the stack by 2,
      * so that when we return from the interrupt handler,
      * the value we pull from the stack will be the instruction following a 1-byte gap.
+     * TODO should be 1?
      * */
     program_counter_address += 2;
 
-    /* Save the updated program counter on the stack. */
-    status = IStackOperation::push(program_ctx, program_counter_address);
+    /* Enter the interrupt handler routine. */
+    status = this->execute_interrupt_handler(
+        program_ctx,
+        interrupt_vector_storage,
+        program_counter_address,
+        program_status
+    );
     if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass program counter push failed. Status: %d", status);
-        goto l_cleanup;
-    }
-
-    /* Save the stack version of the status on the stack. */
-    status = IStackOperation::push(program_ctx, program_status);
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass status push failed. Status: %d", status);
-        goto l_cleanup;
-    }
-
-    /* Perform the jump operation to the address stored within the vector table */
-    status = IJumpOperation::jump(register_program_counter, interrupt_vector_storage);
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass jump failed. Status: %d", status);
-        goto l_cleanup;
-    }
-
-    /* Call the parent function to update the status flags based on the update mask. */
-    status = this->update_status(register_status);
-    if (PENES_STATUS_SUCCESS != status) {
-        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass update_data_status failed. Status: %d", status);
+        DEBUG_PRINT_WITH_ERRNO_WITH_ARGS("Superclass execute_interrupt_handler failed. Status: %d", status);
         goto l_cleanup;
     }
 

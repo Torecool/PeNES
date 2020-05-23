@@ -104,6 +104,8 @@ public:
 
     RegisterFile register_file;
     MemoryMap memory_map;
+    bool did_receive_irq = false;
+    bool did_receive_nmi = false;
 };
 
 #endif /* __PROGRAM_CONTEXT_H__ */

@@ -5,8 +5,6 @@
  * */
 
 /** Headers ***************************************************************/
-#include <array>
-
 #include "utils/utils.h"
 
 #include "instruction_set/instruction_set.h"

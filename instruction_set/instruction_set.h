@@ -1,5 +1,5 @@
 /**
- * @brief  
+ * @brief  Definitions for the instruction set's instructions and opcode tables.
  * @author TBK
  * @date   20/04/2020
  * */
@@ -24,6 +24,9 @@
 namespace instruction_set {
 
 /** Enums *****************************************************************/
+/** @brief Enum representing all supported opcodes,
+ *  to be used as an index into the InstanceFactoryList opcode_instance_factory_list.
+ * */
 enum OpcodeType {
     OPCODE_TYPE_NONE = 0,
     OPCODE_TYPE_ADC,
@@ -87,6 +90,9 @@ enum OpcodeType {
 };
 
 /** Classes ***************************************************************/
+/** @brief Object representing a single opcode table,
+ *  mapping a set of opcode encodings to their corresponding opcode objects.
+ * */
 class OpcodeTable : public utils::ObjectTable<enum OpcodeType, IOpcode> {
 public:
     OpcodeTable(std::initializer_list<enum OpcodeType> opcode_types):
@@ -94,10 +100,14 @@ public:
     {};
 
 private:
+    /** Internal data structure of opcode type - opcode object mappings, for querying based on encoding. */
     static const utils::InstanceFactoryList<enum OpcodeType, IOpcode> opcode_instance_factory_list;
 };
 
 
+/** @brief Object representing a single entire instruction to be executed,
+ *  including the opcode, address mode storage and execution context.
+ * */
 class Instruction {
 public:
     explicit Instruction(
